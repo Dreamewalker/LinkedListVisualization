@@ -5,8 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LinkedListVisualization"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="链表可视化" 
+        Height="500"
+        Width="1200"
+        AllowsTransparency="True"
+        OpacityMask="White" 
+        WindowStyle="None" 
+        Background="Transparent"
+        Style="{StaticResource CustomWindow}">
+    <Grid
+        Name="GeneralGrid">
+        <Viewbox
+            Name="PathViewBox"
+            Stretch="Fill"
+            >
+            <Path
+                Fill="#FFFFFF">
+                <Path.Data>
+                    <PathGeometry
+                    Figures="
+                        M0 25 C0 0, 0 0, 25 0 
+                        M25 0 L1175 0, 1200 25, 1200 475, 1175 500, 25 500, 0 475, 0 25
+                        M1175 0 C1200 0, 1200 0, 1200 25
+                        M0 475 C0 500, 0 500, 25 500
+                        M1175 500 C1200 500, 1200 500, 1200 475
+                        Z"
+                    />
+                </Path.Data>
+            </Path>
+        </Viewbox>
+
+        <Canvas
+            Name="GeneralCanvas">
+            
+        </Canvas>
     </Grid>
 </Window>
