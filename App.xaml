@@ -6,8 +6,16 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="WindowTempl.xaml"/>
+                <ResourceDictionary Source="/Templ/WindowTempl.xaml"/>
+                <ResourceDictionary Source="/Templ/MinButton.xaml"/>
+                <ResourceDictionary Source="/Templ/CloseButton.xaml"/>
+                <ResourceDictionary Source="/Templ/CustomScrollView.xaml"/>
+                <ResourceDictionary Source="/Templ/BackButton.xaml"/>
+                <ResourceDictionary Source="/Templ/BackEndButton.xaml"/>
+                <ResourceDictionary Source="/Templ/ForwardButton.xaml"/>
+                <ResourceDictionary Source="/Templ/ForwardEndButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+
     </Application.Resources>
 </Application>
