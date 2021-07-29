@@ -49,33 +49,33 @@
             VerticalAlignment="Stretch"
             >
             <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="305"/>
-                    </Grid.RowDefinitions>
-                    <Viewbox
-                            Name="CodeViewBox"
-                            Stretch="Fill"
-                            Grid.Row="0">
-                        <Border
-                                BorderBrush="Transparent"
-                                BorderThickness="6">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity=".25" Direction="90" ShadowDepth="1"/>
-                            </Border.Effect>
-                            <Path
-                                    Fill="#FFFFFF"
-                                    Margin="5 5 0 0">
-                                <Path.Data>
-                                    <PathGeometry 
-                                            Figures="
-                                                      M0 25 C0 0, 0 0, 25 0
-                                                      M25 0 L375 0, 400 25, 400 475, 375 500, 25 500, 0 475, 0 25
-                                                      M375 0 C400 0, 400 0, 400 25
-                                                      M0 475 C0 500, 0 500, 25 500
-                                                      M375 500 C400 500, 400 500, 400 475
-                                                      Z"
-                                        />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="305"/>
+                </Grid.RowDefinitions>
+                <Viewbox
+                    Name="CodeViewBox"
+                    Stretch="Fill"
+                    Grid.Row="0">
+                    <Border
+                        BorderBrush="Transparent"
+                        BorderThickness="6">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Color="#000000" Opacity=".25" Direction="90" ShadowDepth="1"/>
+                        </Border.Effect>
+                        <Path
+                            Fill="#FFFFFF"
+                            Margin="5 5 0 0">
+                            <Path.Data>
+                                <PathGeometry 
+                                    Figures="
+                                                M0 25 C0 0, 0 0, 25 0
+                                                M25 0 L375 0, 400 25, 400 475, 375 500, 25 500, 0 475, 0 25
+                                                M375 0 C400 0, 400 0, 400 25
+                                                M0 475 C0 500, 0 500, 25 500
+                                                M375 500 C400 500, 400 500, 400 475
+                                                Z"
+                                    />
                                 </Path.Data>
                             </Path>
                         </Border>
@@ -113,11 +113,12 @@
 
                 </ScrollViewer>
                     
-                    <Viewbox
+                <Viewbox
                         Name="CtrlViewBox"
                         Height="305"
                         Stretch="Fill"
                         Grid.Row="1">
+                    <Grid>
                         <Border
                             BorderBrush="Transparent"
                             BorderThickness="6">
@@ -140,9 +141,18 @@
                                 </Path.Data>
                             </Path>
                         </Border>
-                    </Viewbox>
 
-                </Grid>
+                    </Grid>
+                    </Viewbox>
+                <Button
+                    Name="NewWidgetTest"
+                    Width="50"
+                    Height="20"
+                    Grid.Row="1"
+                    Click="NewWidgetTest_Click">
+                    Create
+                </Button>
+            </Grid>
         </DockPanel>
         
         <DockPanel

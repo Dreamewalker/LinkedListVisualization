@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinkedListVisualization.Widget;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -11,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -143,5 +145,26 @@ namespace LinkedListVisualization
         {
             this.WindowState = WindowState.Minimized;
         }
+
+        private void NewWidgetTest_Click(object sender, RoutedEventArgs e)
+        {
+            Arrow arrow = new Arrow();
+            Arrow arrow1 = new Arrow();
+            GeneralCanvas.Children.Add(arrow);
+            GeneralCanvas.Children.Add(arrow1);
+            Canvas.SetTop(arrow, 200);
+            Canvas.SetLeft(arrow, 400);
+            Canvas.SetTop(arrow1, 300);
+            Canvas.SetLeft(arrow1, 500);
+
+            Storyboard storyboard = new Storyboard();
+            double thisCompleteTime = arrow.Expand(storyboard, 0);
+            arrow1.Expand(storyboard, 0);
+
+            thisCompleteTime = arrow1.Close(storyboard, thisCompleteTime + 2);
+            arrow.Close(storyboard, thisCompleteTime + 1);
+            storyboard.Begin();
+        }
+
     }
 }
