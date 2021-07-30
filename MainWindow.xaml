@@ -38,8 +38,40 @@
         </Viewbox>
 
         <Canvas
-            Name="GeneralCanvas">
-            
+            Name="MotherCanvas"
+            ClipToBounds="True"
+            Margin="10"
+            Background="LightBlue">
+            <Viewbox
+                Name="ViewboxGeneralCanvas"
+                Stretch="None"
+                Canvas.Left="-785"
+                Canvas.Top="-200"
+                >
+                <Viewbox.RenderTransform>
+                    <ScaleTransform x:Name="GeneralCanvasScaleTransform" ScaleX="1" ScaleY="1"/>
+                </Viewbox.RenderTransform>
+                <Canvas
+                    Name="GeneralCanvas"
+                    Width="3140"
+                    Height="1600"
+                    Background="#EEEEEE">
+
+                </Canvas>
+            </Viewbox>
+            <Thumb
+                Name="ThumbGeneralCanvas"
+                Canvas.Left="0"
+                Canvas.Top="0"
+                Width="1553"
+                Height="782"
+                DragDelta="ThumbGeneralCanvas_DragDelta"
+                DragCompleted="ThumbGeneralCanvas_DragCompleted"
+                Background="Gray"
+                Opacity="0"
+                MouseWheel="ViewboxGeneralCanvas_MouseWheel"
+                >
+            </Thumb>
         </Canvas>
 
         <!-- Control layer -->

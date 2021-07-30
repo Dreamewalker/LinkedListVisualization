@@ -176,6 +176,8 @@ namespace LinkedListVisualization
 
         private void NewLinkedList(object sender, RoutedEventArgs e)
         {
+            // Width bias = 785
+            // Height bias = 200
             Storyboard storyboard = new Storyboard();
 
             ListElement[] listElements = new ListElement[5];
@@ -185,8 +187,8 @@ namespace LinkedListVisualization
             {
                 listElements[i] = new ListElement(i, (byte)(40 * i), 155, 155);
                 GeneralCanvas.Children.Add(listElements[i]);
-                Canvas.SetLeft(listElements[i], 500 + 160 * i);
-                Canvas.SetTop(listElements[i], 400);
+                Canvas.SetLeft(listElements[i], 785 + 500 + 160 * i);
+                Canvas.SetTop(listElements[i], 200 + 400);
                 listElements[i].Show(storyboard, 0);
             }
 
@@ -194,8 +196,8 @@ namespace LinkedListVisualization
             {
                 arrows[i] = new Arrow();
                 GeneralCanvas.Children.Add(arrows[i]);
-                Canvas.SetLeft(arrows[i], 590 + 160 * i);
-                Canvas.SetTop(arrows[i], 420);
+                Canvas.SetLeft(arrows[i], 785 + 590 + 160 * i);
+                Canvas.SetTop(arrows[i], 200 + 420);
                 currentTime = arrows[i].Expand(storyboard, 0);
             }
 
@@ -204,5 +206,99 @@ namespace LinkedListVisualization
             storyboard.Begin();
         }
 
+        private double currentScaleRate = 1;
+        private void ViewboxGeneralCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta == 0)
+            {
+                return;
+            }
+
+            double destination = e.Delta / Math.Abs(e.Delta);
+
+            if (currentScaleRate < 0.5 && destination < 0)
+            {
+                return;
+            }
+
+            if (currentScaleRate > 5 && destination > 0)
+            {
+                return;
+            }
+
+            currentScaleRate += destination * 0.05;
+            Point targetZoomFocus = e.GetPosition(ViewboxGeneralCanvas);
+
+            GeneralCanvasScaleTransform.ScaleX = currentScaleRate;
+            GeneralCanvasScaleTransform.ScaleY = currentScaleRate;
+
+            Point cursorPosAfter = e.GetPosition(ViewboxGeneralCanvas);
+
+            double deltaX = targetZoomFocus.X * destination * 0.05;
+            double deltaY = targetZoomFocus.Y * destination * 0.05;
+
+            double newCanvasLeft = Canvas.GetLeft(ViewboxGeneralCanvas) - deltaX;
+            double newCanvasTop = Canvas.GetTop(ViewboxGeneralCanvas) - deltaY;
+            Canvas.SetLeft(ViewboxGeneralCanvas, newCanvasLeft);
+            Canvas.SetTop(ViewboxGeneralCanvas, newCanvasTop);
+
+        }
+
+        private double prevHoriChange = 0;
+        private double prevVerChange = 0;
+        private void ThumbGeneralCanvas_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            double currentLeft = Canvas.GetLeft(ViewboxGeneralCanvas);
+            double currentRight = this.Width - 40 - currentScaleRate * 3140 - currentLeft;
+            double currentTop = Canvas.GetTop(ViewboxGeneralCanvas);
+            double currentBotton = this.Height - 40 - currentScaleRate * 1600 - currentTop;
+
+            if (e.HorizontalChange > prevHoriChange)
+            {
+                // 向右移动
+                if (currentLeft <= 0)
+                {
+                    double newCanvasLeft = currentLeft + e.HorizontalChange - prevHoriChange;
+                    Canvas.SetLeft(ViewboxGeneralCanvas, newCanvasLeft);
+                }
+            }
+            else
+            {
+                // 向左移动
+                if (currentRight <= 0)
+                {
+                    double newCanvasLeft = currentLeft + e.HorizontalChange - prevHoriChange;
+                    Canvas.SetLeft(ViewboxGeneralCanvas, newCanvasLeft);
+                }
+            }
+
+
+            if (e.VerticalChange > prevVerChange)
+            {
+                // 向下移动
+                if (currentTop <= 0)
+                {
+                    double newCanvasTop = currentTop + e.VerticalChange - prevVerChange;
+                    Canvas.SetTop(ViewboxGeneralCanvas, newCanvasTop);
+                }
+            }
+            else
+            {
+                // 向上移动
+                if (currentBotton <= 0)
+                {
+                    double newCanvasTop = currentTop + e.VerticalChange - prevVerChange;
+                    Canvas.SetTop(ViewboxGeneralCanvas, newCanvasTop);
+                }
+            }
+            prevHoriChange = e.HorizontalChange;
+            prevVerChange = e.VerticalChange;
+        }
+
+        private void ThumbGeneralCanvas_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            prevHoriChange = 0;
+            prevVerChange = 0;
+        }
     }
 }
