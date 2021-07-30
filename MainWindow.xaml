@@ -149,7 +149,7 @@
                     Width="50"
                     Height="20"
                     Grid.Row="1"
-                    Click="NewWidgetTest_Click">
+                    Click="NewLinkedList">
                     Create
                 </Button>
             </Grid>

@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:LinkedListVisualization.Widget"
              mc:Ignorable="d" 
              d:DesignHeight="35" d:DesignWidth="60">
+    <Viewbox.RenderTransform>
+        <RotateTransform x:Name="Rotation" Angle="0" CenterX="60" CenterY="17.5"/>
+    </Viewbox.RenderTransform>
     <Canvas
         Width="60"
         Height="35">

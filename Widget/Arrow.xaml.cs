@@ -43,6 +43,44 @@ namespace LinkedListVisualization.Widget
             return EndRot(storyboard, thisCompleteTime);
         }
 
+        public double Rotate(Storyboard storyboard, double prevCompleteTime, double angle)
+        {
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Rotation.Angle, Rotation.Angle + angle, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, this);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Angle"));
+            storyboard.Children.Add(doubleAnimation);
+            return prevCompleteTime + 1;
+        }
+
+        public double Move(Storyboard storyboard, double prevCompleteTime, double deltaX, double deltaY)
+        {
+            DoubleAnimation xDoubleAnimation = new DoubleAnimation(Canvas.GetLeft(this), Canvas.GetLeft(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            xDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+
+            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            xDoubleAnimation.EasingFunction = nonLinearEasingFunction;
+            yDoubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(xDoubleAnimation, this);
+            Storyboard.SetTargetProperty(xDoubleAnimation, new PropertyPath("(Canvas.Left)"));
+            Storyboard.SetTarget(yDoubleAnimation, this);
+            Storyboard.SetTargetProperty(yDoubleAnimation, new PropertyPath("(Canvas.Top)"));
+
+            storyboard.Children.Add(xDoubleAnimation);
+            storyboard.Children.Add(yDoubleAnimation);
+            return prevCompleteTime + 1.5;
+        }
+
         private double RotateAmin(Storyboard storyboard, double prevCompleteTime, Viewbox viewbox, double initAngle, double targetAngle, int opacityTarget)
         {
             DoubleAnimation doubleAnimation = new DoubleAnimation(initAngle, targetAngle, new Duration(TimeSpan.FromMilliseconds(500)));

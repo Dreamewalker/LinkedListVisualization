@@ -149,20 +149,58 @@ namespace LinkedListVisualization
         private void NewWidgetTest_Click(object sender, RoutedEventArgs e)
         {
             Arrow arrow = new Arrow();
-            Arrow arrow1 = new Arrow();
+            ListElement listElement = new ListElement();
             GeneralCanvas.Children.Add(arrow);
-            GeneralCanvas.Children.Add(arrow1);
+            GeneralCanvas.Children.Add(listElement);
             Canvas.SetTop(arrow, 200);
             Canvas.SetLeft(arrow, 400);
-            Canvas.SetTop(arrow1, 300);
-            Canvas.SetLeft(arrow1, 500);
+            Canvas.SetTop(listElement, 300);
+            Canvas.SetLeft(listElement, 500);
 
             Storyboard storyboard = new Storyboard();
             double thisCompleteTime = arrow.Expand(storyboard, 0);
-            arrow1.Expand(storyboard, 0);
+            listElement.Show(storyboard, 0);
 
-            thisCompleteTime = arrow1.Close(storyboard, thisCompleteTime + 2);
+            thisCompleteTime = arrow.Rotate(storyboard, thisCompleteTime + 1, 60);
+            thisCompleteTime = arrow.Move(storyboard, thisCompleteTime + 0.5, 60, 80);
+            thisCompleteTime = listElement.Move(storyboard, thisCompleteTime + 0.5, 100, 0);
+
+            thisCompleteTime = listElement.Close(storyboard, thisCompleteTime + 2);
             arrow.Close(storyboard, thisCompleteTime + 1);
+            BeginStoryboard(storyboard);
+            //storyboard.Begin();
+
+            //System.Threading.Thread.Sleep(1000);
+            listElement.SetProperty(7, 255, 155, 155);
+        }
+
+        private void NewLinkedList(object sender, RoutedEventArgs e)
+        {
+            Storyboard storyboard = new Storyboard();
+
+            ListElement[] listElements = new ListElement[5];
+            Arrow[] arrows = new Arrow[4];
+            double currentTime = 0;
+            for (int i = 0; i < 5; ++i)
+            {
+                listElements[i] = new ListElement(i, (byte)(40 * i), 155, 155);
+                GeneralCanvas.Children.Add(listElements[i]);
+                Canvas.SetLeft(listElements[i], 500 + 160 * i);
+                Canvas.SetTop(listElements[i], 400);
+                listElements[i].Show(storyboard, 0);
+            }
+
+            for (int i = 0; i < 4; ++i)
+            {
+                arrows[i] = new Arrow();
+                GeneralCanvas.Children.Add(arrows[i]);
+                Canvas.SetLeft(arrows[i], 590 + 160 * i);
+                Canvas.SetTop(arrows[i], 420);
+                currentTime = arrows[i].Expand(storyboard, 0);
+            }
+
+            currentTime = arrows[3].Close(storyboard, currentTime + 0.5);
+            listElements[4].Close(storyboard, currentTime);
             storyboard.Begin();
         }
 

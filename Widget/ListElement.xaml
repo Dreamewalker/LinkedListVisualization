@@ -1,0 +1,35 @@
+﻿<Viewbox x:Class="LinkedListVisualization.Widget.ListElement"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LinkedListVisualization.Widget"
+             mc:Ignorable="d" 
+             d:DesignHeight="80" d:DesignWidth="80">
+    <Canvas
+        Height="80"
+        Width="80">
+        <Path 
+            Fill="Gray"
+            Name="Ring">
+            <Path.Data>
+                <GeometryGroup>
+                    <EllipseGeometry RadiusX="40" RadiusY="40" Center="40, 40"/>
+                    <EllipseGeometry RadiusX="32" RadiusY="32" Center="40, 40"/>
+                </GeometryGroup>
+            </Path.Data>
+        </Path>
+        <Label
+            Name="Content"
+            Height="80"
+            Width="80"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            FontFamily="Consolas"
+            FontSize="50"
+            FontWeight="Bold"
+            Foreground="Gray">
+            24
+        </Label>
+    </Canvas>
+</Viewbox>
