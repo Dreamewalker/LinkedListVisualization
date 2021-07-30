@@ -15,7 +15,10 @@
                         <Grid>
                             <Path
                                 x:Name="CloseBackground"
-                                Fill="#EEEEEE">
+                                >
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="CloseBackgroundFill" Color="#EEEEEE"/>
+                                </Path.Fill>
                                 <Path.Data>
                                     <PathGeometry Figures=" 
                                                             M0 150 C0 0, 0 0, 150 0
@@ -68,9 +71,40 @@
 
 
                     <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetName="CloseBackgroundFill"
+                                        Storyboard.TargetProperty="(SolidColorBrush.Color)"
+                                        From="#EEEEEE"
+                                        To="#FF5555"
+                                        Duration="0:0:0.3">
+                                        <ColorAnimation.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </ColorAnimation.EasingFunction>
+                                    </ColorAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetName="CloseBackgroundFill"
+                                        Storyboard.TargetProperty="(SolidColorBrush.Color)"
+                                        From="#FF5555"
+                                        To="#EEEEEE"
+                                        Duration="0:0:0.3">
+                                        <ColorAnimation.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </ColorAnimation.EasingFunction>
+                                    </ColorAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="CloseLogoPath" Property="Fill" Value="White"/>
-                            <Setter TargetName="CloseBackground" Property="Fill" Value="#FF5555"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="CloseLogoPath" Property="Fill" Value="White"/>

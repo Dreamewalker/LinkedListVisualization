@@ -20,7 +20,10 @@
                                 </Border.Effect>
                                 <Path
                                 x:Name="ForwardBackground"
-                                Fill="#FFFFFF">
+                                >
+                                    <Path.Fill>
+                                        <SolidColorBrush x:Name="ForwardBackgroundFill" Color="#FFFFFF"/>
+                                    </Path.Fill>
                                     <Path.Data>
                                         <PathGeometry Figures=" 
                                                             M0 150 C0 0, 0 0, 150 0
@@ -65,9 +68,40 @@
                     </Viewbox>
 
                     <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetName="ForwardBackgroundFill"
+                                        Storyboard.TargetProperty="(SolidColorBrush.Color)"
+                                        From="#FFFFFF"
+                                        To="#DDDDDD"
+                                        Duration="0:0:0.3">
+                                        <ColorAnimation.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </ColorAnimation.EasingFunction>
+                                    </ColorAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                        Storyboard.TargetName="ForwardBackgroundFill"
+                                        Storyboard.TargetProperty="(SolidColorBrush.Color)"
+                                        From="#DDDDDD"
+                                        To="#FFFFFF"
+                                        Duration="0:0:0.3">
+                                        <ColorAnimation.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </ColorAnimation.EasingFunction>
+                                    </ColorAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ForwardLogoPath" Property="Fill" Value="#222222"/>
-                            <Setter TargetName="ForwardBackground" Property="Fill" Value="#DDDDDD"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="ForwardLogoPath" Property="Fill" Value="#111111"/>
