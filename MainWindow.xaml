@@ -83,7 +83,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="305"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Viewbox
                     Name="CodeViewBox"
@@ -144,10 +144,10 @@
                     </TextBlock>
 
                 </ScrollViewer>
-                    
+
                 <Viewbox
                         Name="CtrlViewBox"
-                        Height="305"
+                        Height="245"
                         Stretch="Fill"
                         Grid.Row="1">
                     <Grid>
@@ -175,15 +175,430 @@
                         </Border>
 
                     </Grid>
-                    </Viewbox>
-                <Button
-                    Name="NewWidgetTest"
-                    Width="50"
-                    Height="20"
+                </Viewbox>
+                <Canvas
                     Grid.Row="1"
-                    Click="NewLinkedList">
-                    Create
-                </Button>
+                    Margin="15"
+                    ClipToBounds="True">
+                    <Grid
+                        Name="NewPanel"
+                        Canvas.Left="0"
+                        Canvas.Top="0"
+                        Height="215"
+                        Width="370">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="4*"/>
+                        </Grid.RowDefinitions>
+                        <Grid
+                        Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Grid.Column="0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                FontSize="20"
+                                FontFamily="微软雅黑"
+                                FontWeight="ExtraBold"
+                                Content="     新   建"
+                                Foreground="DimGray"
+                            >
+
+                            </Label>
+                            <Viewbox
+                            Grid.Column="1">
+                                <Button
+                                    Name="CreateNewListButton"
+                                    Foreground="DimGray"
+                                    Style="{StaticResource CtrlArrowButton}"
+                                    Click="CreateNewListButton_Click"
+                            >
+                                </Button>
+                            </Viewbox>
+
+                        </Grid>
+                        <Grid
+                        x:Name="NewAreaCtrlGrid"
+                        Grid.Row="1"
+                        Margin="0 10 0 0"
+                        >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.8*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontSize="18"
+                            FontFamily="微软雅黑"
+                            FontWeight="Bold"
+                            Content="形式"
+                            Foreground="#1D7CA7"/>
+
+
+                            <Canvas
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="3">
+
+                                <Viewbox
+                                Name="TypeSelectedMask"
+                                Canvas.Left="0"
+                                Canvas.Top="4"
+                                Width="97"
+                                Stretch="Uniform">
+                                    <Viewbox.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Viewbox.RenderTransform>
+                                    <Path
+                                    Fill="#5DCCF7">
+                                        <Path.Data>
+                                            <PathGeometry Figures="
+                                              M15 0 C0 0, 0 0, 0 15
+                                              L0 45
+                                              C0 60, 0 60, 15 60
+                                              L165 60
+                                              C180 60, 180 60, 180 45
+                                              L180 15
+                                              C180 0, 180 0, 165, 0
+                                              Z"/>
+                                        </Path.Data>
+                                    </Path>
+                                </Viewbox>
+
+
+                            </Canvas>
+
+                            <Button
+                            Name="NewSingleLinkButton"
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="单链表"
+                            MinWidth="0"
+                            
+                            Click="NewSingleLinkButton_Click">
+                            </Button>
+                            <Button
+                            Name="NewRecycleLinkButton"
+                            Grid.Column="2"
+                            Grid.Row="0"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="循环链表"
+                            MinWidth="1"
+                            Click="NewRecycleLinkButton_Click">
+                            </Button>
+                            <Button
+                            Name="NewBidirectLinkButton"
+                            Grid.Column="3"
+                            Grid.Row="0"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="双向链表"
+                            MinWidth="1"
+                            Click="NewBidirectLinkButton_Click">
+                            </Button>
+
+
+                            <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontSize="18"
+                            FontFamily="微软雅黑"
+                            FontWeight="Bold"
+                            Content="实现"
+                            Foreground="#2D8DB8"/>
+
+
+                            <Canvas
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2">
+
+                                <Viewbox
+                                Name="ImplSelectedMask"
+                                Canvas.Left="0"
+                                Canvas.Top="4"
+                                Width="97"
+                                Stretch="Uniform">
+                                    <Viewbox.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Viewbox.RenderTransform>
+                                    <Path
+                                    Fill="#72DCFF">
+                                        <Path.Data>
+                                            <PathGeometry Figures="
+                                              M15 0 C0 0, 0 0, 0 15
+                                              L0 45
+                                              C0 60, 0 60, 15 60
+                                              L165 60
+                                              C180 60, 180 60, 180 45
+                                              L180 15
+                                              C180 0, 180 0, 165, 0
+                                              Z"/>
+                                        </Path.Data>
+                                    </Path>
+
+                                </Viewbox>
+                            </Canvas>
+
+                            <Button
+                            Name="ImplPointerButton"
+                            Grid.Column="1"
+                            Grid.Row="1"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="指针"
+                            MinWidth="0"
+                            Click="ImplPointerButton_Click">
+                            </Button>
+
+                            <Button
+                            Name="ImplArrayButton"
+                            Grid.Column="2"
+                            Grid.Row="1"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="数组"
+                            MinWidth="1"
+                            Click="ImplArrayButton_Click">
+                            </Button>
+
+
+                            <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontSize="18"
+                            FontFamily="微软雅黑"
+                            FontWeight="Bold"
+                            Content="头节点"
+                            Foreground="#1C9CD6"/>
+
+                            <Canvas
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2">
+
+                                <Viewbox
+                                Name="HeadSelectedMask"
+                                Canvas.Left="0"
+                                Canvas.Top="4"
+                                Width="97"
+                                Stretch="Uniform">
+                                    <Viewbox.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Viewbox.RenderTransform>
+                                    <Path
+                                        Fill="#7EE7FF">
+                                        <Path.Data>
+                                            <PathGeometry Figures="
+                                              M15 0 C0 0, 0 0, 0 15
+                                              L0 45
+                                              C0 60, 0 60, 15 60
+                                              L165 60
+                                              C180 60, 180 60, 180 45
+                                              L180 15
+                                              C180 0, 180 0, 165, 0
+                                              Z"/>
+                                        </Path.Data>
+                                    </Path>
+                                </Viewbox>
+                            </Canvas>
+
+                            <Button
+                            Name="HeadOnButton"
+                            Grid.Column="1"
+                            Grid.Row="2"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="ON"
+                            MinWidth="0"
+                            Click="HeadOnButton_Click">
+                            </Button>
+                            <Button
+                            Name="HeadOffButton"
+                            Grid.Column="2"
+                            Grid.Row="2"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="OFF"
+                            MinWidth="1"
+                            Click="HeadOffButton_Click">
+                            </Button>
+
+                            <Label
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontSize="18"
+                            FontFamily="微软雅黑"
+                            FontWeight="Bold"
+                            Content="尾指针"
+                            Foreground="#2FA4D9"/>
+
+
+                            <Canvas
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2">
+
+                                <Viewbox
+                                Name="TailSelectedMask"
+                                Canvas.Left="0"
+                                Canvas.Top="4"
+                                Width="97"
+                                Stretch="Uniform">
+                                    <Viewbox.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Viewbox.RenderTransform>
+                                    <Path
+                                        Fill="#90F8FF">
+                                        <Path.Data>
+                                            <PathGeometry Figures="
+                                              M15 0 C0 0, 0 0, 0 15
+                                              L0 45
+                                              C0 60, 0 60, 15 60
+                                              L165 60
+                                              C180 60, 180 60, 180 45
+                                              L180 15
+                                              C180 0, 180 0, 165, 0
+                                              Z"/>
+                                        </Path.Data>
+                                    </Path>
+                                </Viewbox>
+                            </Canvas>
+
+                            <Button
+                            Name="TailOnButton"
+                            Grid.Column="1"
+                            Grid.Row="3"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="ON"
+                            MinWidth="0"
+                            Click="TailOnButton_Click">
+                            </Button>
+
+                            <Button
+                            Name="TailOffButton"
+                            Grid.Column="2"
+                            Grid.Row="3"
+                            Style="{StaticResource CtrlAreaButton}"
+                            VerticalAlignment="Center"
+                            Content="OFF"
+                            MinWidth="1"
+                            Click="TailOffButton_Click">
+                            </Button>
+
+                        </Grid>
+
+                    </Grid>
+                    
+                    <Grid
+                        Name="OprPanel"
+                        Canvas.Top="0"
+                        Canvas.Left="370"
+                        Width="370"
+                        Height="215">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="4*"/>
+                        </Grid.RowDefinitions>
+                        <Grid
+                            Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="9*"/>
+                            </Grid.ColumnDefinitions>
+                            <Viewbox
+                                Grid.Column="0">
+                                <Viewbox.RenderTransform>
+                                    <RotateTransform Angle="180" CenterX="18.5" CenterY="18.5"/>
+                                </Viewbox.RenderTransform>
+                                <Button
+                                    Name="BackNewButton"
+                                    Style="{StaticResource CtrlArrowButton}"
+                                    Click="BackNewButton_Click">
+                                </Button>
+                            </Viewbox>
+                            <Label
+                                Name="OprPanelTitle"
+                                Grid.Column="1"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                FontSize="18"
+                                FontFamily="微软雅黑"
+                                FontWeight="ExtraBold"
+                                Content="单链表·指针·有头结点·无尾指针"
+                                Foreground="DimGray">
+                                
+                            </Label>
+                            
+                        </Grid>
+                        <Grid
+                            Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Column="0"
+                                Style="{StaticResource CtrlAreaButton}"
+                                VerticalAlignment="Center"
+                                Content="新建"
+                                MinWidth="1">
+                            </Button>
+                            
+                            <Button
+                                Grid.Column="1"
+                                Style="{StaticResource CtrlAreaButton}"
+                                VerticalAlignment="Center"
+                                Content="插入"
+                                MinWidth="1">
+                            </Button>
+
+                            <Button
+                                Grid.Column="2"
+                                Style="{StaticResource CtrlAreaButton}"
+                                VerticalAlignment="Center"
+                                Content="删除"
+                                MinWidth="1">
+                            </Button>
+                            
+                            <Button
+                                Grid.Column="3"
+                                Style="{StaticResource CtrlAreaButton}"
+                                VerticalAlignment="Center"
+                                Content="查找"
+                                MinWidth="1">
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Canvas>
+                
             </Grid>
         </DockPanel>
         

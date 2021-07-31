@@ -14,6 +14,8 @@
                 <ResourceDictionary Source="/Templ/BackEndButton.xaml"/>
                 <ResourceDictionary Source="/Templ/ForwardButton.xaml"/>
                 <ResourceDictionary Source="/Templ/ForwardEndButton.xaml"/>
+                <ResourceDictionary Source="/Templ/ControlAreaButton.xaml"/>
+                <ResourceDictionary Source="/Templ/ControlAreaArrow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 

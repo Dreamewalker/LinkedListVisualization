@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style x:Key="ForwardEndButton" TargetType="Button">
+    <Style x:Key="CtrlArrowButton" TargetType="Button">
         <Setter Property="Width" Value="60"/>
         <Setter Property="Height" Value="60"/>
         <Setter Property="Foreground" Value="#333333"/>
@@ -12,20 +12,14 @@
                     <Viewbox
                             Stretch="Uniform">
                         <Grid>
-                            <Border
-                                BorderBrush="Transparent" 
-                                BorderThickness="12">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="60" Color="#000000" Opacity=".25" Direction="90" ShadowDepth="1"/>
-                                </Border.Effect>
-                                <Path
+                            <Path
                                 x:Name="ForwardBackground"
                                 >
-                                    <Path.Fill>
-                                        <SolidColorBrush x:Name="ForwardBackgroundFill" Color="#FFFFFF"/>
-                                    </Path.Fill>
-                                    <Path.Data>
-                                        <PathGeometry Figures=" 
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="ForwardBackgroundFill" Color="#FFFFFF"/>
+                                </Path.Fill>
+                                <Path.Data>
+                                    <PathGeometry Figures=" 
                                                             M0 150 C0 0, 0 0, 150 0
                                                             L450 0
                                                             C600 0, 600 0, 600 150
@@ -35,18 +29,18 @@
                                                             C0 600, 0 600, 0 450
                                                             L0 150
                                                             Z"/>
-                                    </Path.Data>
+                                </Path.Data>
 
-                                </Path>
-                            </Border>
+                            </Path>
 
                             <Path
                                 x:Name="ForwardLogoPath"
-                                Width="400"
+                                Width="216.777"
                                 Height="353.554"
-                                Fill="#333333">
+                                Fill="{TemplateBinding Foreground}"
+                                >
                                 <Path.RenderTransform>
-                                    <RotateTransform Angle="180" CenterX="200" CenterY="176.777"/>
+                                    <RotateTransform Angle="180" CenterX="108.389" CenterY="176.777"/>
                                 </Path.RenderTransform>
                                 <Path.Data>
                                     <PathGeometry Figures=" M159.099 17.678 C176.777 0, 176.777 0, 176.777 25
@@ -58,17 +52,6 @@
                                                             C176.777 353.554, 176.777 353.554, 159.099 335.876
                                                             L17.678 194.454
                                                             C0 176.777, 0 176.777, 17.678 159.099
-                                                            Z
-                                                  
-                                                            M359.099 17.678 C376.777 0, 376.777 0, 376.777 25
-                                                            C376.777 50, 376.777 50, 359.099 67.678
-                                                            L267.678 159.099
-                                                            C250 176.777, 250 176.777, 267.678 194.455
-                                                            L359.099 285.876
-                                                            C376.777 303.554, 376.777 303.554, 376.777 328.554
-                                                            C376.777 353.554, 376.777 353.554, 359.099 335.876
-                                                            L217.678 194.454
-                                                            C200 176.777, 200 176.777, 217.678 159.099
                                                             Z"/>
                                 </Path.Data>
                             </Path>

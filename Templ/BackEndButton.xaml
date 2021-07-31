@@ -110,7 +110,7 @@
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="BackLogoPath" Property="Fill" Value="#111111"/>
-                            <Setter TargetName="BackBackground" Property="Fill" Value="#BBBBBB"/>
+                            <Setter TargetName="BackBackground" Property="Fill" Value="#CCCCCC"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

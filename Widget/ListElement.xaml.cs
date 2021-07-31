@@ -38,11 +38,11 @@ namespace LinkedListVisualization.Widget
 
         public double Show(Storyboard storyboard, double prevCompleteTime)
         {
-            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)))
+            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
-            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)))
+            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
@@ -60,16 +60,16 @@ namespace LinkedListVisualization.Widget
 
             storyboard.Children.Add(ringDoubleAnimation);
             storyboard.Children.Add(contentDoubleAnimation);
-            return prevCompleteTime + 0.5;
+            return prevCompleteTime + 0.7;
         }
 
         public double Close(Storyboard storyboard, double prevCompleteTime)
         {
-            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)))
+            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
-            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)))
+            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
@@ -87,7 +87,7 @@ namespace LinkedListVisualization.Widget
 
             storyboard.Children.Add(ringDoubleAnimation);
             storyboard.Children.Add(contentDoubleAnimation);
-            return prevCompleteTime + 0.5;
+            return prevCompleteTime + 0.7;
         }
 
         public void SetProperty(int number, byte r, byte g, byte b)

@@ -226,7 +226,7 @@ namespace LinkedListVisualization
                 return;
             }
 
-            currentScaleRate += destination * 0.05;
+            currentScaleRate += destination * 0.1;
             Point targetZoomFocus = e.GetPosition(ViewboxGeneralCanvas);
 
             GeneralCanvasScaleTransform.ScaleX = currentScaleRate;
@@ -234,8 +234,8 @@ namespace LinkedListVisualization
 
             Point cursorPosAfter = e.GetPosition(ViewboxGeneralCanvas);
 
-            double deltaX = targetZoomFocus.X * destination * 0.05;
-            double deltaY = targetZoomFocus.Y * destination * 0.05;
+            double deltaX = targetZoomFocus.X * destination * 0.1;
+            double deltaY = targetZoomFocus.Y * destination * 0.1;
 
             double newCanvasLeft = Canvas.GetLeft(ViewboxGeneralCanvas) - deltaX;
             double newCanvasTop = Canvas.GetTop(ViewboxGeneralCanvas) - deltaY;
@@ -299,6 +299,428 @@ namespace LinkedListVisualization
         {
             prevHoriChange = 0;
             prevVerChange = 0;
+        }
+
+        private int currentNewListType = 0;
+        private void NewSingleLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentNewListType == 0)
+            {
+                return;
+            }
+            else if (currentNewListType == 1)
+            {
+                NewRecycleLinkButton.MinWidth = 1;
+            }
+            else
+            {
+                NewBidirectLinkButton.MinWidth = 1;
+            }
+            NewSingleLinkButton.MinWidth = 0;
+            Storyboard storyboard = new Storyboard();
+
+            //TypeMaskLabel.Content = "单链表";
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(500 + 500 * (currentNewListType - 0))));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, TypeSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentNewListType = 0;
+        }
+
+        private void NewRecycleLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentNewListType == 1)
+            {
+                return;
+            }
+            else if (currentNewListType == 0)
+            {
+                NewSingleLinkButton.MinWidth = 1;
+            }
+            else
+            {
+                NewBidirectLinkButton.MinWidth = 1;
+            }
+            NewRecycleLinkButton.MinWidth = 0;
+
+            //TypeMaskLabel.Content = "循环链表";
+            Storyboard storyboard = new Storyboard();
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(currentNewListType - 1))));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, TypeSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentNewListType = 1;
+
+        }
+
+        private void NewBidirectLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentNewListType == 2)
+            {
+                return;
+            }
+            else if (currentNewListType == 1)
+            {
+                NewRecycleLinkButton.MinWidth = 1;
+            }
+            else
+            {
+                NewSingleLinkButton.MinWidth = 1;
+            }
+            NewBidirectLinkButton.MinWidth = 0;
+            //TypeMaskLabel.Content = "双向链表";
+            Storyboard storyboard = new Storyboard();
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 194, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(currentNewListType - 2))));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, TypeSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentNewListType = 2;
+        }
+
+        private int currentImplSelect = 0;
+        private void ImplPointerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentImplSelect == 0)
+            {
+                return;
+            }
+
+            ImplPointerButton.MinWidth = 0;
+            ImplArrayButton.MinWidth = 1;
+
+            if (Canvas.GetLeft(HeadSelectedMask) > 50)
+            {
+                HeadOnButton.MinWidth = 1;
+                HeadOffButton.MinWidth = 0;
+            }
+            else
+            {
+                HeadOnButton.MinWidth = 0;
+                HeadOffButton.MinWidth = 1;
+            }
+            //HeadSelectedMask.Opacity = 1;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Show HeadSelectMask Anim
+            DoubleAnimation showAmin = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
+            showAmin.EasingFunction = new ExponentialEase()
+            {
+                EasingMode = EasingMode.EaseOut
+            };
+            Storyboard.SetTarget(showAmin, HeadSelectedMask);
+            Storyboard.SetTargetProperty(showAmin, new PropertyPath("Opacity"));
+            storyboard.Children.Add(showAmin);
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(ImplSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, ImplSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentImplSelect = 0;
+        }
+
+        private void ImplArrayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentImplSelect == 1)
+            {
+                return;
+            }
+
+            ImplPointerButton.MinWidth = 1;
+            ImplArrayButton.MinWidth = 0;
+
+            HeadOnButton.MinWidth = 0;
+            HeadOffButton.MinWidth = 0;
+            //HeadSelectedMask.Opacity = 0;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Hide HeadSelectMask Anim
+            DoubleAnimation hideAmin = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)));
+            hideAmin.EasingFunction = new ExponentialEase()
+            {
+                EasingMode = EasingMode.EaseOut
+            };
+            Storyboard.SetTarget(hideAmin, HeadSelectedMask);
+            Storyboard.SetTargetProperty(hideAmin, new PropertyPath("Opacity"));
+            storyboard.Children.Add(hideAmin);
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(ImplSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, ImplSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentImplSelect = 1;
+        }
+
+        private int currentHeadSelect = 0;
+        private void HeadOnButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentHeadSelect == 0 || HeadOnButton.MinWidth < 0.5)
+            {
+                return;
+            }
+
+            HeadOnButton.MinWidth = 0;
+            HeadOffButton.MinWidth = 1;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(HeadSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, HeadSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentHeadSelect = 0;
+        }
+
+        private void HeadOffButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentHeadSelect == 1 || HeadOffButton.MinWidth < 0.5)
+            {
+                return;
+            }
+
+            HeadOnButton.MinWidth = 1;
+            HeadOffButton.MinWidth = 0;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(HeadSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, HeadSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentHeadSelect = 1;
+        }
+
+        private int currentTailSelect = 0;
+        private void TailOnButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentTailSelect == 0 || TailOnButton.MinWidth < 0.5)
+            {
+                return;
+            }
+
+            TailOnButton.MinWidth = 0;
+            TailOffButton.MinWidth = 1;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TailSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, TailSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentTailSelect = 0;
+        }
+
+        private void TailOffButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentTailSelect == 1 || TailOffButton.MinWidth < 0.5)
+            {
+                return;
+            }
+
+            TailOnButton.MinWidth = 1;
+            TailOffButton.MinWidth = 0;
+
+            Storyboard storyboard = new Storyboard();
+
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            // Move Anim
+            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TailSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
+            doubleAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(doubleAnimation, TailSelectedMask);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(doubleAnimation);
+
+            storyboard.Begin();
+
+            currentTailSelect = 1;
+        }
+
+        private void CreateNewListButton_Click(object sender, RoutedEventArgs e)
+        {
+            string title = "";
+            switch (currentNewListType)
+            {
+                case 0:
+                    title += "单链表·";
+                    break;
+                case 1:
+                    title += "循环链表·";
+                    break;
+                case 2:
+                    title += "双向链表·";
+                    break;
+            }
+
+            if (currentImplSelect == 0)
+            {
+                title += "指针·";
+                if (currentHeadSelect == 0)
+                {
+                    title += "有头结点·";
+                }
+                else
+                {
+                    title += "无头结点·";
+                }
+            }
+            else
+            {
+                title += "数组·";
+            }
+
+            if (currentTailSelect == 0)
+            {
+                title += "有尾指针";
+            }
+            else
+            {
+                title += "无尾指针";
+            }
+
+            OprPanelTitle.Content = title;
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            Storyboard storyboard = new Storyboard();
+            
+            DoubleAnimation newPanelAnimation = new DoubleAnimation(0, -370, new Duration(TimeSpan.FromMilliseconds(1500)));
+            newPanelAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(newPanelAnimation, NewPanel);
+            Storyboard.SetTargetProperty(newPanelAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(newPanelAnimation);
+
+            DoubleAnimation oprPanelAnimation = new DoubleAnimation(370, 0, new Duration(TimeSpan.FromMilliseconds(1500)));
+            oprPanelAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(oprPanelAnimation, OprPanel);
+            Storyboard.SetTargetProperty(oprPanelAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(oprPanelAnimation);
+
+            storyboard.Begin();
+        }
+
+        private void BackNewButton_Click(object sender, RoutedEventArgs e)
+        {
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            Storyboard storyboard = new Storyboard();
+
+            DoubleAnimation newPanelAnimation = new DoubleAnimation(-370, 0, new Duration(TimeSpan.FromMilliseconds(1500)));
+            newPanelAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(newPanelAnimation, NewPanel);
+            Storyboard.SetTargetProperty(newPanelAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(newPanelAnimation);
+
+            DoubleAnimation oprPanelAnimation = new DoubleAnimation(0, 370, new Duration(TimeSpan.FromMilliseconds(1500)));
+            oprPanelAnimation.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(oprPanelAnimation, OprPanel);
+            Storyboard.SetTargetProperty(oprPanelAnimation, new PropertyPath("(Canvas.Left)"));
+
+            storyboard.Children.Add(oprPanelAnimation);
+
+            storyboard.Begin();
         }
     }
 }
