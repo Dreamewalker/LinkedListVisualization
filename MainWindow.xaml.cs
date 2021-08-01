@@ -61,6 +61,23 @@ namespace LinkedListVisualization
             this.SourceInitialized += MainWindow_SourceInitialized;
             this.Loaded += MainWindow_Loaded;
             this.MouseMove += MainWindow_MouseMove;
+
+            // 禁用输入框右键菜单
+            CreateNodeNumEditView.ContextMenu = null;
+
+            // Control Panel中ToolBar按钮数组初始化
+            toolBarButtons[0] = ToolBarCreateButton;
+            toolBarButtons[1] = ToolBarInsertButton;
+            toolBarButtons[2] = ToolBarDeleteButton;
+            toolBarButtons[3] = ToolBarUpdateButton;
+            toolBarButtons[4] = ToolBarQueryButton;
+
+            // Opr Panel中各个面板数组初始化
+            oprPanelGrids[0] = CreateOprGrid;
+            oprPanelGrids[1] = InsertOprGrid;
+            oprPanelGrids[2] = DeleteOprGrid;
+            oprPanelGrids[3] = UpdateOprGrid;
+            oprPanelGrids[4] = QueryOprGrid;
         }
 
         void MainWindow_MouseMove(object sender, MouseEventArgs e)
@@ -721,6 +738,81 @@ namespace LinkedListVisualization
             storyboard.Children.Add(oprPanelAnimation);
 
             storyboard.Begin();
+        }
+
+        private void CreateNodeNumEditView_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string targetContent = "";
+            int currentCursorPos = CreateNodeNumEditView.SelectionStart;
+            foreach (char c in CreateNodeNumEditView.Text)
+            {
+                if (c <= '9' && c >= '0')
+                {
+                    targetContent += c;
+                }
+            }
+            if (targetContent.Length > 5)
+            {
+                targetContent = targetContent.Substring(0, 5);
+            }
+            int diff = targetContent.Length - CreateNodeNumEditView.Text.Length;
+            CreateNodeNumEditView.Text = targetContent;
+            CreateNodeNumEditView.SelectionStart = currentCursorPos + diff;
+        }
+
+        private void CreateNodeNumEditView_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (CreateNodeNumEditView.Text.Length <= 0)
+            {
+                CreateNodeNumEditView.Text = "0";
+            }
+        }
+
+        private Button[] toolBarButtons = new Button[5];
+        private Grid[] oprPanelGrids = new Grid[5];
+        private int currentToolBarSelect = 0;
+
+        private void ToolBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            int clickedButtonIndex = 0;
+            for (int i = 1; i < 5; ++i)
+            {
+                if (sender == toolBarButtons[i])
+                {
+                    clickedButtonIndex = i;
+                }
+            }
+
+            if (clickedButtonIndex == currentToolBarSelect)
+            {
+                return;
+            }
+
+            toolBarButtons[clickedButtonIndex].MinWidth = 0;
+            toolBarButtons[currentToolBarSelect].MinWidth = 1;
+
+            Storyboard storyboard = new Storyboard();
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+            // Tool Bar Anim
+            DoubleAnimation toolBarAnim = new DoubleAnimation(currentToolBarSelect * 74, clickedButtonIndex * 74, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentToolBarSelect))));
+            toolBarAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(toolBarAnim, OprSelectedMask);
+            Storyboard.SetTargetProperty(toolBarAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(toolBarAnim);
+
+            // Panel Switch Anim
+            DoubleAnimation[] panelSwitchAnims = new DoubleAnimation[5];
+            for (int i = 0; i < 5; ++i)
+            {
+                panelSwitchAnims[i] = new DoubleAnimation((i - currentToolBarSelect) * 370, (i - clickedButtonIndex) * 370, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentToolBarSelect))));
+                panelSwitchAnims[i].EasingFunction = nonLinearEasingFunction;
+                Storyboard.SetTarget(panelSwitchAnims[i], oprPanelGrids[i]);
+                Storyboard.SetTargetProperty(panelSwitchAnims[i], new PropertyPath("(Canvas.Left)"));
+                storyboard.Children.Add(panelSwitchAnims[i]);
+            }
+            storyboard.Begin();
+            currentToolBarSelect = clickedButtonIndex;
         }
     }
 }

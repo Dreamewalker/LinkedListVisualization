@@ -1,46 +1,47 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style x:Key="CtrlAreaButton" TargetType="Button">
-        <Setter Property="Foreground" Value="#333333"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Background" Value="#EEEEEE"/>
-        <Setter Property="Template">
+    <Style x:Key="EditView" TargetType="TextBox">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Foreground" Value="DimGray"/>
+        <Setter Property="CaretBrush" Value="Gray"/>
+        <Setter Property="Text" Value="6"/>
+        <Setter Property="Template" >
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Viewbox Stretch="Uniform">
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Viewbox>
                         <Grid>
-                            <Path
-                                x:Name="PathBackground"
-                                Opacity="{TemplateBinding MinWidth}">
+                            <Path>
                                 <Path.Fill>
-                                    <SolidColorBrush x:Name="PathFill" Color="Transparent"/>
+                                    <SolidColorBrush x:Name="PathFill" Color="#EEEEEE"/>
                                 </Path.Fill>
                                 <Path.Data>
                                     <PathGeometry Figures="
-                                              M15 0 C0 0, 0 0, 0 15
-                                              L0 45
-                                              C0 60, 0 60, 15 60
-                                              L165 60
-                                              C180 60, 180 60, 180 45
-                                              L180 15
-                                              C180 0, 180 0, 165, 0
-                                              Z"/>
+                                                  M0 15 C0 0, 0 0, 15 0
+                                                  L135 0
+                                                  C150 0, 150 0, 150 15
+                                                  L150 25
+                                                  C150 40, 150 40, 135, 40
+                                                  L15, 40
+                                                  C0 40, 0 40, 0 25
+                                                  Z"/>
                                 </Path.Data>
                             </Path>
-                            <Label
-                                Content="{TemplateBinding Content}"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                FontSize="{TemplateBinding FontSize}"
-                                FontFamily="微软雅黑"
-                                FontWeight="Bold"
-                                Foreground="#333333"
-                                Opacity="1">
-                                
-                            </Label>
+                            <ScrollViewer 
+                                x:Name="PART_ContentHost" 
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Width="100"
+                                Margin="10 0 0 0"
+                                Focusable="False"
+                                Background="Transparent"
+                                HorizontalScrollBarVisibility="Hidden" 
+                                VerticalScrollBarVisibility="Hidden"/>
 
                         </Grid>
                     </Viewbox>
+
 
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
@@ -49,7 +50,7 @@
                                     <ColorAnimation
                                         Storyboard.TargetName="PathFill"
                                         Storyboard.TargetProperty="(SolidColorBrush.Color)"
-                                        From="Transparent"
+                                        From="#EEEEEE"
                                         To="#DDDDDD"
                                         Duration="0:0:0.3">
                                         <ColorAnimation.EasingFunction>
@@ -59,7 +60,6 @@
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
-
                         <EventTrigger RoutedEvent="MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>
@@ -67,7 +67,7 @@
                                         Storyboard.TargetName="PathFill"
                                         Storyboard.TargetProperty="(SolidColorBrush.Color)"
                                         From="#DDDDDD"
-                                        To="Transparent"
+                                        To="#EEEEEE"
                                         Duration="0:0:0.3">
                                         <ColorAnimation.EasingFunction>
                                             <ExponentialEase EasingMode="EaseOut"/>
@@ -76,13 +76,9 @@
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PathBackground" Property="Fill" Value="#CCCCCC"/>
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>
