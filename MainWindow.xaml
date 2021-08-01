@@ -53,8 +53,8 @@
                 </Viewbox.RenderTransform>
                 <Canvas
                     Name="GeneralCanvas"
-                    Width="3140"
-                    Height="1600"
+                    Width="6280"
+                    Height="3200"
                     Background="#EEEEEE">
 
                 </Canvas>
@@ -622,7 +622,7 @@
                                 VerticalAlignment="Center"
                                 Content="插入"
                                 FontSize="32"
-                                MinWidth="1"
+                                MinWidth="0"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -633,7 +633,7 @@
                                 VerticalAlignment="Center"
                                 Content="删除"
                                 FontSize="32"
-                                MinWidth="1"
+                                MinWidth="0"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -644,7 +644,7 @@
                                 VerticalAlignment="Center"
                                 Content="修改"
                                 FontSize="32"
-                                MinWidth="1"
+                                MinWidth="0"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -655,7 +655,7 @@
                                 VerticalAlignment="Center"
                                 Content="查找"
                                 FontSize="32"
-                                MinWidth="1"
+                                MinWidth="0"
                                 Click="ToolBarButton_Click">
                             </Button>
                         </Grid>
@@ -707,24 +707,28 @@
                                 </TextBox>
 
                                 <Button
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Style="{StaticResource CtrlAreaButton}"
-                                MinWidth="1"
-                                Content="新建空链表"
-                                FontSize="24"
-                                Margin="0">
+                                    Name="CreateEmptyButton"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Style="{StaticResource CtrlAreaButton}"
+                                    MinWidth="1"
+                                    Content="新建空链表"
+                                    FontSize="24"
+                                    Margin="0"
+                                    Click="CreateEmptyButton_Click">
 
                                 </Button>
 
                                 <Button
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Style="{StaticResource CtrlAreaButton}"
-                                MinWidth="1"
-                                Content="新建随机链表"
-                                FontSize="24"
-                                Margin="0">
+                                    Name="CreateRandomButton"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Style="{StaticResource CtrlAreaButton}"
+                                    MinWidth="1"
+                                    Content="新建随机链表"
+                                    FontSize="24"
+                                    Margin="0"
+                                    Click="CreateRandomButton_Click">
 
                                 </Button>
 

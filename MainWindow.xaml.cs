@@ -233,7 +233,7 @@ namespace LinkedListVisualization
 
             double destination = e.Delta / Math.Abs(e.Delta);
 
-            if (currentScaleRate < 0.5 && destination < 0)
+            if (currentScaleRate < 0.3 && destination < 0)
             {
                 return;
             }
@@ -266,14 +266,14 @@ namespace LinkedListVisualization
         private void ThumbGeneralCanvas_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             double currentLeft = Canvas.GetLeft(ViewboxGeneralCanvas);
-            double currentRight = this.Width - 40 - currentScaleRate * 3140 - currentLeft;
+            double currentRight = this.Width - 40 - currentScaleRate * GeneralCanvas.Width - currentLeft;
             double currentTop = Canvas.GetTop(ViewboxGeneralCanvas);
-            double currentBotton = this.Height - 40 - currentScaleRate * 1600 - currentTop;
+            double currentBotton = this.Height - 40 - currentScaleRate * GeneralCanvas.Height - currentTop;
 
             if (e.HorizontalChange > prevHoriChange)
             {
                 // 向右移动
-                if (currentLeft <= 0)
+                if (currentLeft <= 400)
                 {
                     double newCanvasLeft = currentLeft + e.HorizontalChange - prevHoriChange;
                     Canvas.SetLeft(ViewboxGeneralCanvas, newCanvasLeft);
@@ -711,7 +711,32 @@ namespace LinkedListVisualization
 
             storyboard.Children.Add(oprPanelAnimation);
 
+            storyboard.Completed += new EventHandler(ResetOprPanel);
             storyboard.Begin();
+        }
+
+        private void ResetOprPanel(object sender, EventArgs e)
+        {
+            GeneralCanvas.Children.Clear();
+            toolBarButtons[0].MinWidth = 1;
+            for (int i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 0;
+            }
+
+            ToolBarButton_Click(ToolBarCreateButton, null);
+            for (int i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 0;
+            }
+            /*
+            Canvas.SetLeft(OprSelectedMask, 0);
+
+            for (int i = 0; i < 5; ++i)
+            {
+                Canvas.SetLeft(oprPanelGrids[i], 370 * i);
+            }
+            */
         }
 
         private void BackNewButton_Click(object sender, RoutedEventArgs e)
@@ -736,6 +761,8 @@ namespace LinkedListVisualization
             Storyboard.SetTargetProperty(oprPanelAnimation, new PropertyPath("(Canvas.Left)"));
 
             storyboard.Children.Add(oprPanelAnimation);
+
+            root.CloseAnim(storyboard);
 
             storyboard.Begin();
         }
@@ -783,7 +810,7 @@ namespace LinkedListVisualization
                 }
             }
 
-            if (clickedButtonIndex == currentToolBarSelect)
+            if (clickedButtonIndex == currentToolBarSelect || ((Button)sender).MinWidth == 0)
             {
                 return;
             }
@@ -813,6 +840,56 @@ namespace LinkedListVisualization
             }
             storyboard.Begin();
             currentToolBarSelect = clickedButtonIndex;
+        }
+
+        Node root = null;
+
+        private void CreateEmptyButton_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralCanvas.Children.Clear();
+            Storyboard storyboard = new Storyboard();
+            if (currentHeadSelect == 0)
+            {
+                root = new Node(-1, 155, 155, 155, null);
+                root.InitialDraw(GeneralCanvas, storyboard);
+                storyboard.Begin();
+            }
+            for (int i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 1;
+            }
+        }
+
+        private void CreateRandomButton_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralCanvas.Children.Clear();
+            Storyboard storyboard = new Storyboard();
+
+            Random random = new Random();
+            if (currentHeadSelect == 0)
+            {
+                root = new Node(-1, 155, 155, 155, null);
+            }
+            else
+            {
+                root = new Node(random.Next(0, 100), 155, 155, 155, null);
+            }
+
+            int nodeNum = int.Parse(CreateNodeNumEditView.Text) - currentHeadSelect;
+            Node currentPtr = root;
+            for (int i = 0; i < nodeNum; ++i)
+            {
+                currentPtr.CreateNextNode(random.Next(0, 100), false);
+                currentPtr = currentPtr.nextPtr;
+            }
+
+            root.InitialDraw(GeneralCanvas, storyboard);
+            storyboard.Begin();
+
+            for (int i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 1;
+            }
         }
     }
 }

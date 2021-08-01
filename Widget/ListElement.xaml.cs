@@ -92,7 +92,14 @@ namespace LinkedListVisualization.Widget
 
         public void SetProperty(int number, byte r, byte g, byte b)
         {
-            Content.Content = number;
+            if (number >= 0)
+            {
+                Content.Content = number;
+            }
+            else
+            {
+                Content.Content = "H";
+            }
             SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromRgb(r, g, b));
             Content.Foreground = solidColorBrush;
             Ring.Fill = solidColorBrush;
