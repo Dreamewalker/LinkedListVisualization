@@ -142,6 +142,5 @@ namespace LinkedListVisualization.Widget
             storyboard.Children.Add(doubleAnimationOpcacity);
             return prevCompleteTime + 0.5;
         }
-
     }
 }

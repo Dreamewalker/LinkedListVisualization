@@ -711,7 +711,7 @@ namespace LinkedListVisualization
 
             storyboard.Children.Add(oprPanelAnimation);
 
-            storyboard.Completed += new EventHandler(ResetOprPanel);
+            
             storyboard.Begin();
         }
 
@@ -762,8 +762,12 @@ namespace LinkedListVisualization
 
             storyboard.Children.Add(oprPanelAnimation);
 
-            root.CloseAnim(storyboard);
+            if (root != null)
+            {
+                root.CloseAnim(storyboard);
+            }
 
+            storyboard.Completed += new EventHandler(ResetOprPanel);
             storyboard.Begin();
         }
 
@@ -851,7 +855,7 @@ namespace LinkedListVisualization
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
-                root.InitialDraw(GeneralCanvas, storyboard);
+                root.InitialDraw(GeneralCanvas, storyboard, false);
                 storyboard.Begin();
             }
             for (int i = 1; i < 5; ++i)
@@ -862,7 +866,7 @@ namespace LinkedListVisualization
 
         private void CreateRandomButton_Click(object sender, RoutedEventArgs e)
         {
-            GeneralCanvas.Children.Clear();
+            //GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
 
             Random random = new Random();
@@ -879,11 +883,11 @@ namespace LinkedListVisualization
             Node currentPtr = root;
             for (int i = 0; i < nodeNum; ++i)
             {
-                currentPtr.CreateNextNode(random.Next(0, 100), false);
+                currentPtr.CreateNextNode(random.Next(0, 100), currentNewListType == 2);
                 currentPtr = currentPtr.nextPtr;
             }
 
-            root.InitialDraw(GeneralCanvas, storyboard);
+            root.InitialDraw(GeneralCanvas, storyboard, currentNewListType == 2);
             storyboard.Begin();
 
             for (int i = 1; i < 5; ++i)

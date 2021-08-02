@@ -5,16 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LinkedListVisualization.Widget"
              mc:Ignorable="d" 
-             d:DesignHeight="35" d:DesignWidth="60">
+             d:DesignHeight="35" d:DesignWidth="190">
     <Viewbox.RenderTransform>
-        <RotateTransform x:Name="Rotation" Angle="0" CenterX="60" CenterY="17.5"/>
+        <TransformGroup>
+            <ScaleTransform x:Name="ScaleTrans" ScaleX="1" ScaleY="1" CenterX="190" CenterY="17.5"/>
+            <RotateTransform x:Name="Rotation" Angle="0" CenterX="190" CenterY="17.5"/>
+        </TransformGroup>
     </Viewbox.RenderTransform>
     <Canvas
-        Width="60"
+        Width="200"
         Height="35">
         <Viewbox
             Name="ArrowLine"
-            Canvas.Left="5"
+            Canvas.Left="65"
             Canvas.Top="20">
             <Viewbox.RenderTransform>
                 <TransformGroup>
@@ -40,7 +43,7 @@
             </Path>
         </Viewbox>
         <Viewbox
-            Canvas.Left="5"
+            Canvas.Left="65"
             Canvas.Top="20"
             >
             <Viewbox.RenderTransform>
@@ -76,7 +79,7 @@
         </Viewbox>
 
         <Viewbox
-            Canvas.Left="5"
+            Canvas.Left="65"
             Canvas.Top="15">
             <Viewbox.RenderTransform>
                 <TransformGroup>
