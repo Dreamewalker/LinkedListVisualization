@@ -229,7 +229,6 @@
                                 <RowDefinition Height="1*"/>
                                 <RowDefinition Height="1*"/>
                                 <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="0.8*"/>
@@ -257,7 +256,7 @@
                                 <Viewbox
                                 Name="TypeSelectedMask"
                                 Canvas.Left="0"
-                                Canvas.Top="4"
+                                Canvas.Top="11"
                                 Width="97"
                                 Stretch="Uniform">
                                     <Viewbox.RenderTransform>
@@ -317,78 +316,8 @@
                             Click="NewBidirectLinkButton_Click">
                             </Button>
 
-
                             <Label
                             Grid.Row="1"
-                            Grid.Column="0"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            FontSize="18"
-                            FontFamily="微软雅黑"
-                            FontWeight="Bold"
-                            Content="实现"
-                            Foreground="#2D8DB8"/>
-
-
-                            <Canvas
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="2">
-
-                                <Viewbox
-                                Name="ImplSelectedMask"
-                                Canvas.Left="0"
-                                Canvas.Top="4"
-                                Width="97"
-                                Stretch="Uniform">
-                                    <Viewbox.RenderTransform>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                    </Viewbox.RenderTransform>
-                                    <Path
-                                    Fill="#72DCFF">
-                                        <Path.Data>
-                                            <PathGeometry Figures="
-                                              M15 0 C0 0, 0 0, 0 15
-                                              L0 45
-                                              C0 60, 0 60, 15 60
-                                              L165 60
-                                              C180 60, 180 60, 180 45
-                                              L180 15
-                                              C180 0, 180 0, 165, 0
-                                              Z"/>
-                                        </Path.Data>
-                                    </Path>
-
-                                </Viewbox>
-                            </Canvas>
-
-                            <Button
-                            Name="ImplPointerButton"
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            Style="{StaticResource CtrlAreaButton}"
-                            VerticalAlignment="Center"
-                            Content="指针"
-                            MinWidth="0"
-                            FontSize="32"
-                            Click="ImplPointerButton_Click">
-                            </Button>
-
-                            <Button
-                            Name="ImplArrayButton"
-                            Grid.Column="2"
-                            Grid.Row="1"
-                            Style="{StaticResource CtrlAreaButton}"
-                            VerticalAlignment="Center"
-                            Content="数组"
-                            MinWidth="1"
-                            FontSize="32"
-                            Click="ImplArrayButton_Click">
-                            </Button>
-
-
-                            <Label
-                            Grid.Row="2"
                             Grid.Column="0"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
@@ -399,21 +328,21 @@
                             Foreground="#1C9CD6"/>
 
                             <Canvas
-                            Grid.Row="2"
+                            Grid.Row="1"
                             Grid.Column="1"
                             Grid.ColumnSpan="2">
 
                                 <Viewbox
                                 Name="HeadSelectedMask"
                                 Canvas.Left="0"
-                                Canvas.Top="4"
+                                Canvas.Top="11"
                                 Width="97"
                                 Stretch="Uniform">
                                     <Viewbox.RenderTransform>
                                         <ScaleTransform ScaleX="1" ScaleY="1"/>
                                     </Viewbox.RenderTransform>
                                     <Path
-                                        Fill="#7EE7FF">
+                                        Fill="#72DCFF">
                                         <Path.Data>
                                             <PathGeometry Figures="
                                               M15 0 C0 0, 0 0, 0 15
@@ -432,7 +361,7 @@
                             <Button
                             Name="HeadOnButton"
                             Grid.Column="1"
-                            Grid.Row="2"
+                            Grid.Row="1"
                             Style="{StaticResource CtrlAreaButton}"
                             VerticalAlignment="Center"
                             Content="ON"
@@ -443,7 +372,7 @@
                             <Button
                             Name="HeadOffButton"
                             Grid.Column="2"
-                            Grid.Row="2"
+                            Grid.Row="1"
                             Style="{StaticResource CtrlAreaButton}"
                             VerticalAlignment="Center"
                             Content="OFF"
@@ -453,7 +382,7 @@
                             </Button>
 
                             <Label
-                            Grid.Row="3"
+                            Grid.Row="2"
                             Grid.Column="0"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
@@ -465,14 +394,14 @@
 
 
                             <Canvas
-                            Grid.Row="3"
+                            Grid.Row="2"
                             Grid.Column="1"
                             Grid.ColumnSpan="2">
 
                                 <Viewbox
                                 Name="TailSelectedMask"
                                 Canvas.Left="0"
-                                Canvas.Top="4"
+                                Canvas.Top="11"
                                 Width="97"
                                 Stretch="Uniform">
                                     <Viewbox.RenderTransform>
@@ -498,7 +427,7 @@
                             <Button
                             Name="TailOnButton"
                             Grid.Column="1"
-                            Grid.Row="3"
+                            Grid.Row="2"
                             Style="{StaticResource CtrlAreaButton}"
                             VerticalAlignment="Center"
                             Content="ON"
@@ -510,7 +439,7 @@
                             <Button
                             Name="TailOffButton"
                             Grid.Column="2"
-                            Grid.Row="3"
+                            Grid.Row="2"
                             Style="{StaticResource CtrlAreaButton}"
                             VerticalAlignment="Center"
                             Content="OFF"
@@ -733,24 +662,28 @@
                                 </Button>
 
                                 <Button
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Style="{StaticResource CtrlAreaButton}"
-                                MinWidth="1"
-                                Content="新建升序链表"
-                                FontSize="24"
-                                Margin="0">
+                                    Name="CreateIncreaseButton"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Style="{StaticResource CtrlAreaButton}"
+                                    MinWidth="1"
+                                    Content="新建升序链表"
+                                    FontSize="24"
+                                    Margin="0"
+                                    Click="CreateIncreaseButton_Click">
 
                                 </Button>
 
                                 <Button
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Style="{StaticResource CtrlAreaButton}"
-                                MinWidth="1"
-                                Content="新建降序链表"
-                                FontSize="24"
-                                Margin="0">
+                                    Name="CreateDecreaseBuuton"
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Style="{StaticResource CtrlAreaButton}"
+                                    MinWidth="1"
+                                    Content="新建降序链表"
+                                    FontSize="24"
+                                    Margin="0"
+                                    Click="CreateDecreaseBuuton_Click">
 
                                 </Button>
                             </Grid>

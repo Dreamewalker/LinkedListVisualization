@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
 namespace LinkedListVisualization
 {
-    class Node
+    public class Node
     {
         public int value;
         public Node prevPtr = null;
@@ -29,13 +30,13 @@ namespace LinkedListVisualization
                 prevArrow = new Arrow();
             }
         }
-        public double InitialDraw(Canvas canvas, Storyboard storyboard, bool isBidirection)
+        public double InitialDrawLinear(Canvas canvas, Storyboard storyboard, bool isBidirection, double prevCompleteTime)
         {
             if (listElement == null)
             {
                 return 0;
             }
-            double finishTime = 0;
+            double finishTime = prevCompleteTime;
             double canvasLeft = 785 + 500;
             double canvasTop = 200 + 400;
             Node currentPtr = this;
@@ -43,19 +44,27 @@ namespace LinkedListVisualization
             Canvas.SetLeft(currentPtr.listElement, canvasLeft);
             Canvas.SetTop(currentPtr.listElement, canvasTop);
             canvas.Children.Add(currentPtr.listElement);
-            finishTime = currentPtr.listElement.Show(storyboard, 0);
+            finishTime = currentPtr.listElement.Show(storyboard, prevCompleteTime);
             canvasLeft += 190;
 
             while (currentPtr.nextPtr != null)
             {
+                // 循环链表尾结点处理
+                if (currentPtr.nextPtr == this)
+                {
+                    Node.SetArrowNoAnim(currentPtr, currentPtr.nextPtr, currentPtr.nextArrow);
+                    canvas.Children.Add(currentPtr.nextArrow);
+                    finishTime = currentPtr.nextArrow.Expand(storyboard, prevCompleteTime);
+                    break;
+                }
                 Canvas.SetLeft(currentPtr.nextPtr.listElement, canvasLeft);
                 Canvas.SetTop(currentPtr.nextPtr.listElement, canvasTop);
                 canvas.Children.Add(currentPtr.nextPtr.listElement);
-                finishTime = currentPtr.nextPtr.listElement.Show(storyboard, 0);
+                finishTime = currentPtr.nextPtr.listElement.Show(storyboard, prevCompleteTime);
 
                 Node.SetArrowNoAnim(currentPtr, currentPtr.nextPtr, currentPtr.nextArrow);
                 canvas.Children.Add(currentPtr.nextArrow);
-                finishTime = currentPtr.nextArrow.Expand(storyboard, 0);
+                finishTime = currentPtr.nextArrow.Expand(storyboard, prevCompleteTime);
 
 
                 if (currentPtr.prevPtr != null)
@@ -64,7 +73,7 @@ namespace LinkedListVisualization
                     // Canvas.SetLeft(currentPtr.prevArrow, canvasLeft + 80 - 160);
                     // Canvas.SetTop(currentPtr.prevArrow, canvasTop + 20);
                     canvas.Children.Add(currentPtr.prevArrow);
-                    finishTime = currentPtr.prevArrow.Expand(storyboard, 0);
+                    finishTime = currentPtr.prevArrow.Expand(storyboard, prevCompleteTime);
                 }
                 canvasLeft += 190;
                 currentPtr = currentPtr.nextPtr;
@@ -76,78 +85,108 @@ namespace LinkedListVisualization
                 // Canvas.SetLeft(currentPtr.prevArrow, canvasLeft + 80 - 160);
                 // Canvas.SetTop(currentPtr.prevArrow, canvasTop + 20);
                 canvas.Children.Add(currentPtr.prevArrow);
-                finishTime = currentPtr.prevArrow.Expand(storyboard, 0);
+                finishTime = currentPtr.prevArrow.Expand(storyboard, prevCompleteTime);
             }
-
-            /*
-            do
-            {
-                Canvas.SetLeft(currentPtr.listElement, canvasLeft);
-                Canvas.SetTop(currentPtr.listElement, canvasTop);
-                canvas.Children.Add(currentPtr.listElement);
-                finishTime = currentPtr.listElement.Show(storyboard, 0);
-
-
-                if (currentPtr.nextPtr != null)
-                {
-                    Node.SetArrowNoAnim(currentPtr, currentPtr.nextPtr, currentPtr.nextArrow);
-                    
-                    if (isBidirection)
-                    {
-                        Canvas.SetLeft(currentPtr.nextArrow, canvasLeft + 40);
-                    }
-                    else
-                    {
-                        Canvas.SetLeft(currentPtr.nextArrow, canvasLeft + 30);
-                    }
-                    Canvas.SetTop(currentPtr.nextArrow, canvasTop + 20);
-                    
-                    canvas.Children.Add(currentPtr.nextArrow);
-                    finishTime = currentPtr.nextArrow.Expand(storyboard, 0);
-                }
-
-                if (currentPtr.prevPtr != null)
-                {
-                    Node.SetArrowNoAnim(currentPtr, currentPtr.prevPtr, currentPtr.prevArrow);
-                    // Canvas.SetLeft(currentPtr.prevArrow, canvasLeft + 80 - 160);
-                    // Canvas.SetTop(currentPtr.prevArrow, canvasTop + 20);
-                    canvas.Children.Add(currentPtr.prevArrow);
-                    finishTime = currentPtr.prevArrow.Expand(storyboard, 0);
-                }
-                canvasLeft += 190;
-                currentPtr = currentPtr.nextPtr;
-            } while (currentPtr != null);
-            */
 
             return finishTime;
         }
 
-        public double CloseAnim(Storyboard storyboard)
+        public double InitialDrawRecycle(Canvas canvas, Storyboard storyboard, int elementNum, double prevCompleteTime)
+        {
+            double singleHalfAngle = Math.PI / elementNum;
+            double radius = 95 / Math.Sin(singleHalfAngle);
+            double canvasLeftBias = 785 + 500 + radius;
+            double canvasTopBias = 200 + 400 + radius;
+
+            double finishTime;
+
+            Point[] point = new Point[elementNum];
+            for (int i = 0; i < elementNum; ++i)
+            {
+                point[i].X = radius * Math.Cos(singleHalfAngle * 2 * i);
+                point[i].Y = radius * Math.Sin(singleHalfAngle * 2 * i);
+            }
+
+            Node currentPtr = this.nextPtr;
+            Node prevCurrentPtr = this;
+            Canvas.SetLeft(this.listElement, point[0].X - 40 + canvasLeftBias);
+            Canvas.SetTop(this.listElement, point[0].Y - 40 + canvasTopBias);
+            canvas.Children.Add(this.listElement);
+            finishTime = this.listElement.Show(storyboard, prevCompleteTime);
+            for (int i = 1; i < elementNum; ++i)
+            {
+                Canvas.SetLeft(currentPtr.listElement, point[i].X - 40 + canvasLeftBias);
+                Canvas.SetTop(currentPtr.listElement, point[i].Y - 40 + canvasTopBias);
+                canvas.Children.Add(currentPtr.listElement);
+                currentPtr.listElement.Show(storyboard, prevCompleteTime);
+
+                Node.SetArrowNoAnim(prevCurrentPtr, currentPtr, prevCurrentPtr.nextArrow);
+                canvas.Children.Add(prevCurrentPtr.nextArrow);
+                prevCurrentPtr.nextArrow.Expand(storyboard, prevCompleteTime);
+
+                prevCurrentPtr = currentPtr;
+                currentPtr = currentPtr.nextPtr;
+            }
+
+            Node.SetArrowNoAnim(prevCurrentPtr, this, prevCurrentPtr.nextArrow);
+            canvas.Children.Add(prevCurrentPtr.nextArrow);
+            finishTime = prevCurrentPtr.nextArrow.Expand(storyboard, prevCompleteTime);
+
+            return finishTime;
+        }
+
+
+        public double CloseAnim(Storyboard storyboard, double prevCompleteTime)
         {
             if (listElement == null)
             {
-                return 0;
+                return prevCompleteTime;
             }
-            double finishTime = 0;
+            double finishTime = prevCompleteTime;
             Node currentPtr = this;
             do
             {
-                finishTime = currentPtr.listElement.Close(storyboard, 0);
+                finishTime = currentPtr.listElement.Close(storyboard, prevCompleteTime);
 
 
                 if (currentPtr.nextPtr != null)
                 {
-                    finishTime = currentPtr.nextArrow.Close(storyboard, 0);
+                    finishTime = currentPtr.nextArrow.Close(storyboard, prevCompleteTime);
                 }
 
                 if (currentPtr.prevPtr != null)
                 {
-                    finishTime = currentPtr.prevArrow.Close(storyboard, 0);
+                    finishTime = currentPtr.prevArrow.Close(storyboard, prevCompleteTime);
                 }
                 currentPtr = currentPtr.nextPtr;
-            } while (currentPtr != null);
+            } while (currentPtr != null && currentPtr != this);
 
             return finishTime;
+        }
+
+        public void RemoveFromCanvas(Canvas canvas)
+        {
+            if (listElement == null)
+            {
+                return;
+            }
+            Node currentPtr = this;
+            do
+            {
+                canvas.Children.Remove(currentPtr.listElement);
+
+
+                if (currentPtr.nextPtr != null)
+                {
+                    canvas.Children.Remove(currentPtr.nextArrow);
+                }
+
+                if (currentPtr.prevPtr != null)
+                {
+                    canvas.Children.Remove(currentPtr.prevArrow);
+                }
+                currentPtr = currentPtr.nextPtr;
+            } while (currentPtr != null && currentPtr != this);
         }
 
         public void CreateNextNode(int nodeValue, bool isBidirection)
@@ -175,8 +214,56 @@ namespace LinkedListVisualization
 
             arrowToBeSet.Rotation.Angle = rotAngle;
 
-            Canvas.SetLeft(arrowToBeSet, srcX + 40 - 190 * scaleRate);
-            Canvas.SetTop(arrowToBeSet, srcY + 40 - 35 * scaleRate / 2);
+            Canvas.SetLeft(arrowToBeSet, srcX + 40 - 190);
+            Canvas.SetTop(arrowToBeSet, srcY + 40 - 17.5);
+        }
+
+        public static double SetArrowAnim(Storyboard storyboard, Node dstNode, Arrow arrowToBeRotate, double prevFinishTime)
+        {
+            double srcX = Canvas.GetLeft(arrowToBeRotate) + 190;
+            double srcY = Canvas.GetTop(arrowToBeRotate) + 17.5;
+
+            double dstX = Canvas.GetLeft(dstNode.listElement) + 40;
+            double dstY = Canvas.GetTop(dstNode.listElement) + 40;
+
+            double scaleRate = Math.Sqrt(Math.Pow(srcX - dstX, 2) + Math.Pow(srcY - dstY, 2)) / 190.0;
+            double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360 - 180;
+
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            DoubleAnimation scaleXAnim = new DoubleAnimation(arrowToBeRotate.ScaleTrans.ScaleX, scaleRate, new Duration(TimeSpan.FromMilliseconds(1500)));
+            scaleXAnim.EasingFunction = nonLinearEasingFunction;
+            scaleXAnim.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
+
+            Storyboard.SetTarget(scaleXAnim, arrowToBeRotate.ScaleTrans);
+            Storyboard.SetTargetProperty(scaleXAnim, new PropertyPath("ScaleX"));
+            storyboard.Children.Add(scaleXAnim);
+
+
+            DoubleAnimation scaleYAnim = new DoubleAnimation(arrowToBeRotate.ScaleTrans.ScaleY, scaleRate, new Duration(TimeSpan.FromMilliseconds(1500)));
+            scaleYAnim.EasingFunction = nonLinearEasingFunction;
+            scaleYAnim.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
+
+            Storyboard.SetTarget(scaleYAnim, arrowToBeRotate.ScaleTrans);
+            Storyboard.SetTargetProperty(scaleYAnim, new PropertyPath("ScaleY"));
+            storyboard.Children.Add(scaleYAnim);
+
+
+            DoubleAnimation angleAnimation = new DoubleAnimation(arrowToBeRotate.Rotation.Angle, targetAngle, new Duration(TimeSpan.FromMilliseconds(1500)));
+            angleAnimation.EasingFunction = nonLinearEasingFunction;
+            angleAnimation.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
+
+            Storyboard.SetTarget(angleAnimation, arrowToBeRotate.Rotation);
+            Storyboard.SetTargetProperty(angleAnimation, new PropertyPath("Angle"));
+            storyboard.Children.Add(angleAnimation);
+
+            return prevFinishTime + 1.5;
+        }
+
+        public static void SetRearArrowNoAnim(Node rearNode, Arrow arrowToBeSet)
+        {
+
         }
     }
 }

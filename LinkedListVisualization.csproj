@@ -63,6 +63,9 @@
     <Compile Include="Widget\ListElement.xaml.cs">
       <DependentUpon>ListElement.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widget\VisualPointer.xaml.cs">
+      <DependentUpon>VisualPointer.xaml</DependentUpon>
+    </Compile>
     <Page Include="Templ\BackButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -124,6 +127,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widget\ListElement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widget\VisualPointer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

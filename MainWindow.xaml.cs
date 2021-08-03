@@ -427,6 +427,7 @@ namespace LinkedListVisualization
             currentNewListType = 2;
         }
 
+        /*
         private int currentImplSelect = 0;
         private void ImplPointerButton_Click(object sender, RoutedEventArgs e)
         {
@@ -523,6 +524,7 @@ namespace LinkedListVisualization
 
             currentImplSelect = 1;
         }
+        */
 
         private int currentHeadSelect = 0;
         private void HeadOnButton_Click(object sender, RoutedEventArgs e)
@@ -662,21 +664,13 @@ namespace LinkedListVisualization
                     break;
             }
 
-            if (currentImplSelect == 0)
+            if (currentHeadSelect == 0)
             {
-                title += "指针·";
-                if (currentHeadSelect == 0)
-                {
-                    title += "有头结点·";
-                }
-                else
-                {
-                    title += "无头结点·";
-                }
+                title += "有头结点·";
             }
             else
             {
-                title += "数组·";
+                title += "无头结点·";
             }
 
             if (currentTailSelect == 0)
@@ -764,7 +758,7 @@ namespace LinkedListVisualization
 
             if (root != null)
             {
-                root.CloseAnim(storyboard);
+                root.CloseAnim(storyboard, 0);
             }
 
             storyboard.Completed += new EventHandler(ResetOprPanel);
@@ -846,18 +840,42 @@ namespace LinkedListVisualization
             currentToolBarSelect = clickedButtonIndex;
         }
 
-        Node root = null;
+        private Node root = null;
+        private Node prevRoot = null;
+        private Node rearNode = null;
+        private VisualPointer rearArrow = null;
 
+        private void RemoveWidgetsOnCanvas(object sender, EventArgs e)
+        {
+            if (prevRoot != null)
+            {
+                prevRoot.RemoveFromCanvas(GeneralCanvas);
+            }
+            
+        }
         private void CreateEmptyButton_Click(object sender, RoutedEventArgs e)
         {
-            GeneralCanvas.Children.Clear();
+            // GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
+
+            // clear widgets on canvas
+            prevRoot = root;
+            double clearDoneTime = 0;
+            if (prevRoot != null)
+            {
+                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
+            }
+
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
-                root.InitialDraw(GeneralCanvas, storyboard, false);
-                storyboard.Begin();
+                rearNode = root;
+                rearArrow = new VisualPointer(GeneralCanvas, root);
+                root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2);
             }
+            storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
+
+            storyboard.Begin();
             for (int i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
@@ -869,14 +887,26 @@ namespace LinkedListVisualization
             //GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
 
+            // clear widgets on canvas
+            prevRoot = root;
+            double clearDoneTime = 0;
+            if (prevRoot != null)
+            {
+                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
+            }
+
             Random random = new Random();
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
             }
-            else
+            else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(random.Next(0, 100), 155, 155, 155, null);
+            }
+            else
+            {
+                return;
             }
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text) - currentHeadSelect;
@@ -887,10 +917,153 @@ namespace LinkedListVisualization
                 currentPtr = currentPtr.nextPtr;
             }
 
-            root.InitialDraw(GeneralCanvas, storyboard, currentNewListType == 2);
+            if (currentNewListType == 1)
+            {
+                currentPtr = root;
+                while (currentPtr.nextPtr != null)
+                {
+                    currentPtr = currentPtr.nextPtr;
+                }
+
+                currentPtr.nextPtr = root;
+                currentPtr.nextArrow = new Arrow();
+            }
+
+            if (currentNewListType == 1)
+            {
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1, clearDoneTime + 0.2);
+            }
+            else
+            {
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+            }
+            
+            storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
 
             for (int i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 1;
+            }
+        }
+
+        private void CreateIncreaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Storyboard storyboard = new Storyboard();
+
+            // clear widgets on canvas
+            prevRoot = root;
+            double clearDoneTime = 0;
+            if (prevRoot != null)
+            {
+                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
+            }
+
+            int nodeNum = int.Parse(CreateNodeNumEditView.Text);
+            Random random = new Random();
+            List<int> randomArray = new List<int>();
+            for (int c = 0; c < nodeNum; ++c)
+            {
+                randomArray.Add(random.Next(0, 100));
+            }
+            randomArray.Sort();
+
+            int i = 0;
+            if (currentHeadSelect == 0)
+            {
+                root = new Node(-1, 155, 155, 155, null);
+            }
+            else if (CreateNodeNumEditView.Text != "0")
+            {
+                root = new Node(randomArray[0], 155, 155, 155, null);
+                i = 1;
+            }
+            else
+            {
+                return;
+            }
+            Node currentPtr = root;
+            for (; i < nodeNum; ++i)
+            {
+                currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
+                currentPtr = currentPtr.nextPtr;
+            }
+
+            if (currentNewListType == 1)
+            {
+                currentPtr.nextPtr = root;
+                currentPtr.nextArrow = new Arrow();
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2);
+            }
+            else
+            {
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+            }
+            storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
+            storyboard.Begin();
+
+            for (i = 1; i < 5; ++i)
+            {
+                toolBarButtons[i].MinWidth = 1;
+            }
+        }
+
+        private void CreateDecreaseBuuton_Click(object sender, RoutedEventArgs e)
+        {
+            Storyboard storyboard = new Storyboard();
+
+            // clear widgets on canvas
+            prevRoot = root;
+            double clearDoneTime = 0;
+            if (prevRoot != null)
+            {
+                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
+            }
+
+            int nodeNum = int.Parse(CreateNodeNumEditView.Text);
+            Random random = new Random();
+            List<int> randomArray = new List<int>();
+            for (int c = 0; c < nodeNum; ++c)
+            {
+                randomArray.Add(random.Next(0, 100));
+            }
+            randomArray.Sort();
+
+            int i = nodeNum - 1;
+            if (currentHeadSelect == 0)
+            {
+                root = new Node(-1, 155, 155, 155, null);
+            }
+            else if (CreateNodeNumEditView.Text != "0")
+            {
+                root = new Node(randomArray[i], 155, 155, 155, null);
+                --i;
+            }
+            else
+            {
+                return;
+            }
+            Node currentPtr = root;
+            for (; i >= 0; --i)
+            {
+                currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
+                currentPtr = currentPtr.nextPtr;
+            }
+
+            if (currentNewListType == 1)
+            {
+                currentPtr.nextPtr = root;
+                currentPtr.nextArrow = new Arrow();
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2);
+            }
+            else
+            {
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+            }
+            storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
+            storyboard.Begin();
+
+            for (i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
             }
