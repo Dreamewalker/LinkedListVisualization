@@ -18,6 +18,7 @@ namespace LinkedListVisualization
         public ListElement listElement = null;
         public Arrow prevArrow = null;
         public Arrow nextArrow = null;
+        public Dictionary<string, VisualPointer> relatedPointers = new Dictionary<string, VisualPointer>();
 
         public Node(int nodeValue, byte colorR, byte colorG, byte colorB, Node prevNode)
         {
@@ -44,6 +45,7 @@ namespace LinkedListVisualization
             Canvas.SetLeft(currentPtr.listElement, canvasLeft);
             Canvas.SetTop(currentPtr.listElement, canvasTop);
             canvas.Children.Add(currentPtr.listElement);
+            VisualPointer.ShowPointersInNodeAnim(currentPtr, canvas, storyboard, prevCompleteTime);
             finishTime = currentPtr.listElement.Show(storyboard, prevCompleteTime);
             canvasLeft += 190;
 
@@ -60,6 +62,7 @@ namespace LinkedListVisualization
                 Canvas.SetLeft(currentPtr.nextPtr.listElement, canvasLeft);
                 Canvas.SetTop(currentPtr.nextPtr.listElement, canvasTop);
                 canvas.Children.Add(currentPtr.nextPtr.listElement);
+                VisualPointer.ShowPointersInNodeAnim(currentPtr.nextPtr, canvas, storyboard, prevCompleteTime);
                 finishTime = currentPtr.nextPtr.listElement.Show(storyboard, prevCompleteTime);
 
                 Node.SetArrowNoAnim(currentPtr, currentPtr.nextPtr, currentPtr.nextArrow);
@@ -111,6 +114,7 @@ namespace LinkedListVisualization
             Node prevCurrentPtr = this;
             Canvas.SetLeft(this.listElement, point[0].X - 40 + canvasLeftBias);
             Canvas.SetTop(this.listElement, point[0].Y - 40 + canvasTopBias);
+            VisualPointer.RecycleShowPointersInNodeAnim(this, canvas, storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias);
             canvas.Children.Add(this.listElement);
             finishTime = this.listElement.Show(storyboard, prevCompleteTime);
             for (int i = 1; i < elementNum; ++i)
@@ -118,6 +122,7 @@ namespace LinkedListVisualization
                 Canvas.SetLeft(currentPtr.listElement, point[i].X - 40 + canvasLeftBias);
                 Canvas.SetTop(currentPtr.listElement, point[i].Y - 40 + canvasTopBias);
                 canvas.Children.Add(currentPtr.listElement);
+                VisualPointer.RecycleShowPointersInNodeAnim(currentPtr, canvas, storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias);
                 currentPtr.listElement.Show(storyboard, prevCompleteTime);
 
                 Node.SetArrowNoAnim(prevCurrentPtr, currentPtr, prevCurrentPtr.nextArrow);
@@ -259,11 +264,6 @@ namespace LinkedListVisualization
             storyboard.Children.Add(angleAnimation);
 
             return prevFinishTime + 1.5;
-        }
-
-        public static void SetRearArrowNoAnim(Node rearNode, Arrow arrowToBeSet)
-        {
-
         }
     }
 }

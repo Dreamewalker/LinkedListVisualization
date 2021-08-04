@@ -488,7 +488,7 @@
                                 FontSize="18"
                                 FontFamily="微软雅黑"
                                 FontWeight="ExtraBold"
-                                Content="单链表·指针·有头结点·无尾指针"
+                                Content="单链表·有头结点·无尾指针"
                                 Foreground="DimGray">
                                 
                             </Label>

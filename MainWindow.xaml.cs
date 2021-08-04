@@ -756,10 +756,7 @@ namespace LinkedListVisualization
 
             storyboard.Children.Add(oprPanelAnimation);
 
-            if (root != null)
-            {
-                root.CloseAnim(storyboard, 0);
-            }
+            CloseWidgetsOnCanvas(storyboard, 0);
 
             storyboard.Completed += new EventHandler(ResetOprPanel);
             storyboard.Begin();
@@ -844,6 +841,9 @@ namespace LinkedListVisualization
         private Node prevRoot = null;
         private Node rearNode = null;
         private VisualPointer rearArrow = null;
+        private VisualPointer rootArrow = null;
+        private Dictionary<string, VisualPointer> generalVisualPtrSet = new Dictionary<string, VisualPointer>();
+        private Dictionary<string, VisualPointer> prevGeneralVisualPtrSet = null;
 
         private void RemoveWidgetsOnCanvas(object sender, EventArgs e)
         {
@@ -851,26 +851,70 @@ namespace LinkedListVisualization
             {
                 prevRoot.RemoveFromCanvas(GeneralCanvas);
             }
-            
+            foreach (var pointer in prevGeneralVisualPtrSet.Values)
+            {
+                GeneralCanvas.Children.Remove(pointer);
+            }
         }
+
+        private double CloseWidgetsOnCanvas(Storyboard storyboard, double prevCompleteTime)
+        {
+            prevRoot = root;
+            prevGeneralVisualPtrSet = generalVisualPtrSet;
+            generalVisualPtrSet = new Dictionary<string, VisualPointer>();
+
+            if (GeneralCanvas.Children.Count == 0)
+            {
+                return -0.2;
+            }
+            if (rearArrow != null && rearArrow.PointerType.Opacity > 0.5)
+            {
+                rearArrow.Close(storyboard, 0);
+            }
+
+            if (rootArrow != null && rootArrow.PointerType.Opacity > 0.5)
+            {
+                rootArrow.Close(storyboard, 0);
+            }
+
+            if (prevRoot != null)
+            {
+                prevRoot.CloseAnim(storyboard, 0);
+            }
+
+            foreach (var pointer in prevGeneralVisualPtrSet.Values)
+            {
+                if (pointer.PointerType.Opacity > 0.5)
+                {
+                    pointer.Close(storyboard, 0);
+                }
+            }
+            return prevCompleteTime + 0.7;
+        }
+
         private void CreateEmptyButton_Click(object sender, RoutedEventArgs e)
         {
             // GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
-            prevRoot = root;
-            double clearDoneTime = 0;
-            if (prevRoot != null)
-            {
-                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
-            }
+            double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
+
 
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
-                rearNode = root;
-                rearArrow = new VisualPointer(GeneralCanvas, root);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
+                
+                if (currentTailSelect == 0)
+                {
+                    rearNode = root;
+                    rearArrow = new VisualPointer("Rear");
+                    root.relatedPointers.Add("Rear", rearArrow);
+                    //rearArrow.Show(storyboard, clearDoneTime + 0.2);
+                }
                 root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2);
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
@@ -888,21 +932,23 @@ namespace LinkedListVisualization
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
-            prevRoot = root;
-            double clearDoneTime = 0;
-            if (prevRoot != null)
-            {
-                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
-            }
+            double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
+            
 
             Random random = new Random();
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(random.Next(0, 100), 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
             }
             else
             {
@@ -911,22 +957,26 @@ namespace LinkedListVisualization
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text) - currentHeadSelect;
             Node currentPtr = root;
+            rearNode = root;
             for (int i = 0; i < nodeNum; ++i)
             {
                 currentPtr.CreateNextNode(random.Next(0, 100), currentNewListType == 2);
+
                 currentPtr = currentPtr.nextPtr;
             }
 
+            rearNode = currentPtr;
+
             if (currentNewListType == 1)
             {
-                currentPtr = root;
-                while (currentPtr.nextPtr != null)
-                {
-                    currentPtr = currentPtr.nextPtr;
-                }
+                rearNode.nextPtr = root;
+                rearNode.nextArrow = new Arrow();
+            }
 
-                currentPtr.nextPtr = root;
-                currentPtr.nextArrow = new Arrow();
+            if (currentTailSelect == 0)
+            {
+                rearArrow = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearArrow);
             }
 
             if (currentNewListType == 1)
@@ -952,12 +1002,7 @@ namespace LinkedListVisualization
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
-            prevRoot = root;
-            double clearDoneTime = 0;
-            if (prevRoot != null)
-            {
-                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
-            }
+            double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text);
             Random random = new Random();
@@ -972,10 +1017,16 @@ namespace LinkedListVisualization
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[0], 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
                 i = 1;
             }
             else
@@ -988,6 +1039,15 @@ namespace LinkedListVisualization
                 currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
                 currentPtr = currentPtr.nextPtr;
             }
+
+            rearNode = currentPtr;
+
+            if (currentTailSelect == 0)
+            {
+                rearArrow = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearArrow);
+            }
+            
 
             if (currentNewListType == 1)
             {
@@ -1013,12 +1073,7 @@ namespace LinkedListVisualization
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
-            prevRoot = root;
-            double clearDoneTime = 0;
-            if (prevRoot != null)
-            {
-                clearDoneTime = prevRoot.CloseAnim(storyboard, 0);
-            }
+            double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text);
             Random random = new Random();
@@ -1033,10 +1088,16 @@ namespace LinkedListVisualization
             if (currentHeadSelect == 0)
             {
                 root = new Node(-1, 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[i], 155, 155, 155, null);
+
+                rootArrow = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootArrow);
                 --i;
             }
             else
@@ -1048,6 +1109,14 @@ namespace LinkedListVisualization
             {
                 currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
                 currentPtr = currentPtr.nextPtr;
+            }
+
+            rearNode = currentPtr;
+
+            if (currentTailSelect == 0)
+            {
+                rearArrow = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearArrow);
             }
 
             if (currentNewListType == 1)

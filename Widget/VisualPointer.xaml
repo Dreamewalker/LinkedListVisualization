@@ -5,130 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LinkedListVisualization.Widget"
              mc:Ignorable="d" 
-             d:DesignHeight="160" d:DesignWidth="90">
-    <Canvas
-        Width="90"
-        Height="160">
-        <Viewbox
-            Canvas.Top="60"
-            Canvas.Left="27.5">
-            <Viewbox.RenderTransform>
-                <RotateTransform Angle="90" CenterX="17.5" CenterY="17.5"/>
-            </Viewbox.RenderTransform>
-            <Canvas
-                Width="60"
-                Height="35">
-                <Viewbox
-                Name="ArrowLine"
-                Canvas.Left="5"
-                Canvas.Top="20">
-                    <Viewbox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
-                            <RotateTransform Angle="270"/>
-                        </TransformGroup>
-                    </Viewbox.RenderTransform>
-                    <Path
-                    Fill="#555555">
-                        <Path.Data>
-                            <PathGeometry
-                        Figures="
-                            M0 50 C0 0, 0 0, 50 0 
-                            M50 0 C100 0, 100 0, 100 50 
-                            M100 50 L0 50 L50 0
-                            M0 50 L100 50 L100 1000 L0 1000
-                            M0 1000 C0 1050, 0 1050, 50 1050
-                            M50 1050 C100 1050, 100 1050, 100 1000 
-                            M0 1000 L100 1000 L50 1050
-                            Z"
-                    />
-                        </Path.Data>
-                    </Path>
-                </Viewbox>
-                <Viewbox
-                Canvas.Left="5"
-                Canvas.Top="20"
-                >
-                    <Viewbox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
-                        </TransformGroup>
-                    </Viewbox.RenderTransform>
-                    <Viewbox
-                    Name="ArrowUp"
-                    Opacity="1"
-                >
-                        <Viewbox.RenderTransform>
-                            <TransformGroup>
-                                <RotateTransform
-                                Angle="240"/>
-                            </TransformGroup>
-                        </Viewbox.RenderTransform>
-                        <Path
-                    Fill="#555555">
-                            <Path.Data>
-                                <PathGeometry
-                        Figures="
-                            M0 50 C0 0, 0 0, 43.30 -25
-                            M43.30 -25 C86.60 -50, 86.60 -50, 86.60 0
-                            M0 50 L43.30 -25 86.60 0, 86.60 500, 43.30 525, 0 450
-                            M0 450 C0 500, 0 500, 43.30 525
-                            M43.30 525 C86.60 550, 86.60 550, 86.60 500
-                            Z"
-                    />
-                            </Path.Data>
-                        </Path>
-                    </Viewbox>
-                </Viewbox>
-
-                <Viewbox
-                Canvas.Left="5"
-                Canvas.Top="15">
-                    <Viewbox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
-                        </TransformGroup>
-                    </Viewbox.RenderTransform>
-                    <Viewbox
-                    Name="ArrowDown"
-                    Opacity="1">
-                        <Viewbox.RenderTransform>
-                            <TransformGroup>
-                                <RotateTransform Angle="120"/>
-                            </TransformGroup>
-                        </Viewbox.RenderTransform>
-                        <Path
-                    Fill="#555555">
-                            <Path.Data>
-                                <PathGeometry
-                        Figures="
-                            M0 -450 C0 -500, 0 -500, 43.30 -525
-                            M43.30 -525 C86.60 -550, 86.60 -550, 86.60 -500
-                            M0 -450 L43.30 -525 86.60 -500, 86.60 0, 43.30 25, 0 -50
-                            M0 -50 C0 0, 0 0, 43.30 25
-                            M43.30 25 C86.60 50, 86.60 50, 86.60 0
-                            Z"
-                    />
-                            </Path.Data>
-                        </Path>
-                    </Viewbox>
-                </Viewbox>
-            </Canvas>
-        </Viewbox>
+             d:DesignHeight="40" d:DesignWidth="100">
+    <Viewbox.RenderTransform>
+        <RotateTransform x:Name="Rotation" Angle="0" CenterX="50" CenterY="20"/>
+    </Viewbox.RenderTransform>
+    <Grid>
+        <Path
+            Name="BackgroundPath"
+            Opacity="0.4"
+            Fill="LightGray"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Path.Data>
+                <PathGeometry Figures="
+                                       M10 0 C0 0, 0 0, 0 10
+                                       L0 30
+                                       C0 40, 0 40, 10 40
+                                       L90 40
+                                       C100 40, 100 40, 100 30
+                                       L100 10
+                                       C100 0, 100 0, 90 0
+                                       Z"/>
+            </Path.Data>
+        </Path>
 
         <Label
             Name="PointerType"
-            Canvas.Top="120"
-            Width="90"
-            Content="Rear"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            FontSize="24"
+            FontSize="18"
             FontFamily="Consolas"
             FontWeight="ExtraBold"
-            Foreground="DimGray">
+            Content="Rear"
+            Foreground="DimGray"
+            Opacity="1"
+            >
             
         </Label>
-    </Canvas>
-    
+    </Grid>
+
 </Viewbox>
