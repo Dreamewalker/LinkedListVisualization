@@ -101,6 +101,18 @@ namespace LinkedListVisualization
             double canvasLeftBias = 785 + 500 + radius;
             double canvasTopBias = 200 + 400 + radius;
 
+            if (elementNum == 1)
+            {
+                canvasLeftBias = 785 + 500;
+                canvasTopBias = 200 + 400;
+
+                Canvas.SetLeft(this.listElement, -40 + canvasLeftBias);
+                Canvas.SetTop(this.listElement, -40 + canvasTopBias);
+                VisualPointer.ShowPointersInNodeAnim(this, canvas, storyboard, prevCompleteTime);
+                canvas.Children.Add(this.listElement);
+                return this.listElement.Show(storyboard, prevCompleteTime);
+            }
+
             double finishTime;
 
             Point[] point = new Point[elementNum];

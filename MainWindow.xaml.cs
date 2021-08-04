@@ -840,8 +840,8 @@ namespace LinkedListVisualization
         private Node root = null;
         private Node prevRoot = null;
         private Node rearNode = null;
-        private VisualPointer rearArrow = null;
-        private VisualPointer rootArrow = null;
+        private VisualPointer rearPointer = null;
+        private VisualPointer rootPointer = null;
         private Dictionary<string, VisualPointer> generalVisualPtrSet = new Dictionary<string, VisualPointer>();
         private Dictionary<string, VisualPointer> prevGeneralVisualPtrSet = null;
 
@@ -867,15 +867,17 @@ namespace LinkedListVisualization
             {
                 return -0.2;
             }
-            if (rearArrow != null && rearArrow.PointerType.Opacity > 0.5)
+            /*
+            if (rearPointer != null && rearPointer.PointerType.Opacity > 0.5)
             {
-                rearArrow.Close(storyboard, 0);
+                rearPointer.Close(storyboard, 0);
             }
 
-            if (rootArrow != null && rootArrow.PointerType.Opacity > 0.5)
+            if (rootPointer != null && rootPointer.PointerType.Opacity > 0.5)
             {
-                rootArrow.Close(storyboard, 0);
+                rootPointer.Close(storyboard, 0);
             }
+            */
 
             if (prevRoot != null)
             {
@@ -905,14 +907,16 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
                 
                 if (currentTailSelect == 0)
                 {
                     rearNode = root;
-                    rearArrow = new VisualPointer("Rear");
-                    root.relatedPointers.Add("Rear", rearArrow);
+                    rearPointer = new VisualPointer("Rear");
+                    root.relatedPointers.Add("Rear", rearPointer);
+                    generalVisualPtrSet.Add("Rear", rearPointer);
                     //rearArrow.Show(storyboard, clearDoneTime + 0.2);
                 }
                 root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2);
@@ -940,15 +944,17 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(random.Next(0, 100), 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
             }
             else
             {
@@ -975,8 +981,9 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearArrow = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearArrow);
+                rearPointer = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearPointer);
+                generalVisualPtrSet.Add("Rear", rearPointer);
             }
 
             if (currentNewListType == 1)
@@ -1018,15 +1025,17 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[0], 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
                 i = 1;
             }
             else
@@ -1044,8 +1053,9 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearArrow = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearArrow);
+                rearPointer = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearPointer);
+                generalVisualPtrSet.Add("Rear", rearPointer);
             }
             
 
@@ -1089,15 +1099,17 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[i], 155, 155, 155, null);
 
-                rootArrow = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootArrow);
+                rootPointer = new VisualPointer("Root");
+                root.relatedPointers.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Root", rootPointer);
                 --i;
             }
             else
@@ -1115,8 +1127,9 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearArrow = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearArrow);
+                rearPointer = new VisualPointer("Rear");
+                rearNode.relatedPointers.Add("Rear", rearPointer);
+                generalVisualPtrSet.Add("Rear", rearPointer);
             }
 
             if (currentNewListType == 1)
