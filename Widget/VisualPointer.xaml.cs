@@ -21,10 +21,12 @@ namespace LinkedListVisualization.Widget
     /// </summary>
     public partial class VisualPointer : Viewbox
     {
-        public VisualPointer(String pointerName)
+        public Node pointingNode = null;
+        public VisualPointer(String pointerName, Node pointingNode)
         {
             InitializeComponent();
             PointerType.Content = pointerName;
+            this.pointingNode = pointingNode;
             PointerType.Opacity = 0;
             BackgroundPath.Opacity = 0;
         }
@@ -55,12 +57,37 @@ namespace LinkedListVisualization.Widget
             return prevCompleteTime + 0.7;
         }
 
-        public static double ShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, double prevCompleteTime)
+        public double MoveToAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop)
+        {
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            DoubleAnimation xAnim = new DoubleAnimation(Canvas.GetLeft(this), targetLeft, new Duration(TimeSpan.FromMilliseconds(1000)));
+            xAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            xAnim.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(xAnim, this);
+            Storyboard.SetTargetProperty(xAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(xAnim);
+
+            DoubleAnimation yAnim = new DoubleAnimation(Canvas.GetTop(this), targetTop, new Duration(TimeSpan.FromMilliseconds(1000)));
+            yAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            yAnim.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(yAnim, this);
+            Storyboard.SetTargetProperty(yAnim, new PropertyPath("(Canvas.Top)"));
+            storyboard.Children.Add(yAnim);
+
+            return prevCompleteTime + 1;
+        }
+
+        public static double ShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime)
         {
             double posX = Canvas.GetLeft(node.listElement) + 40 - 50;
             double posY = Canvas.GetTop(node.listElement) + 80 + 20;
 
-            foreach (VisualPointer visualPointer in node.relatedPointers.Values)
+            List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
+            foreach (VisualPointer visualPointer in relatedList)
             {
                 Canvas.SetLeft(visualPointer, posX);
                 Canvas.SetTop(visualPointer, posY);
@@ -72,7 +99,7 @@ namespace LinkedListVisualization.Widget
             return prevCompleteTime + 0.7;
         }
 
-        public static double RecycleShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, double prevCompleteTime, double centerX, double centerY)
+        public static double RecycleShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime, double centerX, double centerY)
         {
             double posX = Canvas.GetLeft(node.listElement) + 40;
             double posY = Canvas.GetTop(node.listElement) + 40;
@@ -81,7 +108,8 @@ namespace LinkedListVisualization.Widget
 
             double pointerCenterR = radius + 80;
 
-            foreach (VisualPointer visualPointer in node.relatedPointers.Values)
+            List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
+            foreach (VisualPointer visualPointer in relatedList)
             {
                 Canvas.SetLeft(visualPointer, centerX + (posX - centerX) / radius * pointerCenterR - 50);
                 Canvas.SetTop(visualPointer, centerY + (posY - centerY) / radius * pointerCenterR - 20);

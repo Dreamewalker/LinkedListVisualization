@@ -907,19 +907,17 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
                 
                 if (currentTailSelect == 0)
                 {
                     rearNode = root;
-                    rearPointer = new VisualPointer("Rear");
-                    root.relatedPointers.Add("Rear", rearPointer);
+                    rearPointer = new VisualPointer("Rear", rearNode);
                     generalVisualPtrSet.Add("Rear", rearPointer);
                     //rearArrow.Show(storyboard, clearDoneTime + 0.2);
                 }
-                root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2);
+                root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
 
@@ -944,16 +942,14 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(random.Next(0, 100), 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else
@@ -981,18 +977,17 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearPointer = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearPointer);
+                rearPointer = new VisualPointer("Rear", rearNode);
                 generalVisualPtrSet.Add("Rear", rearPointer);
             }
 
             if (currentNewListType == 1)
             {
-                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1, clearDoneTime + 0.2);
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
             {
-                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
@@ -1025,16 +1020,14 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[0], 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
                 i = 1;
             }
@@ -1053,8 +1046,7 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearPointer = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearPointer);
+                rearPointer = new VisualPointer("Rear", rearNode);
                 generalVisualPtrSet.Add("Rear", rearPointer);
             }
             
@@ -1063,11 +1055,11 @@ namespace LinkedListVisualization
             {
                 currentPtr.nextPtr = root;
                 currentPtr.nextArrow = new Arrow();
-                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2);
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
             {
-                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
@@ -1099,16 +1091,14 @@ namespace LinkedListVisualization
             {
                 root = new Node(-1, 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
                 root = new Node(randomArray[i], 155, 155, 155, null);
 
-                rootPointer = new VisualPointer("Root");
-                root.relatedPointers.Add("Root", rootPointer);
+                rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
                 --i;
             }
@@ -1127,8 +1117,7 @@ namespace LinkedListVisualization
 
             if (currentTailSelect == 0)
             {
-                rearPointer = new VisualPointer("Rear");
-                rearNode.relatedPointers.Add("Rear", rearPointer);
+                rearPointer = new VisualPointer("Rear", rearNode);
                 generalVisualPtrSet.Add("Rear", rearPointer);
             }
 
@@ -1136,11 +1125,11 @@ namespace LinkedListVisualization
             {
                 currentPtr.nextPtr = root;
                 currentPtr.nextArrow = new Arrow();
-                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2);
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
             {
-                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2);
+                root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
@@ -1149,6 +1138,41 @@ namespace LinkedListVisualization
             {
                 toolBarButtons[i].MinWidth = 1;
             }
+        }
+
+
+
+
+
+
+
+        // Assemble Interpreter
+        private int programCounter = 0;
+
+        public double ExecuteNextInstruction(string instruction, Storyboard storyboard, double prevCompleteTime)
+        {
+            string[] decodeResult = instruction.Split(new char[] { ' ', ',' });
+            switch (decodeResult[0])
+            {
+                case "pAlloc":
+                    VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
+                    Canvas.SetLeft(visualPointer, 785 + 300);
+                    Canvas.SetTop(visualPointer, 400);
+                    GeneralCanvas.Children.Add(visualPointer);
+                    visualPointer.Show(storyboard, prevCompleteTime);
+                    break;
+
+                case "pMove":
+                    VisualPointer srcPtr = null;
+                    generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+                    VisualPointer dstPtr = null;
+                    generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+
+                    List<VisualPointer> srcRelatedPtrs = srcPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
+                    List<VisualPointer> dstRelatedPtrs = dstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
+                    break;
+            }
+            return 0;
         }
     }
 }

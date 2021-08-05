@@ -1,0 +1,6 @@
+currentPtr = root;
+while (currentPtr->next != null) {
+    currentPtr = currentPtr->next;
+}
+newNodePtr = new Node("{0}");
+currentPtr->next = newNodePtr;

@@ -822,7 +822,7 @@
                                         FontFamily="微软雅黑"
                                         FontWeight="Bold"
                                         Foreground="#555555"
-                                        Content="目标结点值">
+                                        Content="目标序号">
                                     </Label>
 
                                     <TextBox

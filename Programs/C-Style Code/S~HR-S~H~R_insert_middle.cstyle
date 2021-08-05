@@ -1,0 +1,11 @@
+currentPtr = root;
+for (int i = 0; i < "{0}"; ++i) {
+    if (currentPtr == null) {
+        return NOT_FOUND;
+    }
+    currentPtr = currentPtr->next;
+}
+newNodePtr = new Node("{1}");
+newNodePtr->next = currentPtr->next;
+currentPtr->next = newNodePtr;
+return SUCCESS;
