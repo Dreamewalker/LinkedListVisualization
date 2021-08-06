@@ -1,6 +1,6 @@
 nAlloc newNodePtr, "{0}"
 
-nSetNextPtrNext newNodePtr, root
+nSetSameNext newNodePtr, root
 
 nSetNextPtr root, newNodePtr
 

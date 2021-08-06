@@ -110,7 +110,7 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation xDoubleAnimation = new DoubleAnimation(Canvas.GetLeft(this), Canvas.GetLeft(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
             xDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
             yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);

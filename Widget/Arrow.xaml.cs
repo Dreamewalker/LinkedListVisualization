@@ -62,7 +62,7 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation xDoubleAnimation = new DoubleAnimation(Canvas.GetLeft(this), Canvas.GetLeft(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
             xDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
             yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
@@ -78,6 +78,33 @@ namespace LinkedListVisualization.Widget
 
             storyboard.Children.Add(xDoubleAnimation);
             storyboard.Children.Add(yDoubleAnimation);
+            return prevCompleteTime + 1.5;
+        }
+
+        public double PointingAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop)
+        {
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            double targetLength = Math.Sqrt(Math.Pow(targetLeft - Canvas.GetLeft(this) - 190, 2) + Math.Pow(targetTop - Canvas.GetTop(this) - 17.5, 2));
+            double targetScaleRate = targetLength / 190;
+
+            double targetAngle = Math.Atan2(targetTop - Canvas.GetTop(this) - 190, targetLeft - Canvas.GetLeft(this) - 17.5);
+
+            DoubleAnimation scaleAnim = new DoubleAnimation(targetScaleRate, new Duration(TimeSpan.FromSeconds(1.5)));
+            scaleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            scaleAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(scaleAnim, ScaleTrans);
+            Storyboard.SetTargetProperty(scaleAnim, new PropertyPath("ScaleX"));
+            storyboard.Children.Add(scaleAnim);
+
+            DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromSeconds(1.5)));
+            angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            angleAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(angleAnim, Rotation);
+            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
+            storyboard.Children.Add(angleAnim);
+
             return prevCompleteTime + 1.5;
         }
 
@@ -120,14 +147,14 @@ namespace LinkedListVisualization.Widget
 
         private double CloseRotAnim(Storyboard storyboard, double prevCompleteTime)
         {
-            RotateAmin(storyboard, prevCompleteTime, ArrowUp, 240, 270, 0);
-            return RotateAmin(storyboard, prevCompleteTime, ArrowDown, 120, 90, 0);
+            RotateAmin(storyboard, prevCompleteTime, ArrowUp, -60, -90, 0);
+            return RotateAmin(storyboard, prevCompleteTime, ArrowDown, 60, 90, 0);
         }
 
         private double StartRot(Storyboard storyboard, double prevCompleteTime)
         {
-            RotateAmin(storyboard, prevCompleteTime, ArrowUp, 270, 240, 1);
-            return RotateAmin(storyboard, prevCompleteTime, ArrowDown, 90, 120, 1);
+            RotateAmin(storyboard, prevCompleteTime, ArrowUp, -90, -60, 1);
+            return RotateAmin(storyboard, prevCompleteTime, ArrowDown, 90, 60, 1);
         }
 
         private double EndRot(Storyboard storyboard, double prevCompleteTime)

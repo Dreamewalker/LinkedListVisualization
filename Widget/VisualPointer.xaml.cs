@@ -57,12 +57,12 @@ namespace LinkedListVisualization.Widget
             return prevCompleteTime + 0.7;
         }
 
-        public double MoveToAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop)
+        public double MoveToAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop, double targetAngle)
         {
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
-            DoubleAnimation xAnim = new DoubleAnimation(Canvas.GetLeft(this), targetLeft, new Duration(TimeSpan.FromMilliseconds(1000)));
+            DoubleAnimation xAnim = new DoubleAnimation(targetLeft, new Duration(TimeSpan.FromMilliseconds(1000)));
             xAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             xAnim.EasingFunction = nonLinearEasingFunction;
 
@@ -70,13 +70,23 @@ namespace LinkedListVisualization.Widget
             Storyboard.SetTargetProperty(xAnim, new PropertyPath("(Canvas.Left)"));
             storyboard.Children.Add(xAnim);
 
-            DoubleAnimation yAnim = new DoubleAnimation(Canvas.GetTop(this), targetTop, new Duration(TimeSpan.FromMilliseconds(1000)));
+
+            DoubleAnimation yAnim = new DoubleAnimation(targetTop, new Duration(TimeSpan.FromMilliseconds(1000)));
             yAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             yAnim.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(yAnim, this);
             Storyboard.SetTargetProperty(yAnim, new PropertyPath("(Canvas.Top)"));
             storyboard.Children.Add(yAnim);
+
+
+            DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromMilliseconds(1000)));
+            angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            angleAnim.EasingFunction = nonLinearEasingFunction;
+
+            Storyboard.SetTarget(angleAnim, Rotation);
+            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
+            storyboard.Children.Add(angleAnim);
 
             return prevCompleteTime + 1;
         }

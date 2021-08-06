@@ -10,7 +10,7 @@ pFree dstPtr    // 释放dstPtr占用的资源
 ### 结点操作
 nSetNextPtr dstPtr, srcPtr  // 将指针srcPtr指向的结点的后继指针指向dstPtr指向的结点  
 nSetPrevPtr dstPtr, srcPtr  // 将指针srcPtr指向的结点的前驱指针指向dstPtr指向的结点  
-nSetNextPtrNext dstPtr, srcPtr  // 将指针srcPtr指向的结点的后继指针指向dstPtr指向的结点的后继结点  
+nSetSameNext dstPtr, srcPtr  // 将指针dstPtr指向的结点的后继指针指向srcPtr指向的结点的后继结点  
 nAlloc newPtr, value    // 新建值为value的结点，由newPtr指向  
 nSetValue dstPtr, value // 将dstPtr指向的结点值设置为value
 nFree srcPtr    // 释放srcPtr指向的结点，不释放srcPtr  

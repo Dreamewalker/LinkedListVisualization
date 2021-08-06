@@ -799,11 +799,13 @@
                                     </TextBox>
 
                                     <Button
+                                        Name="InsertConfirmButton"
                                         Grid.Column="2"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="确认"
                                         FontSize="28"
-                                        MinWidth="1"/>
+                                        MinWidth="1"
+                                        Click="InsertConfirmButton_Click"/>
                                 </Grid>
 
                                 <Grid

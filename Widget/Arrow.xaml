@@ -9,7 +9,7 @@
     <Viewbox.RenderTransform>
         <TransformGroup>
             <ScaleTransform x:Name="ScaleTrans" ScaleX="1" ScaleY="1" CenterX="190" CenterY="17.5"/>
-            <RotateTransform x:Name="Rotation" Angle="0" CenterX="190" CenterY="17.5"/>
+            <RotateTransform x:Name="Rotation" Angle="0" CenterX="0" CenterY="17.5"/>
         </TransformGroup>
     </Viewbox.RenderTransform>
     <Canvas
@@ -17,7 +17,7 @@
         Height="35">
         <Viewbox
             Name="ArrowLine"
-            Canvas.Left="65"
+            Canvas.Left="75"
             Canvas.Top="20">
             <Viewbox.RenderTransform>
                 <TransformGroup>
@@ -43,8 +43,8 @@
             </Path>
         </Viewbox>
         <Viewbox
-            Canvas.Left="65"
-            Canvas.Top="20"
+            Canvas.Left="127"
+            Canvas.Top="15"
             >
             <Viewbox.RenderTransform>
                 <TransformGroup>
@@ -52,13 +52,13 @@
                 </TransformGroup>
             </Viewbox.RenderTransform>
             <Viewbox
-                Name="ArrowUp"
+                Name="ArrowDown"
                 Opacity="1"
             >
                 <Viewbox.RenderTransform>
                     <TransformGroup>
                         <RotateTransform
-                            Angle="240"/>
+                            Angle="60"/>
                     </TransformGroup>
                 </Viewbox.RenderTransform>
                 <Path
@@ -79,19 +79,19 @@
         </Viewbox>
 
         <Viewbox
-            Canvas.Left="65"
-            Canvas.Top="15">
+            Canvas.Left="127"
+            Canvas.Top="20">
             <Viewbox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
                 </TransformGroup>
             </Viewbox.RenderTransform>
             <Viewbox
-                Name="ArrowDown"
+                Name="ArrowUp"
                 Opacity="1">
                 <Viewbox.RenderTransform>
                     <TransformGroup>
-                        <RotateTransform Angle="120"/>
+                        <RotateTransform Angle="-60"/>
                     </TransformGroup>
                 </Viewbox.RenderTransform>
                 <Path

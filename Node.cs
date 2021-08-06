@@ -211,7 +211,7 @@ namespace LinkedListVisualization
         {
             nextPtr = new Node(nodeValue, 155, 155, 155, isBidirection ? this : null);
             nextArrow = new Arrow();
-            nextArrow.Rotation.Angle = 180;
+            nextArrow.Rotation.Angle = 0;
             nextPtr.arrowsPointingToMe.Add(nextArrow);
         }
 
@@ -229,24 +229,24 @@ namespace LinkedListVisualization
             arrowToBeSet.ScaleTrans.ScaleY = scaleRate;
 
             double tanValue = (srcY - dstY) / (srcX - dstX);
-            double rotAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360 - 180;
+            double rotAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360;
 
             arrowToBeSet.Rotation.Angle = rotAngle;
 
-            Canvas.SetLeft(arrowToBeSet, srcX + 40 - 190);
+            Canvas.SetLeft(arrowToBeSet, srcX + 40);
             Canvas.SetTop(arrowToBeSet, srcY + 40 - 17.5);
         }
 
         public static double SetArrowAnim(Storyboard storyboard, Node dstNode, Arrow arrowToBeRotate, double prevFinishTime)
         {
-            double srcX = Canvas.GetLeft(arrowToBeRotate) + 190;
+            double srcX = Canvas.GetLeft(arrowToBeRotate);
             double srcY = Canvas.GetTop(arrowToBeRotate) + 17.5;
 
             double dstX = Canvas.GetLeft(dstNode.listElement) + 40;
             double dstY = Canvas.GetTop(dstNode.listElement) + 40;
 
             double scaleRate = Math.Sqrt(Math.Pow(srcX - dstX, 2) + Math.Pow(srcY - dstY, 2)) / 190.0;
-            double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360 - 180;
+            double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360;
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;

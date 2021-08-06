@@ -1141,38 +1141,164 @@ namespace LinkedListVisualization
         }
 
 
+        private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            string[] instructions = new string[] { "pAlloc currentPtr", "pMove currentPtr, Root", "pFree Root", "nAlloc ptr2, 4", "Halt" };
+
+            Storyboard storyboard = new Storyboard();
+            double completeTime = 0;
+
+            while (programCounter >= 0)
+            {
+                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
+                ++programCounter;
+            }
+
+            storyboard.Begin();
+        }
+
 
 
 
 
 
         // Assemble Interpreter
+        private string[] Decode(string instruction)
+        {
+            List<string> temp = new List<string>();
+            string tempStr = "";
+            for (int i = 0; i < instruction.Length; ++i)
+            {
+                if (instruction[i] != ' ' && instruction[i] != ',')
+                {
+                    tempStr += instruction[i];
+                }
+                else if (tempStr.Length > 0)
+                {
+                    temp.Add(tempStr);
+                    tempStr = "";
+                }
+            }
+            temp.Add(tempStr);
+
+            string[] retArray = new string[temp.Count];
+            for (int i = 0; i < temp.Count; ++i)
+            {
+                retArray[i] = temp[i];
+            }
+
+            return retArray;
+        }
+
+
         private int programCounter = 0;
 
         public double ExecuteNextInstruction(string instruction, Storyboard storyboard, double prevCompleteTime)
         {
-            string[] decodeResult = instruction.Split(new char[] { ' ', ',' });
+            string[] decodeResult = Decode(instruction);
+            double completeTime = prevCompleteTime;
             switch (decodeResult[0])
             {
                 case "pAlloc":
-                    VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
-                    Canvas.SetLeft(visualPointer, 785 + 300);
-                    Canvas.SetTop(visualPointer, 400);
-                    GeneralCanvas.Children.Add(visualPointer);
-                    visualPointer.Show(storyboard, prevCompleteTime);
-                    break;
-
+                    {
+                        VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
+                        generalVisualPtrSet.Add(decodeResult[1], visualPointer);
+                        Canvas.SetLeft(visualPointer, 785 + 400);
+                        Canvas.SetTop(visualPointer, 800);
+                        GeneralCanvas.Children.Add(visualPointer);
+                        completeTime = visualPointer.Show(storyboard, prevCompleteTime);
+                        break;
+                    }
+                    
                 case "pMove":
-                    VisualPointer srcPtr = null;
-                    generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
-                    VisualPointer dstPtr = null;
-                    generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                    {
+                        VisualPointer srcPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+                        VisualPointer dstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
 
-                    List<VisualPointer> srcRelatedPtrs = srcPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
-                    List<VisualPointer> dstRelatedPtrs = dstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
-                    break;
+                        List<VisualPointer> srcRelatedPtrs = srcPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
+                        List<VisualPointer> dstRelatedPtrs = dstPtr.pointingNode == null ? new List<VisualPointer>() : dstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
+
+                        int dstPosition = 0;
+                        for (dstPosition = 0; dstPosition < dstRelatedPtrs.Count && dstRelatedPtrs[dstPosition] != dstPtr; ++dstPosition)
+                        {
+
+                        }
+
+                        for (int i = dstPosition + 1; i < dstRelatedPtrs.Count; ++i)
+                        {
+                            dstRelatedPtrs[i].MoveToAnim(storyboard, prevCompleteTime, Canvas.GetLeft(dstRelatedPtrs[i - 1]), Canvas.GetTop(dstRelatedPtrs[i - 1]), dstRelatedPtrs[i - 1].Rotation.Angle);
+                        }
+
+                        dstPtr.pointingNode = srcPtr.pointingNode;
+
+                        VisualPointer lastSrc = srcRelatedPtrs[srcRelatedPtrs.Count - 1];
+                        completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, Canvas.GetLeft(lastSrc) + 60 * Math.Sin(lastSrc.Rotation.Angle / 180 * Math.PI), Canvas.GetTop(lastSrc) + 60 * Math.Cos(lastSrc.Rotation.Angle / 180 * Math.PI), lastSrc.Rotation.Angle);
+
+                        break;
+                    }
+                    
+                case "pFree":
+                    {
+                        VisualPointer freeDstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out freeDstPtr);
+
+                        List<VisualPointer> freeDstRelatedPtrs = freeDstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
+
+                        completeTime = freeDstPtr.Close(storyboard, prevCompleteTime);
+
+                        int freeDstIdx = 0;
+                        for (; freeDstIdx < freeDstRelatedPtrs.Count && freeDstRelatedPtrs[freeDstIdx] != freeDstPtr; ++freeDstIdx)
+                        {
+
+                        }
+
+                        for (int i = freeDstIdx + 1; i < freeDstRelatedPtrs.Count; ++i)
+                        {
+                            completeTime = freeDstRelatedPtrs[i].MoveToAnim(storyboard, completeTime, Canvas.GetLeft(freeDstRelatedPtrs[i - 1]), Canvas.GetTop(freeDstRelatedPtrs[i - 1]), freeDstRelatedPtrs[i - 1].Rotation.Angle);
+                        }
+
+                        generalVisualPtrSet.Remove(decodeResult[1]);
+                        break;
+                    }
+
+                case "nAlloc":
+                    {
+                        Node newNode = new Node(int.Parse(decodeResult[2]), 155, 155, 155, null);
+                        VisualPointer newPointer = new VisualPointer(decodeResult[1], newNode);
+                        generalVisualPtrSet.Add(decodeResult[1], newPointer);
+
+                        Canvas.SetLeft(newNode.listElement, 785 + 400);
+                        Canvas.SetTop(newNode.listElement, 800);
+                        newNode.listElement.Show(storyboard, prevCompleteTime);
+                        GeneralCanvas.Children.Add(newNode.listElement);
+
+                        Canvas.SetLeft(newPointer, 785 + 400 + 40 - 50);
+                        Canvas.SetTop(newPointer, 800 + 40 + 60);
+                        completeTime = newPointer.Show(storyboard, prevCompleteTime);
+                        GeneralCanvas.Children.Add(newPointer);
+
+                        break;
+                    }
+
+                case "SetSameNext":
+                    {
+                        VisualPointer dstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                        VisualPointer srcPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+                        break;
+                    }
+
+                case "Halt":
+                    {
+                        programCounter = -2;
+                        break;
+                    }
             }
-            return 0;
+            return completeTime;
         }
+
     }
 }
