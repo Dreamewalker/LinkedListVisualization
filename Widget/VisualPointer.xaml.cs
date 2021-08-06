@@ -22,6 +22,9 @@ namespace LinkedListVisualization.Widget
     public partial class VisualPointer : Viewbox
     {
         public Node pointingNode = null;
+        public double currentCanvasLeft = 0;
+        public double currentCanvasTop = 0;
+        public double currentAngle = 0;
         public VisualPointer(String pointerName, Node pointingNode)
         {
             InitializeComponent();
@@ -62,45 +65,50 @@ namespace LinkedListVisualization.Widget
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
-            DoubleAnimation xAnim = new DoubleAnimation(targetLeft, new Duration(TimeSpan.FromMilliseconds(1000)));
+            DoubleAnimation xAnim = new DoubleAnimation(targetLeft, new Duration(TimeSpan.FromMilliseconds(1500)));
             xAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             xAnim.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(xAnim, this);
             Storyboard.SetTargetProperty(xAnim, new PropertyPath("(Canvas.Left)"));
             storyboard.Children.Add(xAnim);
+            currentCanvasLeft = targetLeft;
 
 
-            DoubleAnimation yAnim = new DoubleAnimation(targetTop, new Duration(TimeSpan.FromMilliseconds(1000)));
+            DoubleAnimation yAnim = new DoubleAnimation(targetTop, new Duration(TimeSpan.FromMilliseconds(1500)));
             yAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             yAnim.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(yAnim, this);
             Storyboard.SetTargetProperty(yAnim, new PropertyPath("(Canvas.Top)"));
             storyboard.Children.Add(yAnim);
+            currentCanvasTop = targetTop;
 
 
-            DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromMilliseconds(1000)));
+            DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromMilliseconds(1500)));
             angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             angleAnim.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(angleAnim, Rotation);
             Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
             storyboard.Children.Add(angleAnim);
+            currentAngle = targetAngle;
 
-            return prevCompleteTime + 1;
+            return prevCompleteTime + 1.5;
         }
 
         public static double ShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime)
         {
-            double posX = Canvas.GetLeft(node.listElement) + 40 - 50;
-            double posY = Canvas.GetTop(node.listElement) + 80 + 20;
+            double posX = node.listElement.currentCanvasLeft + 40 - 50;
+            double posY = node.listElement.currentCanvasTop + 80 + 20;
 
             List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
             foreach (VisualPointer visualPointer in relatedList)
             {
                 Canvas.SetLeft(visualPointer, posX);
+                visualPointer.currentCanvasLeft = posX;
                 Canvas.SetTop(visualPointer, posY);
+                visualPointer.currentCanvasTop = posY;
                 visualPointer.Show(storyboard, prevCompleteTime);
                 canvas.Children.Add(visualPointer);
                 posY += 60;
@@ -111,8 +119,8 @@ namespace LinkedListVisualization.Widget
 
         public static double RecycleShowPointersInNodeAnim(Node node, Canvas canvas, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime, double centerX, double centerY)
         {
-            double posX = Canvas.GetLeft(node.listElement) + 40;
-            double posY = Canvas.GetTop(node.listElement) + 40;
+            double posX = node.listElement.currentCanvasLeft + 40;
+            double posY = node.listElement.currentCanvasTop + 40;
 
             double radius = Math.Sqrt(Math.Pow(posX - centerX, 2) + Math.Pow(posY - centerY, 2));
 
@@ -124,8 +132,12 @@ namespace LinkedListVisualization.Widget
                 Canvas.SetLeft(visualPointer, centerX + (posX - centerX) / radius * pointerCenterR - 50);
                 Canvas.SetTop(visualPointer, centerY + (posY - centerY) / radius * pointerCenterR - 20);
 
+                visualPointer.currentCanvasLeft = centerX + (posX - centerX) / radius * pointerCenterR - 50;
+                visualPointer.currentCanvasTop = centerY + (posY - centerY) / radius * pointerCenterR - 20;
+
                 double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180;
                 visualPointer.Rotation.Angle = angle + 90;
+                visualPointer.currentAngle = angle + 90;
                 visualPointer.Show(storyboard, prevCompleteTime);
                 canvas.Children.Add(visualPointer);
                 pointerCenterR += 60;

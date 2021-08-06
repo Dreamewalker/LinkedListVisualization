@@ -28,6 +28,9 @@ namespace LinkedListVisualization.Widget
             Content.Opacity = 0;
         }
 
+        public double currentCanvasLeft = 0;
+        public double currentCanvasTop = 0;
+
         public ListElement(int number, byte r, byte g, byte b)
         {
             InitializeComponent();
@@ -107,10 +110,10 @@ namespace LinkedListVisualization.Widget
 
         public double Move(Storyboard storyboard, double prevCompleteTime, double deltaX, double deltaY)
         {
-            DoubleAnimation xDoubleAnimation = new DoubleAnimation(Canvas.GetLeft(this), Canvas.GetLeft(this) + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            DoubleAnimation xDoubleAnimation = new DoubleAnimation(currentCanvasLeft, currentCanvasLeft + deltaX, new Duration(TimeSpan.FromMilliseconds(1500)));
             xDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            DoubleAnimation yDoubleAnimation = new DoubleAnimation(Canvas.GetTop(this), Canvas.GetTop(this) + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
+            DoubleAnimation yDoubleAnimation = new DoubleAnimation(currentCanvasTop, currentCanvasTop + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
             yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
@@ -126,6 +129,9 @@ namespace LinkedListVisualization.Widget
 
             storyboard.Children.Add(xDoubleAnimation);
             storyboard.Children.Add(yDoubleAnimation);
+
+            currentCanvasLeft += deltaX;
+            currentCanvasTop += deltaY;
             return prevCompleteTime + 1.5;
         }
     }

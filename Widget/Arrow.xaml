@@ -13,11 +13,11 @@
         </TransformGroup>
     </Viewbox.RenderTransform>
     <Canvas
-        Width="200"
+        Width="190"
         Height="35">
         <Viewbox
             Name="ArrowLine"
-            Canvas.Left="75"
+            Canvas.Left="65"
             Canvas.Top="20">
             <Viewbox.RenderTransform>
                 <TransformGroup>
@@ -33,10 +33,10 @@
                         M0 50 C0 0, 0 0, 50 0 
                         M50 0 C100 0, 100 0, 100 50 
                         M100 50 L0 50 L50 0
-                        M0 50 L100 50 L100 1000 L0 1000
-                        M0 1000 C0 1050, 0 1050, 50 1050
-                        M50 1050 C100 1050, 100 1050, 100 1000 
-                        M0 1000 L100 1000 L50 1050
+                        M0 50 L100 50 L100 1200 L0 1200
+                        M0 1200 C0 1250, 0 1250, 50 1250
+                        M50 1250 C100 1250, 100 1250, 100 1200 
+                        M0 1200 L100 1200 L50 1250
                         Z"
                 />
                 </Path.Data>

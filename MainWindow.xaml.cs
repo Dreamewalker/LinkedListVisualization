@@ -163,33 +163,6 @@ namespace LinkedListVisualization
             this.WindowState = WindowState.Minimized;
         }
 
-        private void NewWidgetTest_Click(object sender, RoutedEventArgs e)
-        {
-            Arrow arrow = new Arrow();
-            ListElement listElement = new ListElement();
-            GeneralCanvas.Children.Add(arrow);
-            GeneralCanvas.Children.Add(listElement);
-            Canvas.SetTop(arrow, 200);
-            Canvas.SetLeft(arrow, 400);
-            Canvas.SetTop(listElement, 300);
-            Canvas.SetLeft(listElement, 500);
-
-            Storyboard storyboard = new Storyboard();
-            double thisCompleteTime = arrow.Expand(storyboard, 0);
-            listElement.Show(storyboard, 0);
-
-            thisCompleteTime = arrow.Rotate(storyboard, thisCompleteTime + 1, 60);
-            thisCompleteTime = arrow.Move(storyboard, thisCompleteTime + 0.5, 60, 80);
-            thisCompleteTime = listElement.Move(storyboard, thisCompleteTime + 0.5, 100, 0);
-
-            thisCompleteTime = listElement.Close(storyboard, thisCompleteTime + 2);
-            arrow.Close(storyboard, thisCompleteTime + 1);
-            BeginStoryboard(storyboard);
-            //storyboard.Begin();
-
-            //System.Threading.Thread.Sleep(1000);
-            listElement.SetProperty(7, 255, 155, 155);
-        }
 
         private void NewLinkedList(object sender, RoutedEventArgs e)
         {
@@ -206,6 +179,9 @@ namespace LinkedListVisualization
                 GeneralCanvas.Children.Add(listElements[i]);
                 Canvas.SetLeft(listElements[i], 785 + 500 + 160 * i);
                 Canvas.SetTop(listElements[i], 200 + 400);
+                listElements[i].currentCanvasLeft = 785 + 500 + 160 * i;
+                listElements[i].currentCanvasTop = 600;
+
                 listElements[i].Show(storyboard, 0);
             }
 
@@ -215,6 +191,9 @@ namespace LinkedListVisualization
                 GeneralCanvas.Children.Add(arrows[i]);
                 Canvas.SetLeft(arrows[i], 785 + 590 + 160 * i);
                 Canvas.SetTop(arrows[i], 200 + 420);
+                arrows[i].currentCanvasLeft = 785 + 590 + 160 * i;
+                arrows[i].currentCanvasTop = 200 + 420;
+
                 currentTime = arrows[i].Expand(storyboard, 0);
             }
 
@@ -1143,8 +1122,8 @@ namespace LinkedListVisualization
 
         private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] instructions = new string[] { "pAlloc currentPtr", "pMove currentPtr, Root", "pFree Root", "nAlloc ptr2, 4", "Halt" };
-
+            string[] instructions = new string[] { "nNew newNodePtr, 4", "nMoveAbs newNodePtr, 1380, 435.455", "nSetSameNext newNodePtr, Root", "nSetNextPtr Root, newNodePtr", "Halt" };
+            programCounter = 0;
             Storyboard storyboard = new Storyboard();
             double completeTime = 0;
 
@@ -1199,18 +1178,21 @@ namespace LinkedListVisualization
             double completeTime = prevCompleteTime;
             switch (decodeResult[0])
             {
-                case "pAlloc":
+                case "gNew":
                     {
                         VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
                         generalVisualPtrSet.Add(decodeResult[1], visualPointer);
                         Canvas.SetLeft(visualPointer, 785 + 400);
                         Canvas.SetTop(visualPointer, 800);
+                        visualPointer.currentCanvasLeft = 785 + 400;
+                        visualPointer.currentCanvasTop = 800;
+
                         GeneralCanvas.Children.Add(visualPointer);
                         completeTime = visualPointer.Show(storyboard, prevCompleteTime);
                         break;
                     }
                     
-                case "pMove":
+                case "gMove":
                     {
                         VisualPointer srcPtr = null;
                         generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
@@ -1228,18 +1210,18 @@ namespace LinkedListVisualization
 
                         for (int i = dstPosition + 1; i < dstRelatedPtrs.Count; ++i)
                         {
-                            dstRelatedPtrs[i].MoveToAnim(storyboard, prevCompleteTime, Canvas.GetLeft(dstRelatedPtrs[i - 1]), Canvas.GetTop(dstRelatedPtrs[i - 1]), dstRelatedPtrs[i - 1].Rotation.Angle);
+                            dstRelatedPtrs[i].MoveToAnim(storyboard, prevCompleteTime, dstRelatedPtrs[i - 1].currentCanvasLeft, dstRelatedPtrs[i - 1].currentCanvasTop, dstRelatedPtrs[i - 1].currentAngle);
                         }
 
                         dstPtr.pointingNode = srcPtr.pointingNode;
 
                         VisualPointer lastSrc = srcRelatedPtrs[srcRelatedPtrs.Count - 1];
-                        completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, Canvas.GetLeft(lastSrc) + 60 * Math.Sin(lastSrc.Rotation.Angle / 180 * Math.PI), Canvas.GetTop(lastSrc) + 60 * Math.Cos(lastSrc.Rotation.Angle / 180 * Math.PI), lastSrc.Rotation.Angle);
+                        completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, lastSrc.currentCanvasLeft + 60 * Math.Sin(lastSrc.Rotation.Angle / 180 * Math.PI), lastSrc.currentCanvasTop + 60 * Math.Cos(lastSrc.currentAngle / 180 * Math.PI), lastSrc.currentAngle);
 
                         break;
                     }
                     
-                case "pFree":
+                case "gDelete":
                     {
                         VisualPointer freeDstPtr = null;
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out freeDstPtr);
@@ -1256,14 +1238,14 @@ namespace LinkedListVisualization
 
                         for (int i = freeDstIdx + 1; i < freeDstRelatedPtrs.Count; ++i)
                         {
-                            completeTime = freeDstRelatedPtrs[i].MoveToAnim(storyboard, completeTime, Canvas.GetLeft(freeDstRelatedPtrs[i - 1]), Canvas.GetTop(freeDstRelatedPtrs[i - 1]), freeDstRelatedPtrs[i - 1].Rotation.Angle);
+                            completeTime = freeDstRelatedPtrs[i].MoveToAnim(storyboard, completeTime, freeDstRelatedPtrs[i - 1].currentCanvasLeft, freeDstRelatedPtrs[i - 1].currentCanvasTop, freeDstRelatedPtrs[i - 1].currentAngle);
                         }
 
                         generalVisualPtrSet.Remove(decodeResult[1]);
                         break;
                     }
 
-                case "nAlloc":
+                case "nNew":
                     {
                         Node newNode = new Node(int.Parse(decodeResult[2]), 155, 155, 155, null);
                         VisualPointer newPointer = new VisualPointer(decodeResult[1], newNode);
@@ -1271,26 +1253,154 @@ namespace LinkedListVisualization
 
                         Canvas.SetLeft(newNode.listElement, 785 + 400);
                         Canvas.SetTop(newNode.listElement, 800);
+                        newNode.listElement.currentCanvasLeft = 785 + 400;
+                        newNode.listElement.currentCanvasTop = 800;
+
                         newNode.listElement.Show(storyboard, prevCompleteTime);
                         GeneralCanvas.Children.Add(newNode.listElement);
 
                         Canvas.SetLeft(newPointer, 785 + 400 + 40 - 50);
                         Canvas.SetTop(newPointer, 800 + 40 + 60);
+                        newPointer.currentCanvasLeft = 785 + 400 + 40 - 50;
+                        newPointer.currentCanvasTop = 800 + 40 + 60;
+
                         completeTime = newPointer.Show(storyboard, prevCompleteTime);
                         GeneralCanvas.Children.Add(newPointer);
 
                         break;
                     }
 
-                case "SetSameNext":
+                case "nMoveAbs":
+                    {
+                        VisualPointer dstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+
+                        double moveAbsLeft = double.Parse(decodeResult[2]);
+                        double moveAbsTop = double.Parse(decodeResult[3]);
+
+                        // 移动结点
+                        double deltaX = moveAbsLeft - dstPtr.pointingNode.listElement.currentCanvasLeft;
+                        double deltaY = moveAbsTop - dstPtr.pointingNode.listElement.currentCanvasTop;
+                        completeTime = dstPtr.pointingNode.listElement.Move(storyboard, prevCompleteTime, deltaX, deltaY);
+
+                        // 移动该结点的前驱后继指针
+                        Node dstNode = dstPtr.pointingNode;
+                        if (dstNode.nextPtr != null)
+                        {
+                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        if (dstNode.prevPtr != null)
+                        {
+                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        // 移动该结点相关的通用指针
+                        double canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
+                        double canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        List<VisualPointer> relatedPointers = dstNode.GetRelatedPointers(generalVisualPtrSet);
+                        foreach (VisualPointer visualPointer in relatedPointers)
+                        {
+                            visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                            canvasTopBias += 60;
+                        }
+                        // 随结点移动指向该结点的指针
+                        foreach (Arrow arrow in dstNode.arrowsPointingToMe)
+                        {
+                            completeTime = arrow.PointingAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+                        break;
+                    }
+
+                case "nMoveRel":
+                    {
+                        VisualPointer dstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+
+                        double moveAbsLeft = double.Parse(decodeResult[2]) + dstPtr.pointingNode.listElement.currentCanvasLeft;
+                        double moveAbsTop = double.Parse(decodeResult[3]) + dstPtr.pointingNode.listElement.currentCanvasTop;
+
+                        // 移动结点
+                        double deltaX = moveAbsLeft - dstPtr.pointingNode.listElement.currentCanvasLeft;
+                        double deltaY = moveAbsTop - dstPtr.pointingNode.listElement.currentCanvasTop;
+                        completeTime = dstPtr.pointingNode.listElement.Move(storyboard, prevCompleteTime, deltaX, deltaY);
+
+                        // 移动该结点的前驱后继指针
+                        Node dstNode = dstPtr.pointingNode;
+                        if (dstNode.nextPtr != null)
+                        {
+                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        if (dstNode.prevPtr != null)
+                        {
+                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        // 移动该结点相关的通用指针
+                        double canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
+                        double canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        List<VisualPointer> relatedPointers = dstNode.GetRelatedPointers(generalVisualPtrSet);
+                        foreach (VisualPointer visualPointer in relatedPointers)
+                        {
+                            visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                            canvasTopBias += 60;
+                        }
+                        // 随结点移动指向该结点的指针
+                        foreach (Arrow arrow in dstNode.arrowsPointingToMe)
+                        {
+                            completeTime = arrow.PointingAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+                        break;
+                    }
+                case "nSetSameNext":
                     {
                         VisualPointer dstPtr = null;
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
                         VisualPointer srcPtr = null;
                         generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+
+                        Node dstNode = dstPtr.pointingNode;
+                        // 移动或新建指向srcPtr指向结点的后继结点的箭头
+                        if (dstNode.nextPtr == null)
+                        {
+                            dstNode.nextArrow = new Arrow();
+                            Canvas.SetLeft(dstNode.nextArrow, dstNode.listElement.currentCanvasLeft + 40);
+                            Canvas.SetTop(dstNode.nextArrow, dstNode.listElement.currentCanvasTop + 40 - 17.5);
+                            dstNode.nextArrow.currentCanvasLeft = dstNode.listElement.currentCanvasLeft + 40;
+                            dstNode.nextArrow.currentCanvasTop = dstNode.listElement.currentCanvasTop + 40 - 17.5;
+
+                            double targetAngle = Math.Atan2(srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
+                            dstNode.nextArrow.Rotation.Angle = targetAngle;
+                            dstNode.nextArrow.currentAngle = targetAngle;
+
+                            double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft, 2)) / 190;
+                            dstNode.nextArrow.ScaleTrans.ScaleX = targetScaleRate;
+                            dstNode.nextArrow.currentScaleX = targetScaleRate;
+
+                            GeneralCanvas.Children.Add(dstNode.nextArrow);
+                            completeTime = dstNode.nextArrow.Expand(storyboard, completeTime);
+                        }
+                        else
+                        {
+                            completeTime = dstNode.nextArrow.PointingAnim(storyboard, completeTime, srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop + 40);
+                        }
+
+                        dstNode.nextPtr = srcPtr.pointingNode.nextPtr;
                         break;
                     }
 
+                case "nSetNextPtr":
+                    {
+                        VisualPointer dstPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                        VisualPointer srcPtr = null;
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+
+                        completeTime = dstPtr.pointingNode.nextArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
+                        dstPtr.pointingNode.nextPtr = srcPtr.pointingNode;
+                        break;
+                    }
                 case "Halt":
                     {
                         programCounter = -2;
