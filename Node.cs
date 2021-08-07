@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace LinkedListVisualization
@@ -256,27 +257,53 @@ namespace LinkedListVisualization
             arrowToBeSet.currentCanvasTop = srcY + 40 - 17.5;
         }
 
-        public static double SetArrowAnim(Storyboard storyboard, Node dstNode, Arrow arrowToBeRotate, double prevFinishTime)
+        public static double SetArrowAnim(Storyboard storyboard, Node srcNode, Node dstNode, Arrow arrowToBeRotate, double prevFinishTime)
         {
-            double srcX = arrowToBeRotate.currentCanvasLeft;
-            double srcY = arrowToBeRotate.currentCanvasTop + 17.5;
+            double srcX = srcNode.listElement.currentCanvasLeft + 40;
+            double srcY = srcNode.listElement.currentCanvasTop + 40;
 
             double dstX = dstNode.listElement.currentCanvasLeft + 40;
             double dstY = dstNode.listElement.currentCanvasTop + 40;
 
             double scaleRate = Math.Sqrt(Math.Pow(srcX - dstX, 2) + Math.Pow(srcY - dstY, 2)) / 190.0;
-            double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360;
+            double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / Math.PI * 180;
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
+            DoubleAnimation leftAnim = new DoubleAnimation(srcX, new Duration(TimeSpan.FromMilliseconds(1500)));
+            leftAnim.EasingFunction = nonLinearEasingFunction;
+            leftAnim.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
+            Storyboard.SetTarget(leftAnim, arrowToBeRotate);
+            Storyboard.SetTargetProperty(leftAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(leftAnim);
+
+            DoubleAnimation topAnim = new DoubleAnimation(srcY - 17.5, new Duration(TimeSpan.FromMilliseconds(1500)));
+            topAnim.EasingFunction = nonLinearEasingFunction;
+            topAnim.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
+            Storyboard.SetTarget(topAnim, arrowToBeRotate);
+            Storyboard.SetTargetProperty(topAnim, new PropertyPath("(Canvas.Top)"));
+            storyboard.Children.Add(topAnim);
+
+            arrowToBeRotate.currentCanvasLeft = srcX;
+            arrowToBeRotate.currentCanvasTop = srcY - 17.5;
+
+            /*
+            RotateTransform rotateTransform = new RotateTransform(arrowToBeRotate.currentAngle, 0, 17.5);
+            ScaleTransform scaleTransform = new ScaleTransform(arrowToBeRotate.currentScaleX, 1, 0, 17.5);
+            TransformGroup group = new TransformGroup();
+            group.Children.Add(scaleTransform);
+            group.Children.Add(rotateTransform);
+            arrowToBeRotate.RenderTransform = group;
+            */
+
             DoubleAnimation scaleXAnim = new DoubleAnimation(arrowToBeRotate.currentScaleX, scaleRate, new Duration(TimeSpan.FromMilliseconds(1500)));
             scaleXAnim.EasingFunction = nonLinearEasingFunction;
             scaleXAnim.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
-
-            Storyboard.SetTarget(scaleXAnim, arrowToBeRotate.ScaleTrans);
-            Storyboard.SetTargetProperty(scaleXAnim, new PropertyPath("ScaleX"));
+            Storyboard.SetTarget(scaleXAnim, arrowToBeRotate);
+            Storyboard.SetTargetProperty(scaleXAnim, new PropertyPath("RenderTransform.Children[0].ScaleX"));
             storyboard.Children.Add(scaleXAnim);
+            //scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnim);
             arrowToBeRotate.currentScaleX = scaleRate;
 
             /*
@@ -292,10 +319,10 @@ namespace LinkedListVisualization
             DoubleAnimation angleAnimation = new DoubleAnimation(arrowToBeRotate.currentAngle, targetAngle, new Duration(TimeSpan.FromMilliseconds(1500)));
             angleAnimation.EasingFunction = nonLinearEasingFunction;
             angleAnimation.BeginTime = TimeSpan.FromSeconds(prevFinishTime);
-
-            Storyboard.SetTarget(angleAnimation, arrowToBeRotate.Rotation);
-            Storyboard.SetTargetProperty(angleAnimation, new PropertyPath("Angle"));
+            Storyboard.SetTarget(angleAnimation, arrowToBeRotate);
+            Storyboard.SetTargetProperty(angleAnimation, new PropertyPath("RenderTransform.Children[1].Angle"));
             storyboard.Children.Add(angleAnimation);
+            //rotateTransform.BeginAnimation(RotateTransform.AngleProperty, angleAnimation);
             arrowToBeRotate.currentAngle = targetAngle;
 
             return prevFinishTime + 1.5;

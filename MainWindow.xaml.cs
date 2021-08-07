@@ -1122,7 +1122,16 @@ namespace LinkedListVisualization
 
         private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] instructions = new string[] { "nNew newNodePtr, 4", "nMoveAbs newNodePtr, 1380, 435.455", "nSetSameNext newNodePtr, Root", "nSetNextPtr Root, newNodePtr", "Halt" };
+            string[] instructions = new string[] {  "nNew newNodePtr, 4",
+                                                    "gNewVPtr temp",
+                                                    "nMoveAbs newNodePtr, 1380, 435.455",
+                                                    "gMoveNext temp, Root",
+                                                    "nSetNextPtr newNodePtr, temp",
+                                                    "nSetNextPtr Root, newNodePtr",
+                                                    "aStd",
+                                                    "gDelete newNodePtr",
+                                                    "gDelete temp",
+                                                    "Halt" };
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
             double completeTime = 0;
@@ -1194,10 +1203,15 @@ namespace LinkedListVisualization
                     
                 case "gMove":
                     {
-                        VisualPointer srcPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
-                        VisualPointer dstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+
+                        // 不可见通用指针
+                        if (dstPtr.Opacity < 0.1)
+                        {
+                            dstPtr.pointingNode = srcPtr.pointingNode;
+                            break;
+                        }
 
                         List<VisualPointer> srcRelatedPtrs = srcPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
                         List<VisualPointer> dstRelatedPtrs = dstPtr.pointingNode == null ? new List<VisualPointer>() : dstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
@@ -1223,9 +1237,14 @@ namespace LinkedListVisualization
                     
                 case "gDelete":
                     {
-                        VisualPointer freeDstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out freeDstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer freeDstPtr);
 
+                        // 不可见通用指针
+                        if (freeDstPtr.Opacity < 0.1)
+                        {
+                            generalVisualPtrSet.Remove(decodeResult[1]);
+                            break;
+                        }
                         List<VisualPointer> freeDstRelatedPtrs = freeDstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
 
                         completeTime = freeDstPtr.Close(storyboard, prevCompleteTime);
@@ -1242,6 +1261,67 @@ namespace LinkedListVisualization
                         }
 
                         generalVisualPtrSet.Remove(decodeResult[1]);
+                        break;
+                    }
+
+                case "gNewVPtr":
+                    {
+                        VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
+                        generalVisualPtrSet.Add(decodeResult[1], visualPointer);
+                        Canvas.SetLeft(visualPointer, 0);
+                        Canvas.SetTop(visualPointer, 0);
+                        visualPointer.currentCanvasLeft = 0;
+                        visualPointer.currentCanvasTop = 0;
+                        visualPointer.Opacity = 0;
+
+                        GeneralCanvas.Children.Add(visualPointer);
+                        break;
+                    }
+
+                case "gMoveNext":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                        
+                        Node dstNode = dstPtr.pointingNode;
+                        Node srcNode = srcPtr.pointingNode.nextPtr;
+                        dstPtr.pointingNode = srcPtr.pointingNode.nextPtr;
+                        if (dstPtr.Opacity < 0.1)
+                        {
+                            break;
+                        }
+
+                        List<VisualPointer> srcRelated = srcNode.GetRelatedPointers(generalVisualPtrSet);
+                        List<VisualPointer> dstRelated = dstNode.GetRelatedPointers(generalVisualPtrSet);
+
+                        // srcNode part
+                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
+                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 80 + 20;
+
+                        foreach (VisualPointer visualPointer in srcRelated)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
+                        }
+
+                        // dstNode part
+                        if (dstNode == null)
+                        {
+                            break;
+                        }
+                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
+                        canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        foreach (VisualPointer visualPointer in dstRelated)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
+                        }
                         break;
                     }
 
@@ -1272,8 +1352,7 @@ namespace LinkedListVisualization
 
                 case "nMoveAbs":
                     {
-                        VisualPointer dstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
 
                         double moveAbsLeft = double.Parse(decodeResult[2]);
                         double moveAbsTop = double.Parse(decodeResult[3]);
@@ -1287,12 +1366,12 @@ namespace LinkedListVisualization
                         Node dstNode = dstPtr.pointingNode;
                         if (dstNode.nextPtr != null)
                         {
-                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft, moveAbsTop);
                         }
 
                         if (dstNode.prevPtr != null)
                         {
-                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft, moveAbsTop);
                         }
 
                         // 移动该结点相关的通用指针
@@ -1301,8 +1380,11 @@ namespace LinkedListVisualization
                         List<VisualPointer> relatedPointers = dstNode.GetRelatedPointers(generalVisualPtrSet);
                         foreach (VisualPointer visualPointer in relatedPointers)
                         {
-                            visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                            canvasTopBias += 60;
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
                         }
                         // 随结点移动指向该结点的指针
                         foreach (Arrow arrow in dstNode.arrowsPointingToMe)
@@ -1314,8 +1396,7 @@ namespace LinkedListVisualization
 
                 case "nMoveRel":
                     {
-                        VisualPointer dstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
 
                         double moveAbsLeft = double.Parse(decodeResult[2]) + dstPtr.pointingNode.listElement.currentCanvasLeft;
                         double moveAbsTop = double.Parse(decodeResult[3]) + dstPtr.pointingNode.listElement.currentCanvasTop;
@@ -1343,8 +1424,11 @@ namespace LinkedListVisualization
                         List<VisualPointer> relatedPointers = dstNode.GetRelatedPointers(generalVisualPtrSet);
                         foreach (VisualPointer visualPointer in relatedPointers)
                         {
-                            visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                            canvasTopBias += 60;
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
                         }
                         // 随结点移动指向该结点的指针
                         foreach (Arrow arrow in dstNode.arrowsPointingToMe)
@@ -1353,12 +1437,11 @@ namespace LinkedListVisualization
                         }
                         break;
                     }
-                case "nSetSameNext":
+
+                case "nSetNextPtr":
                     {
-                        VisualPointer dstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
-                        VisualPointer srcPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
 
                         Node dstNode = dstPtr.pointingNode;
                         // 移动或新建指向srcPtr指向结点的后继结点的箭头
@@ -1370,37 +1453,139 @@ namespace LinkedListVisualization
                             dstNode.nextArrow.currentCanvasLeft = dstNode.listElement.currentCanvasLeft + 40;
                             dstNode.nextArrow.currentCanvasTop = dstNode.listElement.currentCanvasTop + 40 - 17.5;
 
-                            double targetAngle = Math.Atan2(srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
+                            double targetAngle = Math.Atan2(srcPtr.pointingNode.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
                             dstNode.nextArrow.Rotation.Angle = targetAngle;
                             dstNode.nextArrow.currentAngle = targetAngle;
 
-                            double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft, 2)) / 190;
+                            double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.listElement.currentCanvasLeft, 2)) / 190;
                             dstNode.nextArrow.ScaleTrans.ScaleX = targetScaleRate;
                             dstNode.nextArrow.currentScaleX = targetScaleRate;
 
                             GeneralCanvas.Children.Add(dstNode.nextArrow);
-                            completeTime = dstNode.nextArrow.Expand(storyboard, completeTime);
+                            completeTime = dstNode.nextArrow.Expand(storyboard, prevCompleteTime);
                         }
                         else
                         {
-                            completeTime = dstNode.nextArrow.PointingAnim(storyboard, completeTime, srcPtr.pointingNode.nextPtr.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.nextPtr.listElement.currentCanvasTop + 40);
+                            completeTime = dstNode.nextArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
+                            dstNode.nextPtr.arrowsPointingToMe.Remove(dstNode.nextArrow);
                         }
 
-                        dstNode.nextPtr = srcPtr.pointingNode.nextPtr;
+                        dstNode.nextPtr = srcPtr.pointingNode;
+                        srcPtr.pointingNode.arrowsPointingToMe.Add(dstPtr.pointingNode.nextArrow);
                         break;
                     }
 
-                case "nSetNextPtr":
+                case "aStd":
                     {
-                        VisualPointer dstPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[1], out dstPtr);
-                        VisualPointer srcPtr = null;
-                        generalVisualPtrSet.TryGetValue(decodeResult[2], out srcPtr);
+                        if (currentNewListType == 1)
+                        {
+                            // 循环链表
+                            int elementNum = 0;
+                            if (root != null)
+                            {
+                                Node currentNode = root;
+                                elementNum = 1;
+                                while (currentNode.nextPtr != root)
+                                {
+                                    ++elementNum;
+                                    currentNode = currentNode.nextPtr;
+                                }
+                            }
+                            
 
-                        completeTime = dstPtr.pointingNode.nextArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
-                        dstPtr.pointingNode.nextPtr = srcPtr.pointingNode;
+                            double singleHalfAngle = Math.PI / elementNum;
+                            double radius = 95 / Math.Sin(singleHalfAngle);
+                            double canvasLeftBias = 785 + 500 + radius;
+                            double canvasTopBias = 200 + 400 + radius;
+
+                            if (elementNum == 1)
+                            {
+                                canvasLeftBias = 785 + 500;
+                                canvasTopBias = 200 + 400;
+
+                                root.listElement.Move(storyboard, prevCompleteTime, -40 + canvasLeftBias - root.listElement.currentCanvasLeft, -40 + canvasTopBias - root.listElement.currentCanvasTop);
+
+                                completeTime = VisualPointer.MovePointersInNodeAnim(root, storyboard, generalVisualPtrSet, prevCompleteTime);
+                                break;
+                            }
+
+
+                            Point[] point = new Point[elementNum];
+                            for (int i = 0; i < elementNum; ++i)
+                            {
+                                point[i].X = radius * Math.Cos(singleHalfAngle * 2 * i);
+                                point[i].Y = radius * Math.Sin(singleHalfAngle * 2 * i);
+                            }
+
+                            Node currentPtr = root.nextPtr;
+                            Node prevCurrentPtr = root;
+                            root.listElement.Move(storyboard, prevCompleteTime, point[0].X - 40 + canvasLeftBias - root.listElement.currentCanvasLeft, point[0].Y - 40 + canvasTopBias - root.listElement.currentCanvasTop);
+
+                            completeTime = VisualPointer.RecycleMovePointersInNodeAnim(root, storyboard, generalVisualPtrSet, prevCompleteTime, canvasLeftBias, canvasTopBias);
+                            for (int i = 1; i < elementNum; ++i)
+                            {
+                                completeTime = currentPtr.listElement.Move(storyboard, prevCompleteTime, 
+                                                                            point[i].X - 40 + canvasLeftBias - currentPtr.listElement.currentCanvasLeft,
+                                                                            point[i].Y - 40 + canvasTopBias - currentPtr.listElement.currentCanvasTop);
+
+                                VisualPointer.RecycleMovePointersInNodeAnim(currentPtr, storyboard, generalVisualPtrSet, prevCompleteTime, canvasLeftBias, canvasTopBias);
+
+                                completeTime = Node.SetArrowAnim(storyboard, prevCurrentPtr, currentPtr, prevCurrentPtr.nextArrow, prevCompleteTime);
+
+                                prevCurrentPtr = currentPtr;
+                                currentPtr = currentPtr.nextPtr;
+                            }
+
+                            completeTime = Node.SetArrowAnim(storyboard, prevCurrentPtr, root, prevCurrentPtr.nextArrow, prevCompleteTime);
+                            
+                        }
+                        else
+                        {
+                            if (root.listElement == null)
+                            {
+                                break;
+                            }
+                            double canvasLeft = 785 + 500;
+                            double canvasTop = 200 + 400;
+                            Node currentPtr = root;
+
+                            currentPtr.listElement.Move(storyboard, prevCompleteTime, canvasLeft - currentPtr.listElement.currentCanvasLeft, canvasTop - currentPtr.listElement.currentCanvasTop);
+
+                            completeTime = VisualPointer.MovePointersInNodeAnim(currentPtr, storyboard, generalVisualPtrSet, prevCompleteTime);
+                            canvasLeft += 190;
+
+                            while (currentPtr.nextPtr != null)
+                            {
+                                // 循环链表尾结点处理
+                                if (currentPtr.nextPtr == root)
+                                {
+                                    Node.SetArrowAnim(storyboard, currentPtr, currentPtr.nextPtr, currentPtr.nextArrow, prevCompleteTime);
+                                    break;
+                                }
+                                currentPtr.nextPtr.listElement.Move(storyboard, prevCompleteTime, canvasLeft - currentPtr.nextPtr.listElement.currentCanvasLeft, canvasTop - currentPtr.nextPtr.listElement.currentCanvasTop);
+
+                                VisualPointer.MovePointersInNodeAnim(currentPtr.nextPtr, storyboard, generalVisualPtrSet, prevCompleteTime);
+
+                                completeTime = Node.SetArrowAnim(storyboard, currentPtr, currentPtr.nextPtr, currentPtr.nextArrow, prevCompleteTime);
+
+
+                                if (currentPtr.prevPtr != null)
+                                {
+                                    completeTime = Node.SetArrowAnim(storyboard, currentPtr, currentPtr.prevPtr, currentPtr.prevArrow, prevCompleteTime);
+                                }
+                                canvasLeft += 190;
+                                currentPtr = currentPtr.nextPtr;
+                            }
+
+                            if (currentPtr.prevPtr != null)
+                            {
+                                completeTime = Node.SetArrowAnim(storyboard, currentPtr, currentPtr.prevPtr, currentPtr.prevArrow, prevCompleteTime);
+                            }
+
+                        }
                         break;
                     }
+
                 case "Halt":
                     {
                         programCounter = -2;

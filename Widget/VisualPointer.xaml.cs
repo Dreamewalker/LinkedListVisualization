@@ -65,7 +65,15 @@ namespace LinkedListVisualization.Widget
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
-            DoubleAnimation xAnim = new DoubleAnimation(targetLeft, new Duration(TimeSpan.FromMilliseconds(1500)));
+            /*
+            DoubleAnimationUsingKeyFrames xAnim = new DoubleAnimationUsingKeyFrames();
+            EasingDoubleKeyFrame xAnimBegin = new EasingDoubleKeyFrame(currentCanvasLeft, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), nonLinearEasingFunction);
+            EasingDoubleKeyFrame xAnimEnd = new EasingDoubleKeyFrame(targetLeft, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1500)), nonLinearEasingFunction);
+            xAnim.KeyFrames.Add(xAnimBegin);
+            xAnim.KeyFrames.Add(xAnimEnd);
+            */
+
+            DoubleAnimation xAnim = new DoubleAnimation(currentCanvasLeft, targetLeft, new Duration(TimeSpan.FromMilliseconds(1500)));
             xAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             xAnim.EasingFunction = nonLinearEasingFunction;
 
@@ -74,8 +82,15 @@ namespace LinkedListVisualization.Widget
             storyboard.Children.Add(xAnim);
             currentCanvasLeft = targetLeft;
 
+            /*
+            DoubleAnimationUsingKeyFrames yAnim = new DoubleAnimationUsingKeyFrames();
+            EasingDoubleKeyFrame yAnimBegin = new EasingDoubleKeyFrame(currentCanvasTop, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), nonLinearEasingFunction);
+            EasingDoubleKeyFrame yAnimEnd = new EasingDoubleKeyFrame(targetTop, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1500)), nonLinearEasingFunction);
+            yAnim.KeyFrames.Add(yAnimBegin);
+            yAnim.KeyFrames.Add(yAnimEnd);
+            */
 
-            DoubleAnimation yAnim = new DoubleAnimation(targetTop, new Duration(TimeSpan.FromMilliseconds(1500)));
+            DoubleAnimation yAnim = new DoubleAnimation(currentCanvasTop, targetTop, new Duration(TimeSpan.FromMilliseconds(1500)));
             yAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             yAnim.EasingFunction = nonLinearEasingFunction;
 
@@ -145,5 +160,48 @@ namespace LinkedListVisualization.Widget
 
             return prevCompleteTime + 0.7;
         }
+
+        public static double MovePointersInNodeAnim(Node node, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime)
+        {
+            double posX = node.listElement.currentCanvasLeft + 40 - 50;
+            double posY = node.listElement.currentCanvasTop + 80 + 20;
+            double completeTime = 0;
+
+            List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
+            foreach (VisualPointer visualPointer in relatedList)
+            {
+                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, posX, posY, 0);
+                
+                posY += 60;
+            }
+
+            return completeTime;
+        }
+
+        public static double RecycleMovePointersInNodeAnim(Node node, Storyboard storyboard, Dictionary<string, VisualPointer> generalVisualPointers, double prevCompleteTime, double centerX, double centerY)
+        {
+            double posX = node.listElement.currentCanvasLeft + 40;
+            double posY = node.listElement.currentCanvasTop + 40;
+
+            double radius = Math.Sqrt(Math.Pow(posX - centerX, 2) + Math.Pow(posY - centerY, 2));
+
+            double pointerCenterR = radius + 80;
+            double completeTime = 0;
+
+            List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
+            foreach (VisualPointer visualPointer in relatedList)
+            {
+                double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180;
+
+                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime,
+                                                        centerX + (posX - centerX) / radius * pointerCenterR - 50,
+                                                        centerY + (posY - centerY) / radius * pointerCenterR - 20, angle + 90);
+                
+                pointerCenterR += 60;
+            }
+
+            return completeTime;
+        }
+
     }
 }

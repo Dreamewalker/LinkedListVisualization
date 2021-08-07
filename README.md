@@ -6,11 +6,13 @@
 gNew newPtr   // 新建一个指针newPtr  
 gMove dstPtr, srcPtr   // 将指针dstPtr指向srcPtr指向的结点  
 gDelete dstPtr    // 删除dstPtr  
+gNewVPtr newPtr     // 新建一个不可见的指针newPtr
+gMoveNext dstPtr, srcPtr    // 将dstPtr指向srcPtr指向的结点的后继  
+gMovePrev dstPtr, srcPtr    // 将dstPtr指向srcPtr指向的结点的前驱  
 
 ### 前驱/后继指针操作
 pSetNext dstPtr, srcPtr  // 将指针dstPtr指向的结点的后继指针指向srcPtr指向的结点  
 pSetPrev dstPtr, srcPtr  // 将指针dstPtr指向的结点的前驱指针指向srcPtr指向的结点  
-pSetSameNext dstPtr, srcPtr  // 将指针dstPtr指向的结点的后继指针指向srcPtr指向的结点的后继结点  
 pDeleteNext dstPtr  // 删除指针dstPtr指向的结点的后继指针  
 pDeletePrev dstPtr  // 删除指针dstPtr指向的结点的前驱指针  
 ### 结点操作
@@ -21,9 +23,8 @@ nMoveAbs dstPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至绝�
 nMoveRel dstPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至相对位置(CanvasLeft, CanvasTop)  
 
 ### 串动画操作
-aLeft srcPtr    // 将srcPtr指向的结点及其后继向左移动  
-aRight srcPtr    // 将srcPtr指向的结点及其后继向右移动  
-aStd srcPtr     // 将srcPtr指向的结点及其后继结点移动到标准位置  
+aLeft srcPtr, offset    // 将srcPtr指向的结点及其后继向左移动  
+aStd     // 将整个链表移动到标准位置  
 
 ### 标量操作
 sSetTime value  // 设置循环轮次  

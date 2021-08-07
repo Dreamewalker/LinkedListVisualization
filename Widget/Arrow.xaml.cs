@@ -101,22 +101,49 @@ namespace LinkedListVisualization.Widget
 
             double targetAngle = Math.Atan2(targetTop - currentCanvasTop, targetLeft - currentCanvasLeft - 17.5) / Math.PI * 180;
 
-            DoubleAnimation scaleAnim = new DoubleAnimation(targetScaleRate, new Duration(TimeSpan.FromSeconds(1.5)));
+            /*
+            DoubleAnimationUsingKeyFrames scaleAnim = new DoubleAnimationUsingKeyFrames();
+            scaleAnim.Duration = new Duration(TimeSpan.FromSeconds(1.5));
+            EasingDoubleKeyFrame scaleBeginFrame = new EasingDoubleKeyFrame(currentScaleX, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0)), nonLinearEasingFunction);
+            EasingDoubleKeyFrame scaleEndFrame = new EasingDoubleKeyFrame(targetScaleRate, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1.5)), nonLinearEasingFunction);
+            scaleAnim.KeyFrames.Add(scaleBeginFrame);
+            scaleAnim.KeyFrames.Add(scaleEndFrame);
+            */
+            /*
+            RotateTransform rotateTransform = new RotateTransform(0, 0, 17.5);
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1, 0, 17.5);
+            TransformGroup group = new TransformGroup();
+            group.Children.Add(scaleTransform);
+            group.Children.Add(rotateTransform);
+            this.RenderTransform = group;
+            */
+
+            DoubleAnimation scaleAnim = new DoubleAnimation(currentScaleX, targetScaleRate, new Duration(TimeSpan.FromSeconds(1.5)));
             scaleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             scaleAnim.EasingFunction = nonLinearEasingFunction;
-            Storyboard.SetTarget(scaleAnim, ScaleTrans);
-            Storyboard.SetTargetProperty(scaleAnim, new PropertyPath("ScaleX"));
+            Storyboard.SetTarget(scaleAnim, this);
+            Storyboard.SetTargetProperty(scaleAnim, new PropertyPath("RenderTransform.Children[0].ScaleX"));
             storyboard.Children.Add(scaleAnim);
             currentScaleX = targetScaleRate;
 
-            DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromSeconds(1.5)));
+            /*
+            DoubleAnimationUsingKeyFrames angleAnim = new DoubleAnimationUsingKeyFrames();
+            angleAnim.Duration = new Duration(TimeSpan.FromSeconds(1.5));
+            EasingDoubleKeyFrame angleBeginFrame = new EasingDoubleKeyFrame(currentAngle, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0)), nonLinearEasingFunction);
+            EasingDoubleKeyFrame angleEndFrame = new EasingDoubleKeyFrame(targetAngle, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1.5)), nonLinearEasingFunction);
+            angleAnim.KeyFrames.Add(angleBeginFrame);
+            angleAnim.KeyFrames.Add(angleEndFrame);
+            */
+            DoubleAnimation angleAnim = new DoubleAnimation(currentAngle, targetAngle, new Duration(TimeSpan.FromSeconds(1.5)));
             angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             angleAnim.EasingFunction = nonLinearEasingFunction;
-            Storyboard.SetTarget(angleAnim, Rotation);
-            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
+            Storyboard.SetTarget(angleAnim, this);
+            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("RenderTransform.Children[1].Angle"));
             storyboard.Children.Add(angleAnim);
             currentAngle = targetAngle;
 
+            //ScaleTrans.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+            //Rotation.BeginAnimation(RotateTransform.AngleProperty, angleAnim);
             return prevCompleteTime + 1.5;
         }
 
@@ -136,16 +163,16 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation scaleAnim = new DoubleAnimation(targetScaleRate, new Duration(TimeSpan.FromSeconds(1.5)));
             scaleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             scaleAnim.EasingFunction = nonLinearEasingFunction;
-            Storyboard.SetTarget(scaleAnim, ScaleTrans);
-            Storyboard.SetTargetProperty(scaleAnim, new PropertyPath("ScaleX"));
+            Storyboard.SetTarget(scaleAnim, this);
+            Storyboard.SetTargetProperty(scaleAnim, new PropertyPath("RenderTransform.Children[0].ScaleX"));
             storyboard.Children.Add(scaleAnim);
             currentScaleX = targetScaleRate;
 
             DoubleAnimation angleAnim = new DoubleAnimation(targetAngle, new Duration(TimeSpan.FromSeconds(1.5)));
             angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             angleAnim.EasingFunction = nonLinearEasingFunction;
-            Storyboard.SetTarget(angleAnim, Rotation);
-            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
+            Storyboard.SetTarget(angleAnim, this);
+            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("RenderTransform.Children[1].Angle"));
             storyboard.Children.Add(angleAnim);
             currentAngle = targetAngle;
 
@@ -165,6 +192,8 @@ namespace LinkedListVisualization.Widget
             storyboard.Children.Add(baseYAnim);
             currentCanvasTop = targetTop;
 
+            //ScaleTrans.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+            //Rotation.BeginAnimation(RotateTransform.AngleProperty, angleAnim);
             return prevCompleteTime + 1.5;
         }
 
