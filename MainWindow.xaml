@@ -115,33 +115,81 @@
                 <ScrollViewer
                     Margin="20"
                     VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled"
+                    HorizontalScrollBarVisibility="Auto"
                     Style="{StaticResource CustomScrollView}"
                     >
+
+                    <Grid>
+                        <Canvas>
+                            <Grid
+                                Canvas.Left="0"
+                                Name="CodeAreaMask"
+                                Height="28"
+                                Width="72">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                </Grid.ColumnDefinitions>
+                                <Path
+                                    Fill="Cyan"
+                                    Grid.Column="0">
+                                    <Path.Data>
+                                        <PathGeometry
+                                            Figures="
+                                            M10 0 C0 0, 0 0, 0 10
+                                            L0 18
+                                            C0 28, 0 28, 10 28
+                                            Z"/>
+                                    </Path.Data>
+                                </Path>
+                                <Border
+                                    Grid.Column="1"
+                                    Background="Cyan">
+                                    
+                                </Border>
+                                <Path
+                                    Fill="Cyan"
+                                    Grid.Column="2">
+                                    <Path.Data>
+                                        <PathGeometry 
+                                            Figures="
+                                            M0 0 C10 0, 10 0, 10 10
+                                            L10 18
+                                            C10 28, 10 28, 0 28
+                                            Z"/>
+                                    </Path.Data>
+                                </Path>
+                            </Grid>
+                        </Canvas>
+                        <TextBlock
+                            Name="CodeAreaText"
+                            FontFamily="Consolas"
+                            FontSize="24"
+                            Grid.Column="0"
+                            LineHeight="36"
+                            Margin="10 0 10 0">
+                            Test
+                            <LineBreak/>
+                            Test
+                            <LineBreak/>
+                            Test
+                            <LineBreak/>
+                            <LineBreak/>
+                            Test
+                            <LineBreak/>
+                            <LineBreak/>
+                            TestTeseeteetet
+                            <LineBreak/>
+                            <LineBreak/>
+                            Test
+                            <LineBreak/>
+                            Test
+                            <LineBreak/>
+                            Test
+                        </TextBlock>
+                    </Grid>
                     
-                    <TextBlock
-                        FontFamily="Consolas"
-                        FontSize="24"
-                        Grid.Column="0">
-                        Test
-                        <LineBreak/>
-                        <LineBreak/>
-                        <LineBreak/>
-                        <LineBreak/>
-                        <LineBreak/>
-                        Test
-                        <LineBreak/>
-                        <LineBreak/>
-                        <LineBreak/>
-                        TestTeseeteetet
-                        <LineBreak/>
-                        <LineBreak/>
-                        Test
-                        <LineBreak/>
-                        Test
-                        <LineBreak/>
-                        Test
-                    </TextBlock>
 
                 </ScrollViewer>
 
@@ -749,27 +797,33 @@
                                     </Canvas>
 
                                     <Button
+                                        Name="InsertHeadSelect"
                                         Grid.Column="1"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="头部"
                                         FontSize="26"
-                                        MinWidth="0">
+                                        MinWidth="0"
+                                        Click="InsertPanelButton_Click">
                                     </Button>
 
                                     <Button
+                                        Name="InsertMiddleSelect"
                                         Grid.Column="2"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="中部"
                                         FontSize="26"
-                                        MinWidth="1">
+                                        MinWidth="1"
+                                        Click="InsertPanelButton_Click">
                                     </Button>
 
                                     <Button
+                                        Name="InsertRearSelect"
                                         Grid.Column="3"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="尾部"
                                         FontSize="26"
-                                        MinWidth="1">
+                                        MinWidth="1"
+                                        Click="InsertPanelButton_Click">
                                     </Button>
                                 </Grid>
 
@@ -793,8 +847,11 @@
                                     </Label>
 
                                     <TextBox
+                                        Name="InsertValueEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
                                         
                                     </TextBox>
 
@@ -828,8 +885,11 @@
                                     </Label>
 
                                     <TextBox
+                                        Name="InsertTargetIdxEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
 
                                     </TextBox>
                                 </Grid>

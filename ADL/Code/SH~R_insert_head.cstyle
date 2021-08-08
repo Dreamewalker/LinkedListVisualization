@@ -1,0 +1,4 @@
+newNodePtr = new Node("{0}");
+newNodePtr->next = root->next;
+root->next = newNodePtr;
+return SUCCESS;

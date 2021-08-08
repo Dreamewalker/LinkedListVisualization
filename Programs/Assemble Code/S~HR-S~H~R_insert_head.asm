@@ -1,5 +1,14 @@
-nAlloc newNodePtr, "{0}"
+aLine 0
+nNew newNodePtr, {0}
+nMoveAbs newNodePtr, 1095, 600
 
-nSetNextPtr root, newNodePtr
+aLine 1
+pSetNext newNodePtr, Root
 
-pMove root, newNodePtr
+aLine 2
+gMove Root, newNodePtr
+
+aLine 3
+gDelete newNodePtr
+aStd
+Halt

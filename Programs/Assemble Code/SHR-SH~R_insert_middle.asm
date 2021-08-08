@@ -1,20 +1,37 @@
-0:  pAlloc currentPtr
-1:  pMoveNext currentPtr, root
+0:  aLine 0
+1:  gNew currentPtr
+2:  gMoveNext currentPtr, root
 
-2:  sSetTime "{1}"
+3:  aLine 1
+4:  sSetTime {1}
 
-3:  pBne currentPtr, null, 5
+5:  aLine 2
+6:  gBne currentPtr, null, 10
 
-4:  Exception
+7:  aLine 3
+8:  Exception NOT_FOUND
 
-5:  pMoveNext currentPtr, currentPtr
+9:  aLine 5
+10:  gMoveNext currentPtr, currentPtr
 
-6:  sLoop 3
+11: aLine 6
+12: sLoop 6
 
-7:  nAlloc newNodePtr, "{1}"
+13: aLine 7
+14: nNew newNodePtr, {0}
+    gNewVPtr temp
+    gMoveNext temp, currentPtr
 
-8:  nSetNextPtrNext newNodePtr, currentPtr
+    aLine 8
+    nMoveRel newNodePtr, temp, -95, -164.545 
+19: pSetNext newNodePtr, temp
 
-9:  nSetNextPtr currentPtr, newNodePtr
+    aLine 9
+21: pSetNext currentPtr, newNodePtr
 
-10: Halt
+    aLine 10
+    gDelete currentPtr
+    gDelete temp
+    gDelete newNodePtr
+    aStd
+27: Halt

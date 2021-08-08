@@ -16,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace LinkedListVisualization
 {
@@ -78,6 +79,11 @@ namespace LinkedListVisualization
             oprPanelGrids[2] = DeleteOprGrid;
             oprPanelGrids[3] = UpdateOprGrid;
             oprPanelGrids[4] = QueryOprGrid;
+
+            // Insert Panel数组初始化
+            insertPanelButtons[0] = InsertHeadSelect;
+            insertPanelButtons[1] = InsertMiddleSelect;
+            insertPanelButtons[2] = InsertRearSelect;
         }
 
         void MainWindow_MouseMove(object sender, MouseEventArgs e)
@@ -405,105 +411,6 @@ namespace LinkedListVisualization
 
             currentNewListType = 2;
         }
-
-        /*
-        private int currentImplSelect = 0;
-        private void ImplPointerButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentImplSelect == 0)
-            {
-                return;
-            }
-
-            ImplPointerButton.MinWidth = 0;
-            ImplArrayButton.MinWidth = 1;
-
-            if (Canvas.GetLeft(HeadSelectedMask) > 50)
-            {
-                HeadOnButton.MinWidth = 1;
-                HeadOffButton.MinWidth = 0;
-            }
-            else
-            {
-                HeadOnButton.MinWidth = 0;
-                HeadOffButton.MinWidth = 1;
-            }
-            //HeadSelectedMask.Opacity = 1;
-
-            Storyboard storyboard = new Storyboard();
-
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
-            // Show HeadSelectMask Anim
-            DoubleAnimation showAmin = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
-            showAmin.EasingFunction = new ExponentialEase()
-            {
-                EasingMode = EasingMode.EaseOut
-            };
-            Storyboard.SetTarget(showAmin, HeadSelectedMask);
-            Storyboard.SetTargetProperty(showAmin, new PropertyPath("Opacity"));
-            storyboard.Children.Add(showAmin);
-
-            // Move Anim
-            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(ImplSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
-            doubleAnimation.EasingFunction = nonLinearEasingFunction;
-
-            Storyboard.SetTarget(doubleAnimation, ImplSelectedMask);
-            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
-
-            storyboard.Children.Add(doubleAnimation);
-
-            storyboard.Begin();
-
-            currentImplSelect = 0;
-        }
-
-        private void ImplArrayButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentImplSelect == 1)
-            {
-                return;
-            }
-
-            ImplPointerButton.MinWidth = 1;
-            ImplArrayButton.MinWidth = 0;
-
-            HeadOnButton.MinWidth = 0;
-            HeadOffButton.MinWidth = 0;
-            //HeadSelectedMask.Opacity = 0;
-
-            Storyboard storyboard = new Storyboard();
-
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
-            // Hide HeadSelectMask Anim
-            DoubleAnimation hideAmin = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)));
-            hideAmin.EasingFunction = new ExponentialEase()
-            {
-                EasingMode = EasingMode.EaseOut
-            };
-            Storyboard.SetTarget(hideAmin, HeadSelectedMask);
-            Storyboard.SetTargetProperty(hideAmin, new PropertyPath("Opacity"));
-            storyboard.Children.Add(hideAmin);
-
-            // Move Anim
-            DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(ImplSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
-            doubleAnimation.EasingFunction = nonLinearEasingFunction;
-
-            Storyboard.SetTarget(doubleAnimation, ImplSelectedMask);
-            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("(Canvas.Left)"));
-
-            storyboard.Children.Add(doubleAnimation);
-
-            storyboard.Begin();
-
-            currentImplSelect = 1;
-        }
-        */
 
         private int currentHeadSelect = 0;
         private void HeadOnButton_Click(object sender, RoutedEventArgs e)
@@ -1119,22 +1026,155 @@ namespace LinkedListVisualization
             }
         }
 
-
-        private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
+        private void NumEditView_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string[] instructions = new string[] {  "nNew newNodePtr, 4",
+            TextBox widget = (TextBox)sender;
+            string targetContent = "";
+            int currentCursorPos = widget.SelectionStart;
+            foreach (char c in widget.Text)
+            {
+                if (c <= '9' && c >= '0')
+                {
+                    targetContent += c;
+                }
+            }
+            if (targetContent.Length > 2)
+            {
+                targetContent = targetContent.Substring(0, 2);
+            }
+            int diff = targetContent.Length - widget.Text.Length;
+            widget.Text = targetContent;
+            widget.SelectionStart = currentCursorPos + diff;
+        }
+
+        private void NumEditView_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox widget = (TextBox)sender;
+            if (widget.Text.Length <= 0)
+            {
+                widget.Text = "0";
+            }
+        }
+
+        // Insert Panel
+        private int currentInsertPositionSelect = 0;
+
+        private string[] codes = new string[]
+        {
+                "newNodePtr = new Node(4);",
+                "newNodePtr->next = root->next;",
+                "root->next = newNodePtr;",
+                "return SUCCESS; "
+        };
+
+        private string[] testInstruction = new string[] {  "aLine 0",
+                                                    "nNew newNodePtr, 4",
                                                     "gNewVPtr temp",
+                                                    "aLine 1",
                                                     "nMoveAbs newNodePtr, 1380, 435.455",
                                                     "gMoveNext temp, Root",
                                                     "nSetNextPtr newNodePtr, temp",
+                                                    "aLine 2",
                                                     "nSetNextPtr Root, newNodePtr",
+                                                    "aLine 3",
                                                     "aStd",
                                                     "gDelete newNodePtr",
                                                     "gDelete temp",
                                                     "Halt" };
+        private readonly Button[] insertPanelButtons = new Button[3];
+        private void InsertPanelButton_Click(object sender, RoutedEventArgs e)
+        {
+            int clickedButtonIndex = 0;
+            for (int i = 1; i < 3; ++i)
+            {
+                if (sender == insertPanelButtons[i])
+                {
+                    clickedButtonIndex = i;
+                }
+            }
+
+            if (clickedButtonIndex == currentInsertPositionSelect || ((Button)sender).MinWidth == 0)
+            {
+                return;
+            }
+
+            insertPanelButtons[clickedButtonIndex].MinWidth = 0;
+            insertPanelButtons[currentInsertPositionSelect].MinWidth = 1;
+
+            Storyboard storyboard = new Storyboard();
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+            // Insert Selection Anim
+            DoubleAnimation insertSelectAnim = new DoubleAnimation(currentInsertPositionSelect * 100, clickedButtonIndex * 100, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentInsertPositionSelect))));
+            insertSelectAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(insertSelectAnim, InsertPlaceMask);
+            Storyboard.SetTargetProperty(insertSelectAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(insertSelectAnim);
+
+            storyboard.Begin();
+            currentInsertPositionSelect = clickedButtonIndex;
+        }
+
+        private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            string targetFileName = "";
+            switch (currentNewListType)
+            {
+                case 0:
+                    targetFileName += 'S';
+                    break;
+                case 1:
+                    targetFileName += 'R';
+                    break;
+                case 2:
+                    targetFileName += 'B';
+                    break;
+            }
+
+            if (currentHeadSelect == 1)
+            {
+                targetFileName += '~';
+            }
+            targetFileName += 'H';
+
+            if (currentTailSelect == 1)
+            {
+                targetFileName += '~';
+            }
+            targetFileName += "R_insert_";
+
+            switch (currentInsertPositionSelect)
+            {
+                case 0:
+                    targetFileName += "head";
+                    break;
+                case 1:
+                    targetFileName += "middle";
+                    break;
+                case 2:
+                    targetFileName += "rear";
+                    break;
+            }
+
+            codes = LoadFile("ADL\\Code\\" + targetFileName + ".cstyle");
+
+            string[] instructions = LoadFile("ADL\\Assemble\\" + targetFileName + ".asm");
+
+            // Embedded
+            for (int i = 0; i < codes.Length; ++i)
+            {
+                codes[i] = string.Format(codes[i], InsertValueEditView.Text, InsertTargetIdxEditView.Text);
+            }
+
+            for (int i = 0; i < instructions.Length; ++i)
+            {
+                instructions[i] = string.Format(instructions[i], InsertValueEditView.Text, InsertTargetIdxEditView.Text);
+            }
+
+            SetCodeAreaText(codes);
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
-            double completeTime = 0;
+            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
 
             while (programCounter >= 0)
             {
@@ -1145,6 +1185,82 @@ namespace LinkedListVisualization
             storyboard.Begin();
         }
 
+        private string[] LoadFile(string filePath)
+        {
+            List<string> tempList = new List<string>();
+            try
+            {
+                FileStream fileInStream = new FileStream(filePath, FileMode.Open);
+                long fileLength = fileInStream.Length;
+                byte[] bufferByte = new byte[fileLength];
+                fileInStream.Read(bufferByte, 0, (int)fileLength);
+                fileInStream.Close();
+                string buffer = System.Text.Encoding.ASCII.GetString(bufferByte);
+
+                string tempStr = "";
+                for (int i = 0; i < buffer.Length; ++i)
+                {
+                    if (buffer[i] != '\n' && buffer[i] != '\r')
+                    {
+                        tempStr += buffer[i];
+                    }
+                    else
+                    {
+                        if (tempStr.Length > 0)
+                        {
+                            tempList.Add(tempStr);
+                            tempStr = "";
+                        }
+                    }
+                }
+                if (tempStr.Length > 0)
+                {
+                    tempList.Add(tempStr);
+                }
+            } catch (IOException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return tempList.ToArray();
+        }
+
+        private double LineMaskMove(Storyboard storyboard, double prevCompleteTime, string[] codes, int targetLine)
+        {
+            if (currentLine == targetLine && CodeAreaMask.Width == codes[currentLine].Length * 13 + 20)
+            {
+                return prevCompleteTime;
+            }
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
+            double animTime = 0.5 + 0.4 * Math.Abs(targetLine - currentLine);
+            DoubleAnimation lengthAnim = new DoubleAnimation(codes[currentLine].Length * 13 + 20, codes[targetLine].Length * 13 + 20, new Duration(TimeSpan.FromSeconds(animTime)));
+            lengthAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            lengthAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(lengthAnim, CodeAreaMask);
+            Storyboard.SetTargetProperty(lengthAnim, new PropertyPath("Width"));
+            storyboard.Children.Add(lengthAnim);
+
+            DoubleAnimation shiftAnim = new DoubleAnimation(currentLine * 36, targetLine * 36, new Duration(TimeSpan.FromSeconds(animTime)));
+            shiftAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            shiftAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(shiftAnim, CodeAreaMask);
+            Storyboard.SetTargetProperty(shiftAnim, new PropertyPath("(Canvas.Top)"));
+            storyboard.Children.Add(shiftAnim);
+            currentLine = targetLine;
+
+            return prevCompleteTime + animTime;
+        }
+
+        private void SetCodeAreaText(string[] codes)
+        {
+            CodeAreaText.Text = "";
+            foreach (string str in codes)
+            {
+                CodeAreaText.Text += str + '\n';
+            }
+        }
 
 
 
@@ -1180,6 +1296,8 @@ namespace LinkedListVisualization
 
 
         private int programCounter = 0;
+        private int currentLine = 0;
+        private int loopCnt = 0;
 
         public double ExecuteNextInstruction(string instruction, Storyboard storyboard, double prevCompleteTime)
         {
@@ -1206,32 +1324,42 @@ namespace LinkedListVisualization
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
                         generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
 
+                        Node srcNode = srcPtr.pointingNode;
+                        Node dstNode = dstPtr.pointingNode;
+                        dstPtr.pointingNode = srcPtr.pointingNode;
                         // 不可见通用指针
                         if (dstPtr.Opacity < 0.1)
                         {
-                            dstPtr.pointingNode = srcPtr.pointingNode;
                             break;
                         }
 
-                        List<VisualPointer> srcRelatedPtrs = srcPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
-                        List<VisualPointer> dstRelatedPtrs = dstPtr.pointingNode == null ? new List<VisualPointer>() : dstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
-
-                        int dstPosition = 0;
-                        for (dstPosition = 0; dstPosition < dstRelatedPtrs.Count && dstRelatedPtrs[dstPosition] != dstPtr; ++dstPosition)
+                        List<VisualPointer> srcRelatedPtrs = srcNode.GetRelatedPointers(generalVisualPtrSet);
+                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
+                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 80 + 20;
+                        foreach (VisualPointer visualPointer in srcRelatedPtrs)
                         {
-
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
                         }
 
-                        for (int i = dstPosition + 1; i < dstRelatedPtrs.Count; ++i)
+                        if (dstNode == null)
                         {
-                            dstRelatedPtrs[i].MoveToAnim(storyboard, prevCompleteTime, dstRelatedPtrs[i - 1].currentCanvasLeft, dstRelatedPtrs[i - 1].currentCanvasTop, dstRelatedPtrs[i - 1].currentAngle);
+                            break;
                         }
-
-                        dstPtr.pointingNode = srcPtr.pointingNode;
-
-                        VisualPointer lastSrc = srcRelatedPtrs[srcRelatedPtrs.Count - 1];
-                        completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, lastSrc.currentCanvasLeft + 60 * Math.Sin(lastSrc.Rotation.Angle / 180 * Math.PI), lastSrc.currentCanvasTop + 60 * Math.Cos(lastSrc.currentAngle / 180 * Math.PI), lastSrc.currentAngle);
-
+                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
+                        canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        List<VisualPointer> dstRelatedPtrs = dstNode.GetRelatedPointers(generalVisualPtrSet);
+                        foreach (VisualPointer visualPointer in dstRelatedPtrs)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
+                                canvasTopBias += 60;
+                            }
+                        }
                         break;
                     }
                     
@@ -1292,7 +1420,6 @@ namespace LinkedListVisualization
                         }
 
                         List<VisualPointer> srcRelated = srcNode.GetRelatedPointers(generalVisualPtrSet);
-                        List<VisualPointer> dstRelated = dstNode.GetRelatedPointers(generalVisualPtrSet);
 
                         // srcNode part
                         double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
@@ -1308,6 +1435,11 @@ namespace LinkedListVisualization
                         }
 
                         // dstNode part
+                        if (dstNode == null)
+                        {
+                            break;
+                        }
+                        List<VisualPointer> dstRelated = dstNode.GetRelatedPointers(generalVisualPtrSet);
                         if (dstNode == null)
                         {
                             break;
@@ -1397,9 +1529,10 @@ namespace LinkedListVisualization
                 case "nMoveRel":
                     {
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
 
-                        double moveAbsLeft = double.Parse(decodeResult[2]) + dstPtr.pointingNode.listElement.currentCanvasLeft;
-                        double moveAbsTop = double.Parse(decodeResult[3]) + dstPtr.pointingNode.listElement.currentCanvasTop;
+                        double moveAbsLeft = double.Parse(decodeResult[3]) + srcPtr.pointingNode.listElement.currentCanvasLeft;
+                        double moveAbsTop = double.Parse(decodeResult[4]) + srcPtr.pointingNode.listElement.currentCanvasTop;
 
                         // 移动结点
                         double deltaX = moveAbsLeft - dstPtr.pointingNode.listElement.currentCanvasLeft;
@@ -1438,7 +1571,7 @@ namespace LinkedListVisualization
                         break;
                     }
 
-                case "nSetNextPtr":
+                case "pSetNext":
                     {
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
                         generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
@@ -1477,6 +1610,7 @@ namespace LinkedListVisualization
 
                 case "aStd":
                     {
+                        root = rootPointer.pointingNode;
                         if (currentNewListType == 1)
                         {
                             // 循环链表
@@ -1582,6 +1716,76 @@ namespace LinkedListVisualization
                                 completeTime = Node.SetArrowAnim(storyboard, currentPtr, currentPtr.prevPtr, currentPtr.prevArrow, prevCompleteTime);
                             }
 
+                        }
+                        break;
+                    }
+
+                case "aLine":
+                    {
+                        int targetLine = int.Parse(decodeResult[1]);
+
+                        completeTime = LineMaskMove(storyboard, prevCompleteTime, codes, targetLine);
+                        break;
+                    }
+
+                case "sLoopBegin":
+                    {
+                        loopCnt = int.Parse(decodeResult[1]);
+                        break;
+                    }
+
+                case "gBeq":
+                    {
+                        Node srcNode = null;
+                        Node dstNode = null;
+                        if (!decodeResult[1].Equals("null"))
+                        {
+                            generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                            dstNode = dstPtr.pointingNode;
+                        }
+
+                        if (!decodeResult[2].Equals("null"))
+                        {
+                            generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                            srcNode = srcPtr.pointingNode;
+                        }
+
+                        if (dstNode == srcNode)
+                        {
+                            programCounter = int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
+                case "gBne":
+                    {
+                        Node srcNode = null;
+                        Node dstNode = null;
+                        if (!decodeResult[1].Equals("null"))
+                        {
+                            generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                            dstNode = dstPtr.pointingNode;
+                        }
+                        
+                        if (!decodeResult[2].Equals("null"))
+                        {
+                            generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                            srcNode = srcPtr.pointingNode;
+                        }
+
+                        if (dstNode != srcNode)
+                        {
+                            programCounter = int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
+                case "sLoop":
+                    {
+                        if (loopCnt > 1)
+                        {
+                            programCounter = int.Parse(decodeResult[1]) - 1;
+                            --loopCnt;
                         }
                         break;
                     }
