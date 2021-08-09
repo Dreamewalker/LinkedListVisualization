@@ -99,7 +99,7 @@ namespace LinkedListVisualization.Widget
             double targetLength = Math.Sqrt(Math.Pow(targetLeft - currentCanvasLeft, 2) + Math.Pow(targetTop - currentCanvasTop - 17.5, 2));
             double targetScaleRate = targetLength / 190;
 
-            double targetAngle = Math.Atan2(targetTop - currentCanvasTop, targetLeft - currentCanvasLeft - 17.5) / Math.PI * 180;
+            double targetAngle = Math.Atan2(targetTop - currentCanvasTop - 17.5, targetLeft - currentCanvasLeft) / Math.PI * 180;
 
             /*
             DoubleAnimationUsingKeyFrames scaleAnim = new DoubleAnimationUsingKeyFrames();
@@ -153,12 +153,12 @@ namespace LinkedListVisualization.Widget
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             double currentEndLeft = currentCanvasLeft + Math.Cos(currentAngle / 180 * Math.PI) * 190 * currentScaleX;
-            double currentEndTop = currentCanvasTop + 17.5 + Math.Sin(currentAngle / 180 * Math.PI) * 190 * currentScaleX;
+            double currentEndTop = currentCanvasTop + 17.5 - Math.Sin(currentAngle / 180 * Math.PI) * 190 * currentScaleX;
 
             double targetLength = Math.Sqrt(Math.Pow(targetLeft - currentEndLeft, 2) + Math.Pow(targetTop - currentEndTop, 2));
             double targetScaleRate = targetLength / 190;
 
-            double targetAngle = Math.Atan2(targetTop - currentEndTop, targetLeft - currentEndLeft);
+            double targetAngle = Math.Atan2(currentEndTop - targetTop, currentEndLeft - targetLeft) * 180 / Math.PI;
 
             DoubleAnimation scaleAnim = new DoubleAnimation(targetScaleRate, new Duration(TimeSpan.FromSeconds(1.5)));
             scaleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
@@ -201,14 +201,12 @@ namespace LinkedListVisualization.Widget
         {
             DoubleAnimation doubleAnimation = new DoubleAnimation(initAngle, targetAngle, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
-            RotateTransform rotateTransform = new RotateTransform();
-            viewbox.RenderTransform = rotateTransform;
 
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(doubleAnimation, viewbox);
-            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Angle"));
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Children[0].Angle"));
             storyboard.Children.Add(doubleAnimation);
 
             DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(1 - opacityTarget, opacityTarget, new Duration(TimeSpan.FromMilliseconds(500)));

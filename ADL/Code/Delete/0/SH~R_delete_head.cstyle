@@ -1,0 +1,7 @@
+delPtr = root->next;
+if (delPtr == null) {{
+    return EMPTY_LIST;
+}}
+root->next = delPtr->next;
+delete delPtr;
+return SUCCESS;

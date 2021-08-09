@@ -1,14 +1,14 @@
 aLine 0
-nNew newNodePtr, {0}
+nNew newNodePtr, {0:D}
 gNewVPtr temp
 
 aLine 1
 nMoveAbs newNodePtr, 1380, 435.455
 gMoveNext temp, Root
-nSetNextPtr newNodePtr, temp
+pSetNext newNodePtr, temp
 
 aLine 2
-nSetNextPtr Root, newNodePtr
+pSetNext Root, newNodePtr
 
 aLine 3
 aStd

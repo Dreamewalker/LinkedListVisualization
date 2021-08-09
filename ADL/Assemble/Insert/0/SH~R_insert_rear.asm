@@ -1,6 +1,6 @@
 aLine 0
 gNew currentPtr
-gMove currentPtr, root
+gMove currentPtr, Root
 gNewVPtr currentNext
 gMoveNext currentNext, currentPtr
 

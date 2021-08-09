@@ -1,0 +1,12 @@
+delPtr = root->next;
+prevPtr = root;
+for (int i = 0; i < {0:D}; ++i) {{
+    if (delPtr == null) {{
+        return NOT_FOUND;
+    }}
+    prevPtr = delPtr;
+    delPtr = delPtr->next;
+}}
+prevPtr->next = delPtr->next;
+delete delPtr;
+return SUCCESS;

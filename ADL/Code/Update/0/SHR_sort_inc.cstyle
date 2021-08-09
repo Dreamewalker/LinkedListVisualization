@@ -1,0 +1,23 @@
+basePtr = root->next;
+basePrev = root;
+while (basePtr->next != null) {{
+    // find max between [basePtr, rear]
+    maxPtr = basePtr;
+    maxPrev = basePrev;
+    currentPtr = basePtr.next;
+    while (currentPtr != null) {{
+        if (maxPtr->value < currentPtr->value) {{
+            maxPtr = currentPtr;
+        }}
+        currentPtr = currentPtr->next;
+    }}
+
+    // split max node & insert max node after root
+    if (maxPtr != basePtr) {{
+        maxPrev->next = maxPtr->next;
+        maxPtr->next = root->next;
+        root->next = maxPtr;
+    }}
+    
+
+}}

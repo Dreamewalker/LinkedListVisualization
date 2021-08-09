@@ -84,6 +84,11 @@ namespace LinkedListVisualization
             insertPanelButtons[0] = InsertHeadSelect;
             insertPanelButtons[1] = InsertMiddleSelect;
             insertPanelButtons[2] = InsertRearSelect;
+
+            // Delete Panel数组初始化
+            deletePanelButtons[0] = DeleteHeadSelect;
+            deletePanelButtons[1] = DeleteMiddleSelect;
+            deletePanelButtons[2] = DeleteRearSelect;
         }
 
         void MainWindow_MouseMove(object sender, MouseEventArgs e)
@@ -730,6 +735,7 @@ namespace LinkedListVisualization
         private VisualPointer rootPointer = null;
         private Dictionary<string, VisualPointer> generalVisualPtrSet = new Dictionary<string, VisualPointer>();
         private Dictionary<string, VisualPointer> prevGeneralVisualPtrSet = null;
+        private Dictionary<string, int> scalarSet = new Dictionary<string, int>();
 
         private void RemoveWidgetsOnCanvas(object sender, EventArgs e)
         {
@@ -804,6 +810,16 @@ namespace LinkedListVisualization
                     //rearArrow.Show(storyboard, clearDoneTime + 0.2);
                 }
                 root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2, generalVisualPtrSet);
+            }
+            else
+            {
+                ExecuteNextInstruction("gNew Root, 1285, 900", storyboard, clearDoneTime + 0.2);
+                generalVisualPtrSet.TryGetValue("Root", out rootPointer);
+                if (currentTailSelect == 0)
+                {
+                    ExecuteNextInstruction("gNew Rear, 1285, 960", storyboard, clearDoneTime + 0.2);
+                    generalVisualPtrSet.TryGetValue("Rear", out rearPointer);
+                }                
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
 
@@ -1067,20 +1083,6 @@ namespace LinkedListVisualization
                 "return SUCCESS; "
         };
 
-        private string[] testInstruction = new string[] {  "aLine 0",
-                                                    "nNew newNodePtr, 4",
-                                                    "gNewVPtr temp",
-                                                    "aLine 1",
-                                                    "nMoveAbs newNodePtr, 1380, 435.455",
-                                                    "gMoveNext temp, Root",
-                                                    "nSetNextPtr newNodePtr, temp",
-                                                    "aLine 2",
-                                                    "nSetNextPtr Root, newNodePtr",
-                                                    "aLine 3",
-                                                    "aStd",
-                                                    "gDelete newNodePtr",
-                                                    "gDelete temp",
-                                                    "Halt" };
         private readonly Button[] insertPanelButtons = new Button[3];
         private void InsertPanelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1117,31 +1119,8 @@ namespace LinkedListVisualization
 
         private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            string targetFileName = "";
-            switch (currentNewListType)
-            {
-                case 0:
-                    targetFileName += 'S';
-                    break;
-                case 1:
-                    targetFileName += 'R';
-                    break;
-                case 2:
-                    targetFileName += 'B';
-                    break;
-            }
-
-            if (currentHeadSelect == 1)
-            {
-                targetFileName += '~';
-            }
-            targetFileName += 'H';
-
-            if (currentTailSelect == 1)
-            {
-                targetFileName += '~';
-            }
-            targetFileName += "R_insert_";
+            string targetFileName = Prefix();
+            targetFileName += "_insert_";
 
             switch (currentInsertPositionSelect)
             {
@@ -1156,9 +1135,10 @@ namespace LinkedListVisualization
                     break;
             }
 
-            codes = LoadFile("ADL\\Code\\" + targetFileName + ".cstyle");
+            codes = LoadFile("ADL\\Code\\Insert\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
-            string[] instructions = LoadFile("ADL\\Assemble\\" + targetFileName + ".asm");
+            string[] instructions = LoadFile("ADL\\Assemble\\Insert\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            scalarSet.Clear();
 
             // Embedded
             for (int i = 0; i < codes.Length; ++i)
@@ -1174,6 +1154,7 @@ namespace LinkedListVisualization
             SetCodeAreaText(codes);
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
+            HideNoticeLabelAnim(storyboard, 0);
             double completeTime = LineMaskMove(storyboard, 0, codes, 0);
 
             while (programCounter >= 0)
@@ -1184,6 +1165,192 @@ namespace LinkedListVisualization
 
             storyboard.Begin();
         }
+
+        // Delete Panel
+        private int currentDeletePositionSelect = 0;
+        private readonly Button[] deletePanelButtons = new Button[3];
+        private void DeletePanelButton_Click(object sender, RoutedEventArgs e)
+        {
+            int clickedButtonIndex = 0;
+            for (int i = 1; i < 3; ++i)
+            {
+                if (sender == deletePanelButtons[i])
+                {
+                    clickedButtonIndex = i;
+                }
+            }
+
+            if (clickedButtonIndex == currentDeletePositionSelect || ((Button)sender).MinWidth == 0)
+            {
+                return;
+            }
+
+            deletePanelButtons[clickedButtonIndex].MinWidth = 0;
+            deletePanelButtons[currentDeletePositionSelect].MinWidth = 1;
+
+            Storyboard storyboard = new Storyboard();
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
+            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+            // Insert Selection Anim
+            DoubleAnimation deleteSelectAnim = new DoubleAnimation(currentDeletePositionSelect * 100, clickedButtonIndex * 100, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentInsertPositionSelect))));
+            deleteSelectAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(deleteSelectAnim, DeletePlaceMask);
+            Storyboard.SetTargetProperty(deleteSelectAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(deleteSelectAnim);
+
+            storyboard.Begin();
+            currentDeletePositionSelect = clickedButtonIndex;
+        }
+
+        private void DeleteConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            string targetFileName = Prefix();
+            targetFileName += "_delete_";
+
+            switch (currentDeletePositionSelect)
+            {
+                case 0:
+                    targetFileName += "head";
+                    break;
+                case 1:
+                    targetFileName += "middle";
+                    break;
+                case 2:
+                    targetFileName += "rear";
+                    break;
+            }
+
+            codes = LoadFile("ADL\\Code\\Delete\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
+
+            string[] instructions = LoadFile("ADL\\Assemble\\Delete\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            scalarSet.Clear();
+
+            // Embedded
+            for (int i = 0; i < codes.Length; ++i)
+            {
+                codes[i] = string.Format(codes[i], DeleteIdxEditView.Text);
+            }
+
+            for (int i = 0; i < instructions.Length; ++i)
+            {
+                instructions[i] = string.Format(instructions[i], DeleteIdxEditView.Text);
+            }
+
+            SetCodeAreaText(codes);
+            programCounter = 0;
+            Storyboard storyboard = new Storyboard();
+            HideNoticeLabelAnim(storyboard, 0);
+            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
+
+            while (programCounter >= 0)
+            {
+                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
+                ++programCounter;
+            }
+
+            storyboard.Begin();
+        }
+
+
+        // Update Panel
+        private void UpdateValue_Click(object sender, RoutedEventArgs e)
+        {
+            string targetFileName = Prefix();
+            targetFileName += "_update";
+
+            codes = LoadFile("ADL\\Code\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
+
+            string[] instructions = LoadFile("ADL\\Assemble\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            scalarSet.Clear();
+
+            // Embedded
+            for (int i = 0; i < codes.Length; ++i)
+            {
+                codes[i] = string.Format(codes[i], UpdateIdxEditView.Text, UpdateValueEditView.Text);
+            }
+
+            for (int i = 0; i < instructions.Length; ++i)
+            {
+                instructions[i] = string.Format(instructions[i], UpdateIdxEditView.Text, UpdateValueEditView.Text);
+            }
+
+            SetCodeAreaText(codes);
+            programCounter = 0;
+            Storyboard storyboard = new Storyboard();
+            HideNoticeLabelAnim(storyboard, 0);
+            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
+
+            while (programCounter >= 0)
+            {
+                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
+                ++programCounter;
+            }
+
+            storyboard.Begin();
+        }
+
+        // Query Panel
+        private void QueryConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            string targetFileName = Prefix();
+            targetFileName += "_query";
+
+            codes = LoadFile("ADL\\Code\\Query\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
+
+            string[] instructions = LoadFile("ADL\\Assemble\\Query\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            scalarSet.Clear();
+
+            // Embedded
+            for (int i = 0; i < codes.Length; ++i)
+            {
+                codes[i] = string.Format(codes[i], QueryValueEditView.Text);
+            }
+
+            for (int i = 0; i < instructions.Length; ++i)
+            {
+                instructions[i] = string.Format(instructions[i], QueryValueEditView.Text);
+            }
+
+            SetCodeAreaText(codes);
+            programCounter = 0;
+            Storyboard storyboard = new Storyboard();
+            HideNoticeLabelAnim(storyboard, 0);
+            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
+
+            while (programCounter >= 0)
+            {
+                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
+                ++programCounter;
+            }
+
+            storyboard.Begin();
+        }
+
+        private List<int> backupList = null;
+        private void ListBackup()
+        {
+            backupList = new List<int>();
+            Node currentNode = root;
+            if (currentHeadSelect == 0)
+            {
+                // 跳过头结点
+                currentNode = root.nextPtr;
+            }
+            if (currentHeadSelect == 1 & currentNewListType == 1 && currentNode != null)
+            {
+                // 无头结点的非空循环链表
+                backupList.Add(currentNode.value);
+                currentNode = currentNode.nextPtr;
+            }
+            while (currentNode != null && currentNode != root)
+            {
+                backupList.Add(currentNode.value);
+                currentNode = currentNode.nextPtr;
+            }
+        }
+
+
+
 
         private string[] LoadFile(string filePath)
         {
@@ -1225,9 +1392,39 @@ namespace LinkedListVisualization
             return tempList.ToArray();
         }
 
+        private string Prefix()
+        {
+            string prefix = "";
+            switch (currentNewListType)
+            {
+                case 0:
+                    prefix += 'S';
+                    break;
+                case 1:
+                    prefix += 'R';
+                    break;
+                case 2:
+                    prefix += 'B';
+                    break;
+            }
+
+            if (currentHeadSelect == 1)
+            {
+                prefix += '~';
+            }
+            prefix += 'H';
+
+            if (currentTailSelect == 1)
+            {
+                prefix += '~';
+            }
+            prefix += "R";
+            return prefix;
+        }
+
         private double LineMaskMove(Storyboard storyboard, double prevCompleteTime, string[] codes, int targetLine)
         {
-            if (currentLine == targetLine && CodeAreaMask.Width == codes[currentLine].Length * 13 + 20)
+            if (currentLine == targetLine && CodeAreaMask.Width == codes[targetLine].Length * 9 + 20)
             {
                 return prevCompleteTime;
             }
@@ -1235,7 +1432,7 @@ namespace LinkedListVisualization
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             double animTime = 0.5 + 0.4 * Math.Abs(targetLine - currentLine);
-            DoubleAnimation lengthAnim = new DoubleAnimation(codes[currentLine].Length * 13 + 20, codes[targetLine].Length * 13 + 20, new Duration(TimeSpan.FromSeconds(animTime)));
+            DoubleAnimation lengthAnim = new DoubleAnimation(codes[targetLine].Length * 9 + 20, new Duration(TimeSpan.FromSeconds(animTime)));
             lengthAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             lengthAnim.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(lengthAnim, CodeAreaMask);
@@ -1262,7 +1459,54 @@ namespace LinkedListVisualization
             }
         }
 
+        private double SetNoticeLabelAnim(Storyboard storyboard, double prevCompleteTime, string content)
+        {
+            StringAnimationUsingKeyFrames changeAnim = new StringAnimationUsingKeyFrames();
+            DiscreteStringKeyFrame changeBeforeFrame = new DiscreteStringKeyFrame((string)NoticeLabel.Content, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0)));
+            DiscreteStringKeyFrame changeAfterFrame = new DiscreteStringKeyFrame(content, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.1)));
+            changeAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            changeAnim.KeyFrames.Add(changeBeforeFrame);
+            changeAnim.KeyFrames.Add(changeAfterFrame);
+            Storyboard.SetTarget(changeAnim, NoticeLabel);
+            Storyboard.SetTargetProperty(changeAnim, new PropertyPath("Content"));
 
+            storyboard.Children.Add(changeAnim);
+
+            DoubleAnimation opacityAnim = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.4)))
+            {
+                EasingFunction = new ExponentialEase()
+                {
+                    EasingMode = EasingMode.EaseOut
+                },
+                BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
+            };
+            Storyboard.SetTarget(opacityAnim, NoticeLabel);
+            Storyboard.SetTargetProperty(opacityAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(opacityAnim);
+
+            return prevCompleteTime + 0.4;
+        }
+
+        private double HideNoticeLabelAnim(Storyboard storyboard, double prevCompleteTime)
+        {
+            if (!GeneralCanvas.Children.Contains(NoticeLabel))
+            {
+                GeneralCanvas.Children.Add(NoticeLabel);
+            }
+            DoubleAnimation opacityAnim = new DoubleAnimation(0, new Duration(TimeSpan.FromSeconds(0.4)))
+            {
+                EasingFunction = new ExponentialEase()
+                {
+                    EasingMode = EasingMode.EaseOut
+                },
+                BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
+            };
+            Storyboard.SetTarget(opacityAnim, NoticeLabel);
+            Storyboard.SetTargetProperty(opacityAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(opacityAnim);
+
+            return prevCompleteTime + 0.4;
+        }
 
 
 
@@ -1297,7 +1541,6 @@ namespace LinkedListVisualization
 
         private int programCounter = 0;
         private int currentLine = 0;
-        private int loopCnt = 0;
 
         public double ExecuteNextInstruction(string instruction, Storyboard storyboard, double prevCompleteTime)
         {
@@ -1309,10 +1552,25 @@ namespace LinkedListVisualization
                     {
                         VisualPointer visualPointer = new VisualPointer(decodeResult[1], null);
                         generalVisualPtrSet.Add(decodeResult[1], visualPointer);
-                        Canvas.SetLeft(visualPointer, 785 + 400);
-                        Canvas.SetTop(visualPointer, 800);
-                        visualPointer.currentCanvasLeft = 785 + 400;
-                        visualPointer.currentCanvasTop = 800;
+
+                        if (decodeResult.Length > 2)
+                        {
+                            double canvasLeft = double.Parse(decodeResult[2]);
+                            double canvasTop = double.Parse(decodeResult[3]);
+
+                            Canvas.SetLeft(visualPointer, canvasLeft);
+                            Canvas.SetTop(visualPointer, canvasTop);
+                            visualPointer.currentCanvasLeft = canvasLeft;
+                            visualPointer.currentCanvasTop = canvasTop;
+                        }
+                        else
+                        {
+                            Canvas.SetLeft(visualPointer, 785 + 400);
+                            Canvas.SetTop(visualPointer, 800);
+                            visualPointer.currentCanvasLeft = 785 + 400;
+                            visualPointer.currentCanvasTop = 800;
+                        }
+                        
 
                         GeneralCanvas.Children.Add(visualPointer);
                         completeTime = visualPointer.Show(storyboard, prevCompleteTime);
@@ -1322,17 +1580,32 @@ namespace LinkedListVisualization
                 case "gMove":
                     {
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
-                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
-
-                        Node srcNode = srcPtr.pointingNode;
                         Node dstNode = dstPtr.pointingNode;
-                        dstPtr.pointingNode = srcPtr.pointingNode;
+
+                        Node srcNode = null;
+                        if (!decodeResult[2].Equals("null"))
+                        {
+                            generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                            srcNode = srcPtr.pointingNode;
+                        }
+
+                        dstPtr.pointingNode = srcNode;
                         // 不可见通用指针
                         if (dstPtr.Opacity < 0.1)
                         {
                             break;
                         }
 
+                        if (srcNode == null)
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, true);
+                            completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, dstPtr.currentCanvasLeft, dstPtr.currentCanvasTop + 150, dstPtr.currentAngle);
+                            break;
+                        }
+                        else
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, false);
+                        }
                         List<VisualPointer> srcRelatedPtrs = srcNode.GetRelatedPointers(generalVisualPtrSet);
                         double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
                         double canvasTopBias = srcNode.listElement.currentCanvasTop + 80 + 20;
@@ -1419,6 +1692,16 @@ namespace LinkedListVisualization
                             break;
                         }
 
+                        if (srcNode == null)
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, true);
+                            completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, dstPtr.currentCanvasLeft, dstPtr.currentCanvasTop + 150, dstPtr.currentAngle);
+                            break;
+                        }
+                        else
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, false);
+                        }
                         List<VisualPointer> srcRelated = srcNode.GetRelatedPointers(generalVisualPtrSet);
 
                         // srcNode part
@@ -1479,6 +1762,15 @@ namespace LinkedListVisualization
                         completeTime = newPointer.Show(storyboard, prevCompleteTime);
                         GeneralCanvas.Children.Add(newPointer);
 
+                        break;
+                    }
+
+                case "nSetValue":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+
+                        completeTime = dstPtr.pointingNode.listElement.SetPropertyAnim(storyboard, prevCompleteTime, int.Parse(decodeResult[2]));
+                        dstPtr.pointingNode.value = int.Parse(decodeResult[2]);
                         break;
                     }
 
@@ -1571,6 +1863,35 @@ namespace LinkedListVisualization
                         break;
                     }
 
+                case "nDelete":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+
+                        Node dstNode = dstPtr.pointingNode;
+
+                        completeTime = dstNode.listElement.Close(storyboard, prevCompleteTime);
+
+                        /*
+                        // next pointer
+                        if (dstNode.nextPtr != null)
+                        {
+                            dstNode.nextPtr.arrowsPointingToMe.Remove(dstNode.nextArrow);
+                            completeTime = dstNode.nextArrow.Close(storyboard, prevCompleteTime);
+                            dstNode.nextPtr = null;
+                            dstNode.nextArrow = null;
+                        }
+
+                        // prev pointer
+                        if (dstNode.prevPtr != null)
+                        {
+                            completeTime = dstNode.prevArrow.Close(storyboard, prevCompleteTime);
+                            dstNode.prevPtr = null;
+                            dstNode.prevArrow = null;
+                        }
+                        */
+                        break;
+                    }
+
                 case "pSetNext":
                     {
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
@@ -1578,39 +1899,69 @@ namespace LinkedListVisualization
 
                         Node dstNode = dstPtr.pointingNode;
                         // 移动或新建指向srcPtr指向结点的后继结点的箭头
-                        if (dstNode.nextPtr == null)
+                        if (srcPtr.pointingNode != null)
                         {
-                            dstNode.nextArrow = new Arrow();
-                            Canvas.SetLeft(dstNode.nextArrow, dstNode.listElement.currentCanvasLeft + 40);
-                            Canvas.SetTop(dstNode.nextArrow, dstNode.listElement.currentCanvasTop + 40 - 17.5);
-                            dstNode.nextArrow.currentCanvasLeft = dstNode.listElement.currentCanvasLeft + 40;
-                            dstNode.nextArrow.currentCanvasTop = dstNode.listElement.currentCanvasTop + 40 - 17.5;
+                            if (dstNode.nextPtr == null)
+                            {
+                                dstNode.nextArrow = new Arrow();
+                                Canvas.SetLeft(dstNode.nextArrow, dstNode.listElement.currentCanvasLeft + 40);
+                                Canvas.SetTop(dstNode.nextArrow, dstNode.listElement.currentCanvasTop + 40 - 17.5);
+                                dstNode.nextArrow.currentCanvasLeft = dstNode.listElement.currentCanvasLeft + 40;
+                                dstNode.nextArrow.currentCanvasTop = dstNode.listElement.currentCanvasTop + 40 - 17.5;
 
-                            double targetAngle = Math.Atan2(srcPtr.pointingNode.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
-                            dstNode.nextArrow.Rotation.Angle = targetAngle;
-                            dstNode.nextArrow.currentAngle = targetAngle;
+                                double targetAngle = Math.Atan2(srcPtr.pointingNode.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
+                                dstNode.nextArrow.Rotation.Angle = targetAngle;
+                                dstNode.nextArrow.currentAngle = targetAngle;
 
-                            double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.listElement.currentCanvasLeft, 2)) / 190;
-                            dstNode.nextArrow.ScaleTrans.ScaleX = targetScaleRate;
-                            dstNode.nextArrow.currentScaleX = targetScaleRate;
+                                double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.listElement.currentCanvasLeft, 2)) / 190;
+                                dstNode.nextArrow.ScaleTrans.ScaleX = targetScaleRate;
+                                dstNode.nextArrow.currentScaleX = targetScaleRate;
 
-                            GeneralCanvas.Children.Add(dstNode.nextArrow);
-                            completeTime = dstNode.nextArrow.Expand(storyboard, prevCompleteTime);
+                                GeneralCanvas.Children.Add(dstNode.nextArrow);
+                                completeTime = dstNode.nextArrow.Expand(storyboard, prevCompleteTime);
+                            }
+                            else
+                            {
+                                completeTime = dstNode.nextArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
+                                dstNode.nextPtr.arrowsPointingToMe.Remove(dstNode.nextArrow);
+                            }
+                            srcPtr.pointingNode.arrowsPointingToMe.Add(dstPtr.pointingNode.nextArrow);
                         }
                         else
                         {
-                            completeTime = dstNode.nextArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
-                            dstNode.nextPtr.arrowsPointingToMe.Remove(dstNode.nextArrow);
+                            // 将next指针指向null
+                            if (dstNode.nextArrow != null)
+                            {
+                                completeTime = dstNode.nextArrow.Close(storyboard, prevCompleteTime);
+                                dstNode.nextArrow = null;
+                            }
                         }
 
                         dstNode.nextPtr = srcPtr.pointingNode;
-                        srcPtr.pointingNode.arrowsPointingToMe.Add(dstPtr.pointingNode.nextArrow);
+                        break;
+                    }
+
+                case "pDeleteNext":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+
+                        if (dstPtr.pointingNode.nextPtr != null)
+                        {
+                            dstPtr.pointingNode.nextPtr.arrowsPointingToMe.Remove(dstPtr.pointingNode.nextArrow);
+                            completeTime = dstPtr.pointingNode.nextArrow.Close(storyboard, prevCompleteTime);
+                            dstPtr.pointingNode.nextPtr = null;
+                            dstPtr.pointingNode.nextArrow = null;
+                        }
                         break;
                     }
 
                 case "aStd":
                     {
                         root = rootPointer.pointingNode;
+                        if (root == null)
+                        {
+                            break;
+                        }
                         if (currentNewListType == 1)
                         {
                             // 循环链表
@@ -1728,12 +2079,6 @@ namespace LinkedListVisualization
                         break;
                     }
 
-                case "sLoopBegin":
-                    {
-                        loopCnt = int.Parse(decodeResult[1]);
-                        break;
-                    }
-
                 case "gBeq":
                     {
                         Node srcNode = null;
@@ -1752,7 +2097,7 @@ namespace LinkedListVisualization
 
                         if (dstNode == srcNode)
                         {
-                            programCounter = int.Parse(decodeResult[3]) - 1;
+                            programCounter += int.Parse(decodeResult[3]) - 1;
                         }
                         break;
                     }
@@ -1775,24 +2120,77 @@ namespace LinkedListVisualization
 
                         if (dstNode != srcNode)
                         {
-                            programCounter = int.Parse(decodeResult[3]) - 1;
+                            programCounter += int.Parse(decodeResult[3]) - 1;
                         }
                         break;
                     }
 
-                case "sLoop":
+                case "vBeq":
                     {
-                        if (loopCnt > 1)
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        if (dstPtr.pointingNode.value == int.Parse(decodeResult[2]))
                         {
-                            programCounter = int.Parse(decodeResult[1]) - 1;
-                            --loopCnt;
+                            programCounter += int.Parse(decodeResult[3]) - 1;
                         }
                         break;
                     }
 
+                case "sInit":
+                    {
+                        scalarSet.Add(decodeResult[1], int.Parse(decodeResult[2]));
+                        break;
+                    }
+
+                case "sMove":
+                    {
+                        scalarSet.TryGetValue(decodeResult[2], out int srcSca);
+
+                        scalarSet[decodeResult[1]] = srcSca;
+                        break;
+                    }
+
+                case "sInc":
+                    {
+                        scalarSet.TryGetValue(decodeResult[1], out int dstSca);
+                        scalarSet[decodeResult[1]] = dstSca + int.Parse(decodeResult[2]);
+                        break;
+                    }
+
+                case "sBge":
+                    {
+                        scalarSet.TryGetValue(decodeResult[1], out int scalar);
+                        int opr2 = int.Parse(decodeResult[2]);
+                        if (scalar >= opr2)
+                        {
+                            programCounter += int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
+                case "Jmp":
+                    {
+                        programCounter += int.Parse(decodeResult[1]) - 1;
+                        break;
+                    }
                 case "Halt":
                     {
                         programCounter = -2;
+                        break;
+                    }
+
+                case "Exception":
+                    {
+                        string result = "Exception : " + decodeResult[1].Replace("_", "__");
+                        completeTime = SetNoticeLabelAnim(storyboard, prevCompleteTime, result);
+                        programCounter = -3;
+                        break;
+                    }
+
+                case "Yield":
+                    {
+                        string result = "Result : " + scalarSet[decodeResult[1]].ToString();
+                        completeTime = SetNoticeLabelAnim(storyboard, prevCompleteTime, result);
+                        programCounter = -4;
                         break;
                     }
             }

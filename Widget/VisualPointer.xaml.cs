@@ -36,7 +36,7 @@ namespace LinkedListVisualization.Widget
 
         public double Show(Storyboard storyboard, double prevCompleteTime)
         {
-            ChangeElementOpacityAnim(storyboard, prevCompleteTime, BackgroundPath, 0.4);
+            ChangeElementOpacityAnim(storyboard, prevCompleteTime, BackgroundPath, pointingNode == null ? 0.11 : 0.4);
             return ChangeElementOpacityAnim(storyboard, prevCompleteTime, PointerType, 1);
         }
 
@@ -44,6 +44,23 @@ namespace LinkedListVisualization.Widget
         {
             ChangeElementOpacityAnim(storyboard, prevCompleteTime, BackgroundPath, 0);
             return ChangeElementOpacityAnim(storyboard, prevCompleteTime, PointerType, 0);
+        }
+
+        public double SetNullAnim(Storyboard storyboard, double prevCompleteTime, bool isNull)
+        {
+            DoubleAnimation doubleAnimation = new DoubleAnimation(isNull ? 0.11 : 0.4, new Duration(TimeSpan.FromSeconds(0.4)))
+            {
+                EasingFunction = new ExponentialEase()
+                {
+                    EasingMode = EasingMode.EaseOut
+                },
+                BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
+            };
+
+            Storyboard.SetTarget(doubleAnimation, BackgroundPath);
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("Opacity"));
+            storyboard.Children.Add(doubleAnimation);
+            return prevCompleteTime + 0.4;
         }
 
         private double ChangeElementOpacityAnim(Storyboard storyboard, double prevCompleteTime, UIElement element, double opacityTarget)

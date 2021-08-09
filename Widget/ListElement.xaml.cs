@@ -97,7 +97,7 @@ namespace LinkedListVisualization.Widget
         {
             if (number >= 0)
             {
-                Content.Content = number;
+                Content.Content = number.ToString();
             }
             else
             {
@@ -106,6 +106,57 @@ namespace LinkedListVisualization.Widget
             SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromRgb(r, g, b));
             Content.Foreground = solidColorBrush;
             Ring.Fill = solidColorBrush;
+        }
+
+        public double SetPropertyAnim(Storyboard storyboard, double prevCompleteTime, int number)
+        {
+            string targetContent;
+            if (number >= 0)
+            {
+                targetContent = number.ToString();
+            }
+            else
+            {
+                targetContent = "H";
+            }
+
+            StringAnimationUsingKeyFrames changeAnim = new StringAnimationUsingKeyFrames();
+            DiscreteStringKeyFrame changeBeforeFrame = new DiscreteStringKeyFrame((string)Content.Content, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0)));
+            DiscreteStringKeyFrame changeAfterFrame = new DiscreteStringKeyFrame(targetContent, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.4)));
+            changeAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
+            changeAnim.KeyFrames.Add(changeBeforeFrame);
+            changeAnim.KeyFrames.Add(changeAfterFrame);
+            Storyboard.SetTarget(changeAnim, Content);
+            Storyboard.SetTargetProperty(changeAnim, new PropertyPath("Content"));
+
+            storyboard.Children.Add(changeAnim);
+
+            /*
+            DoubleAnimation hideAnim = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.4)))
+            {
+                EasingFunction = new ExponentialEase()
+                {
+                    EasingMode = EasingMode.EaseOut
+                },
+                BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
+            };
+            Storyboard.SetTarget(hideAnim, Content);
+            Storyboard.SetTargetProperty(hideAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(hideAnim);
+
+            DoubleAnimation showAnim = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromSeconds(0.4)))
+            {
+                EasingFunction = new ExponentialEase()
+                {
+                    EasingMode = EasingMode.EaseOut
+                },
+                BeginTime = TimeSpan.FromSeconds(prevCompleteTime + 0.4)
+            };
+            Storyboard.SetTarget(showAnim, Content);
+            Storyboard.SetTargetProperty(showAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(showAnim);
+            */
+            return prevCompleteTime + 0.4;
         }
 
         public double Move(Storyboard storyboard, double prevCompleteTime, double deltaX, double deltaY)

@@ -45,8 +45,8 @@
             <Viewbox
                 Name="ViewboxGeneralCanvas"
                 Stretch="None"
-                Canvas.Left="-785"
-                Canvas.Top="-200"
+                Canvas.Left="-685"
+                Canvas.Top="-400"
                 >
                 <Viewbox.RenderTransform>
                     <ScaleTransform x:Name="GeneralCanvasScaleTransform" ScaleX="1" ScaleY="1"/>
@@ -57,6 +57,20 @@
                     Height="3200"
                     Background="#EEEEEE">
 
+                    <Label
+                        Name="NoticeLabel"
+                        Canvas.Left="1600"
+                        Canvas.Top="1000"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        FontSize="30"
+                        FontFamily="微软雅黑"
+                        FontWeight="ExtraBold"
+                        Content="Result : 16"
+                        Foreground="DimGray"
+                        Opacity="0">
+
+                    </Label>
                 </Canvas>
             </Viewbox>
             <Thumb
@@ -165,7 +179,7 @@
                         <TextBlock
                             Name="CodeAreaText"
                             FontFamily="Consolas"
-                            FontSize="24"
+                            FontSize="16"
                             Grid.Column="0"
                             LineHeight="36"
                             Margin="10 0 10 0">
@@ -536,7 +550,7 @@
                                 FontSize="18"
                                 FontFamily="微软雅黑"
                                 FontWeight="ExtraBold"
-                                Content="单链表·有头结点·无尾指针"
+                                Content="单链表·有头结点·有尾指针"
                                 Foreground="DimGray">
                                 
                             </Label>
@@ -956,27 +970,33 @@
                                     </Canvas>
 
                                     <Button
+                                        Name="DeleteHeadSelect"
                                         Grid.Column="1"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="头部"
                                         FontSize="26"
-                                        MinWidth="0">
+                                        MinWidth="0"
+                                        Click="DeletePanelButton_Click">
                                     </Button>
 
                                     <Button
+                                        Name="DeleteMiddleSelect"
                                         Grid.Column="2"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="中部"
                                         FontSize="26"
-                                        MinWidth="1">
+                                        MinWidth="1"
+                                        Click="DeletePanelButton_Click">
                                     </Button>
 
                                     <Button
+                                        Name="DeleteRearSelect"
                                         Grid.Column="3"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="尾部"
                                         FontSize="26"
-                                        MinWidth="1">
+                                        MinWidth="1"
+                                        Click="DeletePanelButton_Click">
                                     </Button>
                                 </Grid>
 
@@ -995,23 +1015,28 @@
                                         FontFamily="微软雅黑"
                                         FontWeight="Bold"
                                         Foreground="#555555"
-                                        Content="目标结点值"
+                                        Content="目标序号"
                                         Margin="60 0 0 0">
                                     </Label>
 
                                     <TextBox
+                                        Name="DeleteIdxEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
 
                                     </TextBox>
                                 </Grid>
 
                                 <Button
-                                        Grid.Row="2"
-                                        Style="{StaticResource CtrlAreaButton}"
-                                        Content="确认"
-                                        FontSize="24"
-                                        MinWidth="1"/>
+                                    Name="DeleteConfirmButton"    
+                                    Grid.Row="2"
+                                    Style="{StaticResource CtrlAreaButton}"
+                                    Content="确认"
+                                    FontSize="24"
+                                    MinWidth="1"
+                                    Click="DeleteConfirmButton_Click"/>
                             </Grid>
 
                             <Grid
@@ -1040,12 +1065,15 @@
                                         FontFamily="微软雅黑"
                                         FontWeight="Bold"
                                         Foreground="#555555"
-                                        Content="目标结点值">
+                                        Content="目标序号">
                                     </Label>
 
                                     <TextBox
+                                        Name="UpdateIdxEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
 
                                     </TextBox>
 
@@ -1070,8 +1098,11 @@
                                     </Label>
 
                                     <TextBox
+                                        Name="UpdateValueEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
 
                                     </TextBox>
 
@@ -1095,11 +1126,13 @@
                                         MinWidth="1"/>
                                     
                                     <Button
+                                        Name="UpdateValue"
                                         Grid.Column="1"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="更新数值"
                                         FontSize="26"
-                                        MinWidth="1"/>
+                                        MinWidth="1"
+                                        Click="UpdateValue_Click"/>
 
                                     <Button
                                         Grid.Column="2"
@@ -1142,19 +1175,39 @@
                                     </Label>
 
                                     <TextBox
+                                        Name="QueryValueEditView"
                                         Grid.Column="1"
-                                        Style="{StaticResource EditView}">
+                                        Style="{StaticResource EditView}"
+                                        TextChanged="NumEditView_TextChanged"
+                                        LostFocus="NumEditView_LostFocus">
 
                                     </TextBox>
 
                                 </Grid>
 
-                                <Button
-                                        Grid.Row="2"
+                                <Grid
+                                    Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button
+                                        Name="QueryConfirm"
+                                        Grid.Column="0"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="查找结点"
                                         FontSize="26"
+                                        MinWidth="1"
+                                        Click="QueryConfirm_Click"/>
+                                    
+                                    <Button
+                                        Grid.Column="1"
+                                        Style="{StaticResource CtrlAreaButton}"
+                                        Content="加载ADL"
+                                        FontSize="26"
                                         MinWidth="1"/>
+                                </Grid>
+                                
 
                             </Grid>
                         </Canvas>
@@ -1213,13 +1266,13 @@
             <StackPanel
                 Orientation="Horizontal">
                 <Button
-                Name="BackEndButton"
-                Style="{StaticResource BackEndButton}"
+                Name="BackButton"
+                Style="{StaticResource BackButton}"
                 Margin="10 0"/>
                 
                 <Button
-                Name="BackButton"
-                Style="{StaticResource BackButton}"
+                Name="BackEndButton"
+                Style="{StaticResource BackEndButton}"
                 Margin="10 0"/>
 
                 <Button
