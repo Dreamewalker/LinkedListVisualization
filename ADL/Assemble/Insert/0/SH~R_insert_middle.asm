@@ -20,18 +20,24 @@ sInc i, 1
 Jmp -9
 
 aLine 7
+gBne currentPtr, null, 3
+
+aLine 8
+Exception NOT_FOUND
+
+aLine 10
 nNew newNodePtr, {0:D}
 gNewVPtr temp
 gMoveNext temp, currentPtr
 
-aLine 8
+aLine 11
 nMoveRel newNodePtr, currentPtr, 95, -164.545 
 pSetNext newNodePtr, temp
 
-aLine 9
+aLine 12
 pSetNext currentPtr, newNodePtr
 
-aLine 10
+aLine 13
 gDelete currentPtr
 gDelete temp
 gDelete newNodePtr

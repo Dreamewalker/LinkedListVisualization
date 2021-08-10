@@ -16,6 +16,9 @@ for (int i = 0; i < {0:D}; ++i) {{
     prevPtr = delPtr;
     delPtr = delPtr->next;
 }}
+if (delPtr == null) {{
+    return NOT_FOUND;
+}}
 prevPtr->next = delPtr->next;
 delete delPtr;
 return SUCCESS;

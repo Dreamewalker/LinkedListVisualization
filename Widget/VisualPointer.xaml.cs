@@ -187,9 +187,12 @@ namespace LinkedListVisualization.Widget
             List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
             foreach (VisualPointer visualPointer in relatedList)
             {
-                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, posX, posY, 0);
-                
-                posY += 60;
+                if (visualPointer.Opacity > 0.1)
+                {
+                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, posX, posY, 0);
+
+                    posY += 60;
+                }
             }
 
             return completeTime;

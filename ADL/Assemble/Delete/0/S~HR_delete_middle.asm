@@ -53,24 +53,30 @@ sInc i, 1
 Jmp -11
 
 aLine 18
-gBne delPtr, Rear, 3
+gBne delPtr, null, 3
 
 aLine 19
-gMove Rear, prevPtr
+Exception NOT_FOUND
 
 aLine 21
+gBne delPtr, Rear, 3
+
+aLine 22
+gMove Rear, prevPtr
+
+aLine 24
 gNewVPtr delNext
 gMoveNext delNext, delPtr
 nMoveRel delPtr, delPtr, 0, -164.545
 pSetNext prevPtr, delNext
 
-aLine 22
+aLine 25
 pDeleteNext delPtr
 nDelete delPtr
 gDelete delPtr
 gDelete prevPtr
 gDelete delNext
 
-aLine 23
+aLine 26
 aStd
 Halt

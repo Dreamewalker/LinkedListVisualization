@@ -1,0 +1,30 @@
+basePtr = root;
+basePrev = null;
+while (basePtr != null) {{
+    // find min between [basePtr, rear]
+    minPtr = basePtr;
+    minPrev = basePrev;
+    currentPtr = basePtr->next;
+    currentPrev = basePtr;
+    while (currentPtr != null) {{
+        if (minPtr->value > currentPtr->value) {{
+            minPrev = currentPrev;
+            minPtr = currentPtr;
+        }}
+        currentPrev = currentPtr;
+        currentPtr = currentPtr->next;
+    }}
+    //insert min node after root
+    if (minPtr == basePtr) {{
+        basePtr = basePtr->next;
+    }}
+    if (basePrev == null) {{
+        basePrev = minPtr;
+    }}
+    if (minPrev != null) {{
+        minPrev->next = minPtr->next;
+        minPtr->next = root;
+        root = minPtr;
+    }}
+}}
+return SUCCESS;

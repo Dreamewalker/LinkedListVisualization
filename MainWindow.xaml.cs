@@ -1256,7 +1256,26 @@ namespace LinkedListVisualization
         private void UpdateValue_Click(object sender, RoutedEventArgs e)
         {
             string targetFileName = Prefix();
-            targetFileName += "_update";
+            switch (((Button)sender).Name)
+            {
+                case "UpdateIncSort":
+                    {
+                        targetFileName += "_sort_inc";
+                        break;
+                    }
+
+                case "UpdateValue":
+                    {
+                        targetFileName += "_update";
+                        break;
+                    }
+
+                case "UpdateDecSort":
+                    {
+                        targetFileName += "_sort_dec";
+                        break;
+                    }
+            }
 
             codes = LoadFile("ADL\\Code\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
@@ -1431,7 +1450,7 @@ namespace LinkedListVisualization
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
-            double animTime = 0.5 + 0.4 * Math.Abs(targetLine - currentLine);
+            double animTime = 0.5 + 0.1 * Math.Abs(targetLine - currentLine);
             DoubleAnimation lengthAnim = new DoubleAnimation(codes[targetLine].Length * 9 + 20, new Duration(TimeSpan.FromSeconds(animTime)));
             lengthAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             lengthAnim.EasingFunction = nonLinearEasingFunction;
@@ -1439,7 +1458,7 @@ namespace LinkedListVisualization
             Storyboard.SetTargetProperty(lengthAnim, new PropertyPath("Width"));
             storyboard.Children.Add(lengthAnim);
 
-            DoubleAnimation shiftAnim = new DoubleAnimation(currentLine * 36, targetLine * 36, new Duration(TimeSpan.FromSeconds(animTime)));
+            DoubleAnimation shiftAnim = new DoubleAnimation(currentLine * 36 - 3, targetLine * 36 - 3, new Duration(TimeSpan.FromSeconds(animTime)));
             shiftAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             shiftAnim.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(shiftAnim, CodeAreaMask);
@@ -1646,9 +1665,15 @@ namespace LinkedListVisualization
                             generalVisualPtrSet.Remove(decodeResult[1]);
                             break;
                         }
+                        completeTime = freeDstPtr.Close(storyboard, prevCompleteTime);
+
+                        if (freeDstPtr.pointingNode == null)
+                        {
+                            generalVisualPtrSet.Remove(decodeResult[1]);
+                            break;
+                        }
                         List<VisualPointer> freeDstRelatedPtrs = freeDstPtr.pointingNode.GetRelatedPointers(generalVisualPtrSet);
 
-                        completeTime = freeDstPtr.Close(storyboard, prevCompleteTime);
 
                         int freeDstIdx = 0;
                         for (; freeDstIdx < freeDstRelatedPtrs.Count && freeDstRelatedPtrs[freeDstIdx] != freeDstPtr; ++freeDstIdx)
@@ -2135,6 +2160,28 @@ namespace LinkedListVisualization
                         break;
                     }
 
+                case "vBge":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                        if (dstPtr.pointingNode.value >= srcPtr.pointingNode.value)
+                        {
+                            programCounter += int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
+                case "vBle":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+                        if (dstPtr.pointingNode.value <= srcPtr.pointingNode.value)
+                        {
+                            programCounter += int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
                 case "sInit":
                     {
                         scalarSet.Add(decodeResult[1], int.Parse(decodeResult[2]));
@@ -2191,6 +2238,13 @@ namespace LinkedListVisualization
                         string result = "Result : " + scalarSet[decodeResult[1]].ToString();
                         completeTime = SetNoticeLabelAnim(storyboard, prevCompleteTime, result);
                         programCounter = -4;
+                        break;
+                    }
+
+                default:
+                    {
+                        programCounter = -5;
+                        completeTime = SetNoticeLabelAnim(storyboard, prevCompleteTime, "Invalid Instruction!");
                         break;
                     }
             }

@@ -3,7 +3,7 @@
 
 ## 动画描述指令(ADL)
 ### 通用指针操作
-gNew newPtr   // 新建一个指针newPtr  
+gNew newPtr, (CanvasLeft, CanvasTop)   // 新建一个指针newPtr, 后两个参数指示了新指针的位置，可选  
 gMove dstPtr, srcPtr   // 将指针dstPtr指向srcPtr指向的结点  
 gDelete dstPtr    // 删除dstPtr  
 gNewVPtr newPtr     // 新建一个不可见的指针newPtr  
@@ -37,8 +37,8 @@ gBne ptr1, ptr2, label  // 当ptr1与ptr2指向不同结点时跳转到PC = PC +
 sBge scalar, value, label   // 当scalar值不小于value时跳转到PC = PC + label  
 vBeq genPtr, value, label   // 当genPtr指向结点值等于value时跳转到PC = PC + label  
 Jmp label   // 无条件跳转至 PC + label  
-nBge ptr1, ptr2, label  // 当ptr1指向的结点值大于等于ptr2指向的结点值时跳转到PC = PC + label  
-nBle ptr1, ptr2, label  // 当ptr1指向的结点值小于等于ptr2指向的结点值时跳转到PC = PC + label  
+vBge ptr1, ptr2, label  // 当ptr1指向的结点值大于等于ptr2指向的结点值时跳转到PC = PC + label  
+vBle ptr1, ptr2, label  // 当ptr1指向的结点值小于等于ptr2指向的结点值时跳转到PC = PC + label  
 Halt        // 程序结束  
 Exception cause   // 结果异常, cause为原因  
 Yield scalar    // 将scalar值作为执行结果进行展示  

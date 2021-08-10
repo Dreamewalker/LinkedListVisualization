@@ -1119,11 +1119,13 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button
+                                        Name="UpdateIncSort"
                                         Grid.Column="0"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="升序排序"
                                         FontSize="26"
-                                        MinWidth="1"/>
+                                        MinWidth="1"
+                                        Click="UpdateValue_Click"/>
                                     
                                     <Button
                                         Name="UpdateValue"
@@ -1135,11 +1137,13 @@
                                         Click="UpdateValue_Click"/>
 
                                     <Button
+                                        Name="UpdateDecSort"
                                         Grid.Column="2"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="降序排序"
                                         FontSize="26"
-                                        MinWidth="1"/>
+                                        MinWidth="1"
+                                        Click="UpdateValue_Click"/>
 
                                 </Grid>
                             </Grid>

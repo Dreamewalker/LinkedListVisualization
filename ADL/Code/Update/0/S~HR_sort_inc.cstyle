@@ -1,5 +1,5 @@
-basePtr = root->next;
-basePrev = root;
+basePtr = root;
+basePrev = null;
 while (basePtr != null) {{
     // find max between [basePtr, rear]
     maxPtr = basePtr;
@@ -18,12 +18,14 @@ while (basePtr != null) {{
     if (maxPtr == basePtr) {{
         basePtr = basePtr->next;
     }}
-    if (basePrev == root) {{
+    if (basePrev == null) {{
         basePrev = maxPtr;
         rear = maxPtr
     }}
-    maxPrev->next = maxPtr->next;
-    maxPtr->next = root->next;
-    root->next = maxPtr;
+    if (maxPrev != null) {{
+        maxPrev->next = maxPtr->next;
+        maxPtr->next = root;
+        root = maxPtr;
+    }}
 }}
 return SUCCESS;

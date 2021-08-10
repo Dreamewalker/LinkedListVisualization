@@ -20,7 +20,6 @@ while (basePtr != null) {{
     }}
     if (basePrev == root) {{
         basePrev = maxPtr;
-        rear = maxPtr
     }}
     maxPrev->next = maxPtr->next;
     maxPtr->next = root->next;
