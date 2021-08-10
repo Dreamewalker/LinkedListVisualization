@@ -1,36 +1,28 @@
 aLine 0
-nNew newNodePtr, {0:D}
-
-aLine 1
-gBne Root, null, 7
-
-aLine 2
-gMove Root, newNodePtr
-
-aLine 3
-gDelete newNodePtr
-aStd
-Halt
-
-aLine 5
 gNew currentPtr
 gMove currentPtr, Root
 gNewVPtr currentNext
 gMoveNext currentNext, currentPtr
 
-aLine 6
-gBeq currentNext, null, 5
+aLine 1
+gBeq currentNext, Root, 5
 
-aLine 7
+aLine 2
 gMove currentPtr, currentNext
 gMoveNext currentNext, currentNext
 Jmp -5
 
-aLine 9
-nMoveRel newNodePtr, currentPtr, 95, -164.545
+aLine 4
+nNew newNodePtr, {0:D}
+
+aLine 5
+nMoveRelOut newNodePtr, currentPtr, 190
 pSetNext currentPtr, newNodePtr
 
-aLine 10
+aLine 6
+pSetNext newNodePtr, Root
+
+aLine 7
 aStd
 gDelete newNodePtr
 gDelete currentPtr

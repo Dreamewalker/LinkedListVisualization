@@ -1,0 +1,14 @@
+currentPtr = root;
+for (i = 0; i < {1}; ++i) {{
+    if (currentPtr == root && i > 0) {{
+        return NOT_FOUND;
+    }}
+    currentPtr = currentPtr->next;
+}}
+if (currentPtr == root && i != 0) {{
+    return NOT_FOUND;
+}}
+newNodePtr = new Node({0});
+newNodePtr->next = currentPtr->next;
+currentPtr->next = newNodePtr;
+return SUCCESS;

@@ -184,13 +184,13 @@ namespace LinkedListVisualization.Widget
             storyboard.Children.Add(baseXAnim);
             currentCanvasLeft = targetLeft;
 
-            DoubleAnimation baseYAnim = new DoubleAnimation(targetTop, new Duration(TimeSpan.FromSeconds(1.5)));
+            DoubleAnimation baseYAnim = new DoubleAnimation(targetTop - 17.5, new Duration(TimeSpan.FromSeconds(1.5)));
             baseYAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             baseYAnim.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(baseYAnim, this);
             Storyboard.SetTargetProperty(baseYAnim, new PropertyPath("(Canvas.Top)"));
             storyboard.Children.Add(baseYAnim);
-            currentCanvasTop = targetTop;
+            currentCanvasTop = targetTop - 17.5;
 
             //ScaleTrans.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
             //Rotation.BeginAnimation(RotateTransform.AngleProperty, angleAnim);

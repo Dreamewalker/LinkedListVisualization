@@ -121,8 +121,8 @@ namespace LinkedListVisualization.Widget
             angleAnim.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             angleAnim.EasingFunction = nonLinearEasingFunction;
 
-            Storyboard.SetTarget(angleAnim, Rotation);
-            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("Angle"));
+            Storyboard.SetTarget(angleAnim, this);
+            Storyboard.SetTargetProperty(angleAnim, new PropertyPath("RenderTransform.Angle"));
             storyboard.Children.Add(angleAnim);
             currentAngle = targetAngle;
 
@@ -157,6 +157,7 @@ namespace LinkedListVisualization.Widget
             double radius = Math.Sqrt(Math.Pow(posX - centerX, 2) + Math.Pow(posY - centerY, 2));
 
             double pointerCenterR = radius + 80;
+            double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180 + 90;
 
             List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
             foreach (VisualPointer visualPointer in relatedList)
@@ -167,14 +168,13 @@ namespace LinkedListVisualization.Widget
                 visualPointer.currentCanvasLeft = centerX + (posX - centerX) / radius * pointerCenterR - 50;
                 visualPointer.currentCanvasTop = centerY + (posY - centerY) / radius * pointerCenterR - 20;
 
-                double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180;
-                visualPointer.Rotation.Angle = angle + 90;
-                visualPointer.currentAngle = angle + 90;
+                visualPointer.Rotation.Angle = angle;
+                visualPointer.currentAngle = angle;
                 visualPointer.Show(storyboard, prevCompleteTime);
                 canvas.Children.Add(visualPointer);
                 pointerCenterR += 60;
             }
-
+            node.vpAngle = angle;
             return prevCompleteTime + 0.7;
         }
 
@@ -207,15 +207,16 @@ namespace LinkedListVisualization.Widget
 
             double pointerCenterR = radius + 80;
             double completeTime = 0;
+            double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180 + 90;
+            node.vpAngle = angle;
 
             List<VisualPointer> relatedList = node.GetRelatedPointers(generalVisualPointers);
             foreach (VisualPointer visualPointer in relatedList)
             {
-                double angle = Math.Atan2(posY - centerY, posX - centerX) / Math.PI * 180;
 
                 completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime,
                                                         centerX + (posX - centerX) / radius * pointerCenterR - 50,
-                                                        centerY + (posY - centerY) / radius * pointerCenterR - 20, angle + 90);
+                                                        centerY + (posY - centerY) / radius * pointerCenterR - 20, angle);
                 
                 pointerCenterR += 60;
             }

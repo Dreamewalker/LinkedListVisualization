@@ -1,0 +1,17 @@
+currentPtr = root->next;
+for (int i = 0; i < {1:D}; ++i) {{
+    if (currentPtr == root) {{
+        return NOT_FOUND;
+    }}
+    currentPtr = currentPtr->next;
+}}
+if (currentPtr == root) {{
+    return NOT_FOUND;
+}}
+newNodePtr = new Node({0:D});
+newNodePtr->next = currentPtr->next;
+if (currentPtr->next == root) {{
+    rear = newNodePtr;
+}}
+currentPtr->next = newNodePtr;
+return SUCCESS;

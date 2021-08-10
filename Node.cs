@@ -19,6 +19,7 @@ namespace LinkedListVisualization
         public ListElement listElement = null;
         public Arrow prevArrow = null;
         public Arrow nextArrow = null;
+        public double vpAngle = 0;
         // public Dictionary<string, VisualPointer> relatedPointers = new Dictionary<string, VisualPointer>();
         public List<Arrow> arrowsPointingToMe = new List<Arrow>(); // 仅记录指向该结点的后继指针
 
@@ -121,6 +122,10 @@ namespace LinkedListVisualization
 
                 VisualPointer.ShowPointersInNodeAnim(this, canvas, storyboard, generalVisualPointers, prevCompleteTime);
                 canvas.Children.Add(this.listElement);
+
+                Node.SetArrowNoAnim(this, this, this.nextArrow);
+                nextArrow.Expand(storyboard, prevCompleteTime);
+                canvas.Children.Add(nextArrow);
                 return this.listElement.Show(storyboard, prevCompleteTime);
             }
 

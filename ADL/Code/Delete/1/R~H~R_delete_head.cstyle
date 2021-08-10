@@ -1,0 +1,17 @@
+if (root == null) {{
+    return EMPTY_LIST;
+}}
+rearPtr = root;
+while (rearPtr->next != root) {{
+    rearPtr = rearPtr->next;
+}}
+delPtr = root;
+if (root == rearPtr) {{
+    root = null;
+}}
+else {{
+    root = root->next;
+    rearPtr->next = root;
+}}
+delete delPtr;
+return SUCCESS;

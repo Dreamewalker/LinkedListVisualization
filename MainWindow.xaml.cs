@@ -809,6 +809,13 @@ namespace LinkedListVisualization
                     generalVisualPtrSet.Add("Rear", rearPointer);
                     //rearArrow.Show(storyboard, clearDoneTime + 0.2);
                 }
+
+                if (currentNewListType == 1)
+                {
+                    root.nextPtr = root;
+                    root.nextArrow = new Arrow();
+                    root.arrowsPointingToMe.Add(root.nextArrow);
+                }
                 root.InitialDrawLinear(GeneralCanvas, storyboard, false, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
@@ -873,8 +880,14 @@ namespace LinkedListVisualization
 
             if (currentNewListType == 1)
             {
+                if (rearNode == root)
+                {
+                    root.nextPtr = root;
+                    root.nextArrow = new Arrow();
+                }
                 rearNode.nextPtr = root;
                 rearNode.nextArrow = new Arrow();
+                root.arrowsPointingToMe.Add(rearNode.nextArrow);
             }
 
             if (currentTailSelect == 0)
@@ -955,8 +968,14 @@ namespace LinkedListVisualization
 
             if (currentNewListType == 1)
             {
+                if (rearNode == root)
+                {
+                    root.nextPtr = root;
+                    root.nextArrow = new Arrow();
+                }
                 currentPtr.nextPtr = root;
                 currentPtr.nextArrow = new Arrow();
+                root.arrowsPointingToMe.Add(currentPtr.nextArrow);
                 root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
@@ -1025,8 +1044,14 @@ namespace LinkedListVisualization
 
             if (currentNewListType == 1)
             {
+                if (rearNode == root)
+                {
+                    root.nextPtr = root;
+                    root.nextArrow = new Arrow();
+                }
                 currentPtr.nextPtr = root;
                 currentPtr.nextArrow = new Arrow();
+                root.arrowsPointingToMe.Add(currentPtr.nextArrow);
                 root.InitialDrawRecycle(GeneralCanvas, storyboard, nodeNum + 1 - currentHeadSelect, clearDoneTime + 0.2, generalVisualPtrSet);
             }
             else
@@ -1626,14 +1651,24 @@ namespace LinkedListVisualization
                             completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, false);
                         }
                         List<VisualPointer> srcRelatedPtrs = srcNode.GetRelatedPointers(generalVisualPtrSet);
-                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
-                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 80 + 20;
+                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40;
+                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 40;
+                        double radius = 80;
                         foreach (VisualPointer visualPointer in srcRelatedPtrs)
                         {
                             if (visualPointer.Opacity > 0.1)
                             {
-                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                                canvasTopBias += 60;
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(srcNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(srcNode.vpAngle / 180 * Math.PI) - 20, srcNode.vpAngle);
+                                }
+                                radius += 60;
                             }
                         }
 
@@ -1641,15 +1676,25 @@ namespace LinkedListVisualization
                         {
                             break;
                         }
-                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
-                        canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40;
+                        canvasTopBias = dstNode.listElement.currentCanvasTop + 40;
+                        radius = 80;
                         List<VisualPointer> dstRelatedPtrs = dstNode.GetRelatedPointers(generalVisualPtrSet);
                         foreach (VisualPointer visualPointer in dstRelatedPtrs)
                         {
                             if (visualPointer.Opacity > 0.1)
                             {
-                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                                canvasTopBias += 60;
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(dstNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(dstNode.vpAngle / 180 * Math.PI) - 20, dstNode.vpAngle);
+                                }
+                                radius += 60;
                             }
                         }
                         break;
@@ -1730,15 +1775,25 @@ namespace LinkedListVisualization
                         List<VisualPointer> srcRelated = srcNode.GetRelatedPointers(generalVisualPtrSet);
 
                         // srcNode part
-                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40 - 50;
-                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 80 + 20;
+                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40;
+                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 40;
+                        double radius = 80;
 
                         foreach (VisualPointer visualPointer in srcRelated)
                         {
                             if (visualPointer.Opacity > 0.1)
                             {
-                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                                canvasTopBias += 60;
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(srcNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(srcNode.vpAngle / 180 * Math.PI) - 20, srcNode.vpAngle);
+                                }
+                                radius += 60;
                             }
                         }
 
@@ -1752,14 +1807,26 @@ namespace LinkedListVisualization
                         {
                             break;
                         }
-                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40 - 50;
-                        canvasTopBias = dstNode.listElement.currentCanvasTop + 80 + 20;
+                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40;
+                        canvasTopBias = dstNode.listElement.currentCanvasTop + 40;
+                        radius = 80;
+
                         foreach (VisualPointer visualPointer in dstRelated)
                         {
                             if (visualPointer.Opacity > 0.1)
                             {
-                                completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
-                                canvasTopBias += 60;
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(dstNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(dstNode.vpAngle / 180 * Math.PI) - 20, dstNode.vpAngle);
+                                }
+                                
+                                radius += 60;
                             }
                         }
                         break;
@@ -1815,12 +1882,14 @@ namespace LinkedListVisualization
                         Node dstNode = dstPtr.pointingNode;
                         if (dstNode.nextPtr != null)
                         {
-                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft, moveAbsTop);
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.nextPtr, dstNode.nextArrow, prevCompleteTime);
+                            //completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
                         }
 
                         if (dstNode.prevPtr != null)
                         {
-                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft, moveAbsTop);
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.prevPtr, dstNode.prevArrow, prevCompleteTime);
+                            //completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
                         }
 
                         // 移动该结点相关的通用指针
@@ -1860,12 +1929,14 @@ namespace LinkedListVisualization
                         Node dstNode = dstPtr.pointingNode;
                         if (dstNode.nextPtr != null)
                         {
-                            completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.nextPtr, dstNode.nextArrow, prevCompleteTime);
+                            //completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
                         }
 
                         if (dstNode.prevPtr != null)
                         {
-                            completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.prevPtr, dstNode.prevArrow, prevCompleteTime);
+                            //completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
                         }
 
                         // 移动该结点相关的通用指针
@@ -1878,6 +1949,64 @@ namespace LinkedListVisualization
                             {
                                 visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias, canvasTopBias, visualPointer.currentAngle);
                                 canvasTopBias += 60;
+                            }
+                        }
+                        // 随结点移动指向该结点的指针
+                        foreach (Arrow arrow in dstNode.arrowsPointingToMe)
+                        {
+                            completeTime = arrow.PointingAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+                        break;
+                    }
+
+                case "nMoveRelOut":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+
+                        double radius = double.Parse(decodeResult[3]);
+                        double moveAbsLeft = srcPtr.pointingNode.listElement.currentCanvasLeft + radius * Math.Sin(srcPtr.pointingNode.vpAngle * Math.PI / 180);
+                        double moveAbsTop = srcPtr.pointingNode.listElement.currentCanvasTop - radius * Math.Cos(srcPtr.pointingNode.vpAngle * Math.PI / 180);
+
+                        // 移动结点
+                        double deltaX = moveAbsLeft - dstPtr.pointingNode.listElement.currentCanvasLeft;
+                        double deltaY = moveAbsTop - dstPtr.pointingNode.listElement.currentCanvasTop;
+                        completeTime = dstPtr.pointingNode.listElement.Move(storyboard, prevCompleteTime, deltaX, deltaY);
+
+                        // 移动该结点的前驱后继指针
+                        Node dstNode = dstPtr.pointingNode;
+                        if (dstNode.nextPtr != null)
+                        {
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.nextPtr, dstNode.nextArrow, prevCompleteTime);
+                            //completeTime = dstNode.nextArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        if (dstNode.prevPtr != null)
+                        {
+                            completeTime = Node.SetArrowAnim(storyboard, dstNode, dstNode.prevPtr, dstNode.prevArrow, prevCompleteTime);
+                            //completeTime = dstNode.prevArrow.MoveBaseAnim(storyboard, prevCompleteTime, moveAbsLeft + 40, moveAbsTop + 40);
+                        }
+
+                        // 移动该结点相关的通用指针
+                        double canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40;
+                        double canvasTopBias = dstNode.listElement.currentCanvasTop + 40;
+                        radius = 80;
+                        List<VisualPointer> relatedPointers = dstNode.GetRelatedPointers(generalVisualPtrSet);
+                        foreach (VisualPointer visualPointer in relatedPointers)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                if (dstNode.vpAngle < 0.1 && dstNode.vpAngle > -0.1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(dstNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(dstNode.vpAngle / 180 * Math.PI) - 20, dstNode.vpAngle);
+                                }
+                                radius += 60;
                             }
                         }
                         // 随结点移动指向该结点的指针
@@ -1985,6 +2114,7 @@ namespace LinkedListVisualization
                         root = rootPointer.pointingNode;
                         if (root == null)
                         {
+                            completeTime = rootPointer.MoveToAnim(storyboard, prevCompleteTime, rootPointer.currentCanvasLeft, rootPointer.currentCanvasTop, 0);
                             break;
                         }
                         if (currentNewListType == 1)
@@ -2014,7 +2144,7 @@ namespace LinkedListVisualization
                                 canvasTopBias = 200 + 400;
 
                                 root.listElement.Move(storyboard, prevCompleteTime, -40 + canvasLeftBias - root.listElement.currentCanvasLeft, -40 + canvasTopBias - root.listElement.currentCanvasTop);
-
+                                Node.SetArrowAnim(storyboard, root, root, root.nextArrow, prevCompleteTime);
                                 completeTime = VisualPointer.MovePointersInNodeAnim(root, storyboard, generalVisualPtrSet, prevCompleteTime);
                                 break;
                             }
@@ -2214,11 +2344,23 @@ namespace LinkedListVisualization
                         break;
                     }
 
+                case "sBle":
+                    {
+                        scalarSet.TryGetValue(decodeResult[1], out int scalar);
+                        int opr2 = int.Parse(decodeResult[2]);
+                        if (scalar <= opr2)
+                        {
+                            programCounter += int.Parse(decodeResult[3]) - 1;
+                        }
+                        break;
+                    }
+
                 case "Jmp":
                     {
                         programCounter += int.Parse(decodeResult[1]) - 1;
                         break;
                     }
+
                 case "Halt":
                     {
                         programCounter = -2;

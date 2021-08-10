@@ -21,7 +21,7 @@ nSetValue dstPtr, value // 将dstPtr指向的结点值设置为value
 nDelete srcPtr    // 删除srcPtr指向的结点,务必保证所有指向srcPtr结点的前驱后继指针均已断开连接  
 nMoveAbs dstPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至绝对位置(CanvasLeft, CanvasTop)  
 nMoveRel dstPtr, srcPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至srcPtr相对位置(CanvasLeft, CanvasTop)  
-
+nMoveRelOut dstPtr, srcPtr, radius  // 将dstPtr指向的结点移动至srcPtr指向外的相对位置，二者中心距离为radius  
 ### 动画操作
 aLeft srcPtr, offset    // 将srcPtr指向的结点及其后继向左移动  
 aStd     // 将整个链表移动到标准位置  
@@ -35,6 +35,7 @@ sInc dstSca, value   // dstSca += value
 gBeq ptr1, ptr2, label  // 当ptr1与ptr2指向同一个结点时跳转到PC = PC + label  
 gBne ptr1, ptr2, label  // 当ptr1与ptr2指向不同结点时跳转到PC = PC + label  
 sBge scalar, value, label   // 当scalar值不小于value时跳转到PC = PC + label  
+sBle scalar, value, label   // 当scalar值不大于value时跳转到PC = PC + label  
 vBeq genPtr, value, label   // 当genPtr指向结点值等于value时跳转到PC = PC + label  
 Jmp label   // 无条件跳转至 PC + label  
 vBge ptr1, ptr2, label  // 当ptr1指向的结点值大于等于ptr2指向的结点值时跳转到PC = PC + label  
