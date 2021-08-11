@@ -1279,7 +1279,7 @@
                     Name="BackEndButton"
                     Style="{StaticResource BackEndButton}"
                     Margin="10 0"
-                    Click="Resume"/>
+                    Click="BackToStart"/>
 
                 <Button
                     Name="ForwardButton"

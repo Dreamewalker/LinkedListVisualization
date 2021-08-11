@@ -827,11 +827,15 @@ namespace LinkedListVisualization
                 {
                     ExecuteNextInstruction("gNew Rear, 1285, 960", storyboard, clearDoneTime + 0.2);
                     generalVisualPtrSet.TryGetValue("Rear", out rearPointer);
-                }                
+                }
+                root = null;
+                rearNode = null;
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
 
             storyboard.Begin();
+            scalarSet.Clear();
+            ListBackup();
             for (int i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
@@ -864,6 +868,7 @@ namespace LinkedListVisualization
             }
             else
             {
+                ListBackup();
                 return;
             }
 
@@ -908,7 +913,8 @@ namespace LinkedListVisualization
             
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
-
+            scalarSet.Clear();
+            ListBackup();
             for (int i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
@@ -949,6 +955,7 @@ namespace LinkedListVisualization
             }
             else
             {
+                ListBackup();
                 return;
             }
             Node currentPtr = root;
@@ -985,7 +992,8 @@ namespace LinkedListVisualization
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
-
+            scalarSet.Clear();
+            ListBackup();
             for (i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
@@ -1026,6 +1034,7 @@ namespace LinkedListVisualization
             }
             else
             {
+                ListBackup();
                 return;
             }
             Node currentPtr = root;
@@ -1061,7 +1070,8 @@ namespace LinkedListVisualization
             }
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
-
+            scalarSet.Clear();
+            ListBackup();
             for (i = 1; i < 5; ++i)
             {
                 toolBarButtons[i].MinWidth = 1;
@@ -1109,6 +1119,10 @@ namespace LinkedListVisualization
                 "return SUCCESS; "
         };
 
+        private string[] instructions = new string[]
+        {
+            "Exception NO_VALID_INSTRUCTION"
+        };
         private readonly Button[] insertPanelButtons = new Button[3];
         private void InsertPanelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1167,7 +1181,7 @@ namespace LinkedListVisualization
 
             codes = LoadFile("ADL\\Code\\Insert\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
-            string[] instructions = LoadFile("ADL\\Assemble\\Insert\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            instructions = LoadFile("ADL\\Assemble\\Insert\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
             scalarSet.Clear();
 
             // Embedded
@@ -1253,7 +1267,7 @@ namespace LinkedListVisualization
 
             codes = LoadFile("ADL\\Code\\Delete\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
-            string[] instructions = LoadFile("ADL\\Assemble\\Delete\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            instructions = LoadFile("ADL\\Assemble\\Delete\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
             scalarSet.Clear();
 
             // Embedded
@@ -1311,7 +1325,7 @@ namespace LinkedListVisualization
 
             codes = LoadFile("ADL\\Code\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
-            string[] instructions = LoadFile("ADL\\Assemble\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            instructions = LoadFile("ADL\\Assemble\\Update\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
             scalarSet.Clear();
 
             // Embedded
@@ -1349,7 +1363,7 @@ namespace LinkedListVisualization
 
             codes = LoadFile("ADL\\Code\\Query\\" + currentNewListType.ToString() + '\\' + targetFileName + ".cstyle");
 
-            string[] instructions = LoadFile("ADL\\Assemble\\Query\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
+            instructions = LoadFile("ADL\\Assemble\\Query\\" + currentNewListType.ToString() + '\\' + targetFileName + ".asm");
             scalarSet.Clear();
 
             // Embedded
@@ -1396,11 +1410,16 @@ namespace LinkedListVisualization
             generalVisualPtrSet.Clear();
             if (backupList.Count == 0)
             {
-                rootPointer = new VisualPointer("Root", null);
-                rearPointer = new VisualPointer("Rear", null);
-                root = null;
-                generalVisualPtrSet.Add("Root", rootPointer);
-                generalVisualPtrSet.Add("Rear", rearPointer);
+                generalVisualPtrSet.Clear();
+                Storyboard storyboard1 = new Storyboard();
+                ExecuteNextInstruction("gNew Root, 1285, 900", storyboard1, 0);
+                generalVisualPtrSet.TryGetValue("Root", out rootPointer);
+                if (currentTailSelect == 0)
+                {
+                    ExecuteNextInstruction("gNew Rear, 1285, 960", storyboard1, 0);
+                    generalVisualPtrSet.TryGetValue("Rear", out rearPointer);
+                }
+                storyboard1.Begin();
                 return;
             }
             bool isBidirection = currentNewListType == 2;
@@ -1444,6 +1463,7 @@ namespace LinkedListVisualization
         private void PrepareStoryboards(string[] codes, string[] instructions)
         {
             storyboardList.Clear();
+            scalarSet.Clear();
             programCounter = 0;
             storyboardListIdx = 0;
             inException = false;
@@ -2531,9 +2551,15 @@ namespace LinkedListVisualization
                     storyboardList[storyboardListIdx].Begin();
                 }
             }
-            else
+            else if (storyboardStatus == 1)
             {
                 storyboardStatus = 0;
+            }
+            else
+            {
+                storyboardStatus = 1;
+                PrepareStoryboards(codes, instructions);
+                storyboardList[0].Begin();
             }
         }
 
@@ -2551,15 +2577,21 @@ namespace LinkedListVisualization
                     storyboardList[storyboardListIdx].Begin();
                 }
             }
+            else if (storyboardStatus == -1)
+            {
+                storyboardStatus = 0;
+                PrepareStoryboards(codes, instructions);
+                storyboardList[0].Begin();
+            }
         }
 
-        private void Resume(object sender, RoutedEventArgs e)
+        private void BackToStart(object sender, RoutedEventArgs e)
         {
             if (storyboardStatus == 1 && storyboardListIdx < storyboardList.Count)
             {
                 storyboardList[storyboardListIdx].Stop();
             }
-            storyboardStatus = 0;
+            storyboardStatus = -1;
             
             Storyboard storyboard = new Storyboard();
             foreach (UIElement element in GeneralCanvas.Children)
@@ -2599,6 +2631,9 @@ namespace LinkedListVisualization
                 GeneralCanvas.Children.Add(NoticeLabel);
 
                 ResumeFromBackup();
+                storyboardListIdx = -1;
+                ForwardButton.MinWidth = 1;
+                ForwardEndButton.MinWidth = 1;
             };
 
             storyboard.Begin();
