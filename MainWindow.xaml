@@ -41,7 +41,7 @@
             Name="MotherCanvas"
             ClipToBounds="True"
             Margin="10"
-            Background="LightBlue">
+            Background="#EEEEEE">
             <Viewbox
                 Name="ViewboxGeneralCanvas"
                 Stretch="None"
@@ -137,16 +137,17 @@
                         <Canvas>
                             <Grid
                                 Canvas.Left="0"
+                                Canvas.Top="30"
                                 Name="CodeAreaMask"
                                 Height="28"
-                                Width="72">
+                                Width="128">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="10"/>
                                 </Grid.ColumnDefinitions>
                                 <Path
-                                    Fill="Cyan"
+                                    Fill="#00F7D6"
                                     Grid.Column="0">
                                     <Path.Data>
                                         <PathGeometry
@@ -159,11 +160,11 @@
                                 </Path>
                                 <Border
                                     Grid.Column="1"
-                                    Background="Cyan">
+                                    Background="#00F7D6">
                                     
                                 </Border>
                                 <Path
-                                    Fill="Cyan"
+                                    Fill="#00F7D6"
                                     Grid.Column="2">
                                     <Path.Data>
                                         <PathGeometry 
@@ -183,24 +184,21 @@
                             Grid.Column="0"
                             LineHeight="36"
                             Margin="10 0 10 0">
-                            Test
+                            // Code Area
                             <LineBreak/>
-                            Test
+                            // Code Area
                             <LineBreak/>
-                            Test
+                            // Code Area
                             <LineBreak/>
+                            // Code Area
                             <LineBreak/>
-                            Test
+                            // Code Area
                             <LineBreak/>
+                            // Code Area
                             <LineBreak/>
-                            TestTeseeteetet
+                            // Code Area
                             <LineBreak/>
-                            <LineBreak/>
-                            Test
-                            <LineBreak/>
-                            Test
-                            <LineBreak/>
-                            Test
+                            // Code Area
                         </TextBlock>
                     </Grid>
                     
@@ -644,7 +642,7 @@
                                 Grid.Column="4"
                                 Style="{StaticResource CtrlAreaButton}"
                                 VerticalAlignment="Center"
-                                Content="查找"
+                                Content="其它"
                                 FontSize="32"
                                 MinWidth="0"
                                 Click="ToolBarButton_Click">
@@ -1210,7 +1208,8 @@
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="加载ADL"
                                         FontSize="26"
-                                        MinWidth="1"/>
+                                        MinWidth="1"
+                                        Click="LoadADLButton_Click"/>
                                 </Grid>
                                 
 
@@ -1271,9 +1270,11 @@
             <StackPanel
                 Orientation="Horizontal">
                 <Button
-                Name="BackButton"
-                Style="{StaticResource BackButton}"
-                Margin="10 0"/>
+                    Name="BackButton"
+                    Style="{StaticResource BackButton}"
+                    Margin="10 0"
+                    ToolTip="将画布移动缩放至默认"
+                    Click="BackButton_Click"/>
                 
                 <Button
                     Name="BackEndButton"

@@ -1,0 +1,10 @@
+currentPtr = root->next;
+int idx = 0;
+while (currentPtr != root && currentPtr->value != {0:D}) {{
+    currentPtr = currentPtr->next;
+    ++idx;
+}}
+if (currentPtr == root) {{
+    return NOT_FOUND;
+}}
+return idx;

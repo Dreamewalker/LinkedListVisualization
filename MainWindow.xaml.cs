@@ -260,6 +260,12 @@ namespace LinkedListVisualization
             double currentTop = Canvas.GetTop(ViewboxGeneralCanvas);
             double currentBotton = this.Height - 40 - currentScaleRate * GeneralCanvas.Height - currentTop;
 
+            double newCanvasLeft = currentLeft + e.HorizontalChange - prevHoriChange;
+            Canvas.SetLeft(ViewboxGeneralCanvas, newCanvasLeft);
+
+            double newCanvasTop = currentTop + e.VerticalChange - prevVerChange;
+            Canvas.SetTop(ViewboxGeneralCanvas, newCanvasTop);
+            /*
             if (e.HorizontalChange > prevHoriChange)
             {
                 // 向右移动
@@ -298,6 +304,7 @@ namespace LinkedListVisualization
                     Canvas.SetTop(ViewboxGeneralCanvas, newCanvasTop);
                 }
             }
+            */
             prevHoriChange = e.HorizontalChange;
             prevVerChange = e.VerticalChange;
         }
@@ -789,6 +796,10 @@ namespace LinkedListVisualization
 
         private void CreateEmptyButton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             // GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
 
@@ -831,6 +842,7 @@ namespace LinkedListVisualization
                 root = null;
                 rearNode = null;
             }
+            HideNoticeLabelAnim(storyboard, 0);
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
 
             storyboard.Begin();
@@ -844,6 +856,10 @@ namespace LinkedListVisualization
 
         private void CreateRandomButton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             //GeneralCanvas.Children.Clear();
             Storyboard storyboard = new Storyboard();
 
@@ -869,6 +885,8 @@ namespace LinkedListVisualization
             else
             {
                 ListBackup();
+                HideNoticeLabelAnim(storyboard, 0);
+                storyboard.Begin();
                 return;
             }
 
@@ -910,7 +928,7 @@ namespace LinkedListVisualization
             {
                 root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
-            
+            HideNoticeLabelAnim(storyboard, 0);
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
             scalarSet.Clear();
@@ -923,6 +941,10 @@ namespace LinkedListVisualization
 
         private void CreateIncreaseButton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
@@ -956,6 +978,8 @@ namespace LinkedListVisualization
             else
             {
                 ListBackup();
+                HideNoticeLabelAnim(storyboard, 0);
+                storyboard.Begin();
                 return;
             }
             Node currentPtr = root;
@@ -990,6 +1014,7 @@ namespace LinkedListVisualization
             {
                 root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
+            HideNoticeLabelAnim(storyboard, 0);
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
             scalarSet.Clear();
@@ -1002,6 +1027,10 @@ namespace LinkedListVisualization
 
         private void CreateDecreaseBuuton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             Storyboard storyboard = new Storyboard();
 
             // clear widgets on canvas
@@ -1035,6 +1064,8 @@ namespace LinkedListVisualization
             else
             {
                 ListBackup();
+                HideNoticeLabelAnim(storyboard, 0);
+                storyboard.Begin();
                 return;
             }
             Node currentPtr = root;
@@ -1068,6 +1099,7 @@ namespace LinkedListVisualization
             {
                 root.InitialDrawLinear(GeneralCanvas, storyboard, currentNewListType == 2, clearDoneTime + 0.2, generalVisualPtrSet);
             }
+            HideNoticeLabelAnim(storyboard, 0);
             storyboard.Completed += new EventHandler(RemoveWidgetsOnCanvas);
             storyboard.Begin();
             scalarSet.Clear();
@@ -1407,6 +1439,10 @@ namespace LinkedListVisualization
 
         private void ResumeFromBackup()
         {
+            if (GeneralCanvas.Children.Count <= 1)
+            {
+                return;
+            }
             generalVisualPtrSet.Clear();
             if (backupList.Count == 0)
             {
@@ -1504,8 +1540,8 @@ namespace LinkedListVisualization
             }
             else if (storyboardListIdx == storyboardList.Count - 1)
             {
-                ForwardButton.MinWidth = 0;
-                ForwardEndButton.MinWidth = 0;
+                ForwardButton.MinWidth = 0.4;
+                ForwardEndButton.MinWidth = 0.4;
                 if (!inException)
                 {
                     EnableDisableAllPanelButtons(1);
@@ -2558,8 +2594,34 @@ namespace LinkedListVisualization
             else
             {
                 storyboardStatus = 1;
-                PrepareStoryboards(codes, instructions);
-                storyboardList[0].Begin();
+                if (codes.Length > 0)
+                {
+                    // Normal status
+                    PrepareStoryboards(codes, instructions);
+                    storyboardList[0].Begin();
+                }
+                else
+                {
+                    // Running ADL
+                    storyboardList.Clear();
+                    programCounter = 0;
+                    storyboardListIdx = 0;
+                    ForwardButton.MinWidth = 1;
+                    ForwardEndButton.MinWidth = 1;
+                    while (programCounter >= 0)
+                    {
+                        Storyboard storyboard1 = new Storyboard();
+                        double completeTime = LineMaskMove(storyboard1, 0, instructions, programCounter);
+                        ExecuteNextInstruction(instructions[programCounter], storyboard1, completeTime);
+                        storyboard1.Completed += new EventHandler(BeginNextStoryboard);
+                        storyboardList.Add(storyboard1);
+                        ++programCounter;
+                    }
+                    if (storyboardList.Count > 0)
+                    {
+                        storyboardList[0].Begin();
+                    }
+                }
             }
         }
 
@@ -2580,8 +2642,34 @@ namespace LinkedListVisualization
             else if (storyboardStatus == -1)
             {
                 storyboardStatus = 0;
-                PrepareStoryboards(codes, instructions);
-                storyboardList[0].Begin();
+                if (codes.Length > 0)
+                {
+                    // Normal status
+                    PrepareStoryboards(codes, instructions);
+                    storyboardList[0].Begin();
+                }
+                else
+                {
+                    // Running ADL
+                    storyboardList.Clear();
+                    programCounter = 0;
+                    storyboardListIdx = 0;
+                    ForwardButton.MinWidth = 1;
+                    ForwardEndButton.MinWidth = 1;
+                    while (programCounter >= 0)
+                    {
+                        Storyboard storyboard1 = new Storyboard();
+                        double completeTime = LineMaskMove(storyboard1, 0, instructions, programCounter);
+                        ExecuteNextInstruction(instructions[programCounter], storyboard1, completeTime);
+                        storyboard1.Completed += new EventHandler(BeginNextStoryboard);
+                        storyboardList.Add(storyboard1);
+                        ++programCounter;
+                    }
+                    if (storyboardList.Count > 0)
+                    {
+                        storyboardList[0].Begin();
+                    }
+                }
             }
         }
 
@@ -2637,6 +2725,105 @@ namespace LinkedListVisualization
             };
 
             storyboard.Begin();
+        }
+
+        private void LoadADLButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
+
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            bool? selectResult = dialog.ShowDialog();
+            if (selectResult == true)
+            {
+                // 用户已选择文件
+                instructions = LoadFile(dialog.FileName);
+                codes = new string[0];
+
+                scalarSet.Clear();
+                storyboardList.Clear();
+                EnableDisableAllPanelButtons(0);
+                ForwardButton.MinWidth = 1;
+                ForwardEndButton.MinWidth = 1;
+                SetCodeAreaText(instructions);
+                programCounter = 0;
+                storyboardStatus = 1;
+                storyboardListIdx = 0;
+                Storyboard storyboard = new Storyboard();
+                HideNoticeLabelAnim(storyboard, 0);
+                storyboard.Begin();
+
+                ListBackup();
+
+                while (programCounter >= 0)
+                {
+                    Storyboard storyboard1 = new Storyboard();
+                    double completeTime = LineMaskMove(storyboard1, 0, instructions, programCounter);
+                    ExecuteNextInstruction(instructions[programCounter], storyboard1, completeTime);
+                    storyboard1.Completed += new EventHandler(BeginNextStoryboard);
+                    storyboardList.Add(storyboard1);
+                    ++programCounter;
+                }
+                if (storyboardList.Count > 0)
+                {
+                    storyboardList[0].Begin();
+                }
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentScaleRate = 1;
+            prevHoriChange = 0;
+            prevVerChange = 0;
+            Canvas.SetLeft(ViewboxGeneralCanvas, -685);
+            Canvas.SetTop(ViewboxGeneralCanvas, -400);
+            GeneralCanvasScaleTransform.ScaleX = 1;
+            GeneralCanvasScaleTransform.ScaleY = 1;
+
+            /*
+            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+            {
+                EasingMode = EasingMode.EaseOut
+            };
+
+            Storyboard storyboard = new Storyboard();
+            double durationTime = Math.Sqrt(Math.Pow(Canvas.GetLeft(ViewboxGeneralCanvas) + 685, 2) + Math.Pow(Canvas.GetTop(ViewboxGeneralCanvas) + 400, 2)) / 1000;
+            DoubleAnimation leftAnim = new DoubleAnimation(-685, new Duration(TimeSpan.FromSeconds(durationTime)));
+            leftAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(leftAnim, ViewboxGeneralCanvas);
+            Storyboard.SetTargetProperty(leftAnim, new PropertyPath("(Canvas.Left)"));
+            storyboard.Children.Add(leftAnim);
+
+            DoubleAnimation topAnim = new DoubleAnimation(-400, new Duration(TimeSpan.FromSeconds(durationTime)));
+            topAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(topAnim, ViewboxGeneralCanvas);
+            Storyboard.SetTargetProperty(topAnim, new PropertyPath("(Canvas.Top)"));
+            storyboard.Children.Add(topAnim);
+
+            DoubleAnimation scaleXAnim = new DoubleAnimation(1, new Duration(TimeSpan.FromSeconds(durationTime)));
+            scaleXAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(scaleXAnim, ViewboxGeneralCanvas);
+            Storyboard.SetTargetProperty(scaleXAnim, new PropertyPath("RenderTransform.ScaleX"));
+            storyboard.Children.Add(scaleXAnim);
+
+            DoubleAnimation scaleYAnim = new DoubleAnimation(1, new Duration(TimeSpan.FromSeconds(durationTime)));
+            scaleYAnim.EasingFunction = nonLinearEasingFunction;
+            Storyboard.SetTarget(scaleYAnim, ViewboxGeneralCanvas);
+            Storyboard.SetTargetProperty(scaleYAnim, new PropertyPath("RenderTransform.ScaleY"));
+            storyboard.Children.Add(scaleYAnim);
+
+            storyboard.Completed += (sArg, eArg) =>
+            {
+                Canvas.SetLeft(ViewboxGeneralCanvas, -685);
+                Canvas.SetTop(ViewboxGeneralCanvas, -400);
+                GeneralCanvasScaleTransform.ScaleX = 1;
+                GeneralCanvasScaleTransform.ScaleY = 1;
+            };
+            storyboard.Begin();
+            */
         }
     }
 }

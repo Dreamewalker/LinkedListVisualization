@@ -1,0 +1,43 @@
+if (root == null) {{
+    return SUCCESS;
+}}
+rearPtr = root;
+while (rearPtr->next != root) {{
+    rearPtr = rearPtr->next;
+}}
+headNode = new Node(-1);
+headNode->next = root;
+rearPtr->next = headNode;
+root = headNode;
+basePtr = root->next;
+basePrev = root;
+while (basePtr != root) {{
+    // find min between [basePtr, rear]
+    minPtr = basePtr;
+    minPrev = basePrev;
+    currentPtr = basePtr->next;
+    currentPrev = basePtr;
+    while (currentPtr != root) {{
+        if (minPtr->value > currentPtr->value) {{
+            minPrev = currentPrev;
+            minPtr = currentPtr;
+        }}
+        currentPrev = currentPtr;
+        currentPtr = currentPtr->next;
+    }}
+    //insert min node after root
+    if (minPtr == basePtr) {{
+        basePtr = basePtr->next;
+    }}
+    if (basePrev == root) {{
+        basePrev = minPtr;
+        rearPtr = minPtr
+    }}
+    minPrev->next = minPtr->next;
+    minPtr->next = root->next;
+    root->next = minPtr;
+}}
+rearPtr->next = headNode->next;
+root = headNode->next;
+delete headNode;
+return SUCCESS;
