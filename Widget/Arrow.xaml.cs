@@ -209,7 +209,7 @@ namespace LinkedListVisualization.Widget
             Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Children[0].Angle"));
             storyboard.Children.Add(doubleAnimation);
 
-            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(1 - opacityTarget, opacityTarget, new Duration(TimeSpan.FromMilliseconds(500)));
+            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(opacityTarget, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimationOpcacity.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             doubleAnimationOpcacity.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(doubleAnimationOpcacity, viewbox);
@@ -221,7 +221,7 @@ namespace LinkedListVisualization.Widget
 
         private double ShowAmin(Storyboard storyboard, double prevCompleteTime)
         {
-            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
+            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimationOpcacity.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
@@ -246,7 +246,7 @@ namespace LinkedListVisualization.Widget
 
         private double EndRot(Storyboard storyboard, double prevCompleteTime)
         {
-            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)));
+            DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimationOpcacity.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;

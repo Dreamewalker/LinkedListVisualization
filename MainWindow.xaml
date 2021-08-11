@@ -1205,6 +1205,7 @@
                                         Click="QueryConfirm_Click"/>
                                     
                                     <Button
+                                        Name="LoadADLButton"
                                         Grid.Column="1"
                                         Style="{StaticResource CtrlAreaButton}"
                                         Content="加载ADL"
@@ -1275,19 +1276,24 @@
                 Margin="10 0"/>
                 
                 <Button
-                Name="BackEndButton"
-                Style="{StaticResource BackEndButton}"
-                Margin="10 0"/>
+                    Name="BackEndButton"
+                    Style="{StaticResource BackEndButton}"
+                    Margin="10 0"
+                    Click="Resume"/>
 
                 <Button
-                Name="ForwardButton"
-                Style="{StaticResource ForwardButton}"
-                Margin="10 0"/>
+                    Name="ForwardButton"
+                    Style="{StaticResource ForwardButton}"
+                    Margin="10 0"
+                    MinWidth="1"
+                    Click="ForwardButton_Click"/>
 
                 <Button
-                Name="ForwardEndButton"
-                Style="{StaticResource ForwardEndButton}"
-                Margin="10 0"/>
+                    Name="ForwardEndButton"
+                    Style="{StaticResource ForwardEndButton}"
+                    Margin="10 0"
+                    MinWidth="1"
+                    Click="ForwardEndButton_Click"/>
 
             </StackPanel>
         </DockPanel>

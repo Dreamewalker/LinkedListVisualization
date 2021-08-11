@@ -626,6 +626,7 @@ namespace LinkedListVisualization
 
         private void BackNewButton_Click(object sender, RoutedEventArgs e)
         {
+            storyboardStatus = 0;
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
@@ -1144,6 +1145,10 @@ namespace LinkedListVisualization
 
         private void InsertConfirmButton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             string targetFileName = Prefix();
             targetFileName += "_insert_";
 
@@ -1180,15 +1185,12 @@ namespace LinkedListVisualization
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
             HideNoticeLabelAnim(storyboard, 0);
-            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
-
-            while (programCounter >= 0)
-            {
-                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
-                ++programCounter;
-            }
-
             storyboard.Begin();
+
+            ListBackup();
+            PrepareStoryboards(codes, instructions);
+            storyboardStatus = 1;
+            storyboardList[0].Begin();
         }
 
         // Delete Panel
@@ -1229,6 +1231,10 @@ namespace LinkedListVisualization
 
         private void DeleteConfirmButton_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             string targetFileName = Prefix();
             targetFileName += "_delete_";
 
@@ -1265,21 +1271,22 @@ namespace LinkedListVisualization
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
             HideNoticeLabelAnim(storyboard, 0);
-            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
-
-            while (programCounter >= 0)
-            {
-                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
-                ++programCounter;
-            }
-
             storyboard.Begin();
+
+            ListBackup();
+            PrepareStoryboards(codes, instructions);
+            storyboardStatus = 1;
+            storyboardList[0].Begin();
         }
 
 
         // Update Panel
         private void UpdateValue_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             string targetFileName = Prefix();
             switch (((Button)sender).Name)
             {
@@ -1322,20 +1329,21 @@ namespace LinkedListVisualization
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
             HideNoticeLabelAnim(storyboard, 0);
-            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
-
-            while (programCounter >= 0)
-            {
-                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
-                ++programCounter;
-            }
-
             storyboard.Begin();
+
+            ListBackup();
+            PrepareStoryboards(codes, instructions);
+            storyboardStatus = 1;
+            storyboardList[0].Begin();
         }
 
         // Query Panel
         private void QueryConfirm_Click(object sender, RoutedEventArgs e)
         {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
             string targetFileName = Prefix();
             targetFileName += "_query";
 
@@ -1359,15 +1367,12 @@ namespace LinkedListVisualization
             programCounter = 0;
             Storyboard storyboard = new Storyboard();
             HideNoticeLabelAnim(storyboard, 0);
-            double completeTime = LineMaskMove(storyboard, 0, codes, 0);
-
-            while (programCounter >= 0)
-            {
-                completeTime = ExecuteNextInstruction(instructions[programCounter], storyboard, completeTime);
-                ++programCounter;
-            }
-
             storyboard.Begin();
+
+            ListBackup();
+            PrepareStoryboards(codes, instructions);
+            storyboardStatus = 1;
+            storyboardList[0].Begin();
         }
 
         private List<int> backupList = null;
@@ -1375,25 +1380,118 @@ namespace LinkedListVisualization
         {
             backupList = new List<int>();
             Node currentNode = root;
-            if (currentHeadSelect == 0)
+            while (currentNode != null)
             {
-                // 跳过头结点
-                currentNode = root.nextPtr;
-            }
-            if (currentHeadSelect == 1 & currentNewListType == 1 && currentNode != null)
-            {
-                // 无头结点的非空循环链表
-                backupList.Add(currentNode.value);
-                currentNode = currentNode.nextPtr;
-            }
-            while (currentNode != null && currentNode != root)
-            {
+                if (currentNode == root && backupList.Count > 0)
+                {
+                    break;
+                }
                 backupList.Add(currentNode.value);
                 currentNode = currentNode.nextPtr;
             }
         }
 
+        private void ResumeFromBackup()
+        {
+            generalVisualPtrSet.Clear();
+            if (backupList.Count == 0)
+            {
+                rootPointer = new VisualPointer("Root", null);
+                rearPointer = new VisualPointer("Rear", null);
+                root = null;
+                generalVisualPtrSet.Add("Root", rootPointer);
+                generalVisualPtrSet.Add("Rear", rearPointer);
+                return;
+            }
+            bool isBidirection = currentNewListType == 2;
+            root = new Node(backupList[0], 155, 155, 155, null);
+            rootPointer = new VisualPointer("Root", root);
 
+            Node currentPtr = root;
+            for (int i = 1; i < backupList.Count; ++i)
+            {
+                currentPtr.CreateNextNode(backupList[i], isBidirection);
+                currentPtr = currentPtr.nextPtr;
+            }
+            rearPointer = new VisualPointer("Rear", currentPtr);
+            generalVisualPtrSet.Add("Root", rootPointer);
+            if (currentTailSelect == 0)
+            {
+                generalVisualPtrSet.Add("Rear", rearPointer);
+            }
+
+            Storyboard storyboard = new Storyboard();
+            if (currentNewListType == 1)
+            {
+                currentPtr.nextPtr = root;
+                currentPtr.nextArrow = new Arrow();
+                root.arrowsPointingToMe.Add(currentPtr.nextArrow);
+                root.InitialDrawRecycle(GeneralCanvas, storyboard, backupList.Count, 0, generalVisualPtrSet);
+            }
+            else
+            {
+                root.InitialDrawLinear(GeneralCanvas, storyboard, isBidirection, 0, generalVisualPtrSet);
+            }
+            storyboard.Begin();
+
+            EnableDisableAllPanelButtons(1);
+        }
+
+        private int storyboardStatus = 0;
+        private List<Storyboard> storyboardList = new List<Storyboard>();
+        private int storyboardListIdx = 0;
+        private bool inException = false;
+        private void PrepareStoryboards(string[] codes, string[] instructions)
+        {
+            storyboardList.Clear();
+            programCounter = 0;
+            storyboardListIdx = 0;
+            inException = false;
+            ForwardButton.MinWidth = 1;
+            ForwardEndButton.MinWidth = 1;
+            Storyboard newStoryboard = null;
+            double completeTime = 0;
+
+            while (programCounter >= 0)
+            {
+                if (Decode(instructions[programCounter])[0] == "aLine")
+                {
+                    if (newStoryboard != null)
+                    {
+                        newStoryboard.Completed += new EventHandler(BeginNextStoryboard);
+                        storyboardList.Add(newStoryboard);
+                    }
+                    newStoryboard = new Storyboard();
+                    completeTime = 0;
+                }
+                completeTime = ExecuteNextInstruction(instructions[programCounter], newStoryboard, completeTime);
+                ++programCounter;
+            }
+            if (newStoryboard != null)
+            {
+                newStoryboard.Completed += new EventHandler(BeginNextStoryboard);
+                storyboardList.Add(newStoryboard);
+            }
+            EnableDisableAllPanelButtons(0);
+        }
+
+        private void BeginNextStoryboard(object sender, EventArgs e)
+        {
+            if (storyboardStatus == 1 && storyboardListIdx < storyboardList.Count - 1)
+            {
+                ++storyboardListIdx;
+                storyboardList[storyboardListIdx].Begin();
+            }
+            else if (storyboardListIdx == storyboardList.Count - 1)
+            {
+                ForwardButton.MinWidth = 0;
+                ForwardEndButton.MinWidth = 0;
+                if (!inException)
+                {
+                    EnableDisableAllPanelButtons(1);
+                }
+            }
+        }
 
 
         private string[] LoadFile(string filePath)
@@ -1550,6 +1648,30 @@ namespace LinkedListVisualization
             storyboard.Children.Add(opacityAnim);
 
             return prevCompleteTime + 0.4;
+        }
+
+        private void EnableDisableAllPanelButtons(double targetEnable)
+        {
+            // New panel
+            CreateEmptyButton.MinWidth = targetEnable;
+            CreateRandomButton.MinWidth = targetEnable;
+            CreateIncreaseButton.MinWidth = targetEnable;
+            CreateDecreaseBuuton.MinWidth = targetEnable;
+
+            // Insert panel
+            InsertConfirmButton.MinWidth = targetEnable;
+
+            // Delete panel
+            DeleteConfirmButton.MinWidth = targetEnable;
+
+            // Update panel
+            UpdateIncSort.MinWidth = targetEnable;
+            UpdateValue.MinWidth = targetEnable;
+            UpdateDecSort.MinWidth = targetEnable;
+
+            // Query panel
+            QueryConfirm.MinWidth = targetEnable;
+            LoadADLButton.MinWidth = targetEnable;
         }
 
 
@@ -2372,6 +2494,7 @@ namespace LinkedListVisualization
                         string result = "Exception : " + decodeResult[1].Replace("_", "__");
                         completeTime = SetNoticeLabelAnim(storyboard, prevCompleteTime, result);
                         programCounter = -3;
+                        inException = true;
                         break;
                     }
 
@@ -2393,5 +2516,92 @@ namespace LinkedListVisualization
             return completeTime;
         }
 
+        private void ForwardEndButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
+            if (storyboardStatus == 0)
+            {
+                if (storyboardListIdx < storyboardList.Count - 1)
+                {
+                    storyboardStatus = 1;
+                    ++storyboardListIdx;
+                    storyboardList[storyboardListIdx].Begin();
+                }
+            }
+            else
+            {
+                storyboardStatus = 0;
+            }
+        }
+
+        private void ForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Button)sender).MinWidth < 0.5)
+            {
+                return;
+            }
+            if (storyboardStatus == 0)
+            {
+                if (storyboardListIdx < storyboardList.Count - 1)
+                {
+                    ++storyboardListIdx;
+                    storyboardList[storyboardListIdx].Begin();
+                }
+            }
+        }
+
+        private void Resume(object sender, RoutedEventArgs e)
+        {
+            if (storyboardStatus == 1 && storyboardListIdx < storyboardList.Count)
+            {
+                storyboardList[storyboardListIdx].Stop();
+            }
+            storyboardStatus = 0;
+            
+            Storyboard storyboard = new Storyboard();
+            foreach (UIElement element in GeneralCanvas.Children)
+            {
+                if (element.Opacity > 0.1)
+                {
+                    Type type = element.GetType();
+                    string typeStr = type.Name;
+
+                    switch (typeStr)
+                    {
+                        case "Arrow":
+                            {
+                                ((Arrow)element).Close(storyboard, 0);
+                                break;
+                            }
+
+                        case "ListElement":
+                            {
+                                ((ListElement)element).Close(storyboard, 0);
+                                break;
+                            }
+
+                        case "VisualPointer":
+                            {
+                                ((VisualPointer)element).Close(storyboard, 0);
+                                break;
+                            }
+                    }
+                }
+            }
+
+            storyboard.Completed += (sArg, eArg) =>
+            {
+                GeneralCanvas.Children.Clear();
+                NoticeLabel.Opacity = 0;
+                GeneralCanvas.Children.Add(NoticeLabel);
+
+                ResumeFromBackup();
+            };
+
+            storyboard.Begin();
+        }
     }
 }

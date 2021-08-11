@@ -68,11 +68,11 @@ namespace LinkedListVisualization.Widget
 
         public double Close(Storyboard storyboard, double prevCompleteTime)
         {
-            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(700)))
+            DoubleAnimation ringDoubleAnimation = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
-            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(700)))
+            DoubleAnimation contentDoubleAnimation = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(700)))
             {
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
