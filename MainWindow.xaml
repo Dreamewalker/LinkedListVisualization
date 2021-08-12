@@ -242,7 +242,7 @@
                     ClipToBounds="True">
                     <Grid
                         Name="NewPanel"
-                        Canvas.Left="-370"
+                        Canvas.Left="0"
                         Canvas.Top="0"
                         Height="215"
                         Width="370">
@@ -515,7 +515,7 @@
                     <Grid
                         Name="OprPanel"
                         Canvas.Top="0"
-                        Canvas.Left="0"
+                        Canvas.Left="370"
                         Width="370"
                         Height="215">
                         <Grid.RowDefinitions>

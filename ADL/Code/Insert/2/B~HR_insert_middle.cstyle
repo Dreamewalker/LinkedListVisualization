@@ -1,0 +1,21 @@
+currentPtr = root;
+for (int i = 0; i < {1}; ++i) {{
+    if (currentPtr == null) {{
+        return NOT_FOUND;
+    }}
+    currentPtr = currentPtr->next;
+}}
+if (currentPtr == null) {{
+    return NOT_FOUND;
+}}
+newNodePtr = new Node({0});
+newNodePtr->next = currentPtr->next;
+if (currentPtr->next == null) {{
+    rear = newNodePtr;
+}}
+else {{
+    currentPtr->next->prev = newNodePtr;
+}}
+currentPtr->next = newNodePtr;
+newNodePtr->prev = currentPtr;
+return SUCCESS;

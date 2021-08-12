@@ -21,7 +21,7 @@ namespace LinkedListVisualization
         public Arrow nextArrow = null;
         public double vpAngle = 0;
         // public Dictionary<string, VisualPointer> relatedPointers = new Dictionary<string, VisualPointer>();
-        public List<Arrow> arrowsPointingToMe = new List<Arrow>(); // 仅记录指向该结点的后继指针
+        public List<Arrow> arrowsPointingToMe = new List<Arrow>(); // 记录指向该结点的前驱后继指针
 
         public Node(int nodeValue, byte colorR, byte colorG, byte colorB, Node prevNode)
         {
@@ -32,6 +32,7 @@ namespace LinkedListVisualization
             {
                 prevPtr = prevNode;
                 prevArrow = new Arrow();
+                prevNode.arrowsPointingToMe.Add(prevArrow);
             }
         }
         public double InitialDrawLinear(Canvas canvas, Storyboard storyboard, bool isBidirection, double prevCompleteTime, Dictionary<string, VisualPointer> generalVisualPointers)
@@ -250,8 +251,7 @@ namespace LinkedListVisualization
             arrowToBeSet.ScaleTrans.ScaleX = scaleRate;
             arrowToBeSet.currentScaleX = scaleRate;
 
-            double tanValue = (srcY - dstY) / (srcX - dstX);
-            double rotAngle = Math.Atan2(dstY - srcY, dstX - srcX) / 2 / Math.PI * 360;
+            double rotAngle = Math.Atan2(dstY - srcY, dstX - srcX) * 180 / Math.PI;
 
             arrowToBeSet.Rotation.Angle = rotAngle;
             arrowToBeSet.currentAngle = rotAngle;

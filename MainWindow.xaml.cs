@@ -655,7 +655,35 @@ namespace LinkedListVisualization
 
             storyboard.Children.Add(oprPanelAnimation);
 
-            CloseWidgetsOnCanvas(storyboard, 0);
+            foreach (UIElement element in GeneralCanvas.Children)
+            {
+                if (element.Opacity > 0.1)
+                {
+                    Type type = element.GetType();
+                    string typeStr = type.Name;
+
+                    switch (typeStr)
+                    {
+                        case "Arrow":
+                            {
+                                ((Arrow)element).Close(storyboard, 0);
+                                break;
+                            }
+
+                        case "ListElement":
+                            {
+                                ((ListElement)element).Close(storyboard, 0);
+                                break;
+                            }
+
+                        case "VisualPointer":
+                            {
+                                ((VisualPointer)element).Close(storyboard, 0);
+                                break;
+                            }
+                    }
+                }
+            }
 
             storyboard.Completed += new EventHandler(ResetOprPanel);
             storyboard.Begin();
@@ -1439,10 +1467,6 @@ namespace LinkedListVisualization
 
         private void ResumeFromBackup()
         {
-            if (GeneralCanvas.Children.Count <= 1)
-            {
-                return;
-            }
             generalVisualPtrSet.Clear();
             if (backupList.Count == 0)
             {
@@ -1544,7 +1568,19 @@ namespace LinkedListVisualization
                 ForwardEndButton.MinWidth = 0.4;
                 if (!inException)
                 {
+                    DeleteGeneralPointers();
                     EnableDisableAllPanelButtons(1);
+                }
+            }
+        }
+
+        private void DeleteGeneralPointers()
+        {
+            foreach (string item in generalVisualPtrSet.Keys)
+            {
+                if (item != "Root" && item != "Rear")
+                {
+                    generalVisualPtrSet.Remove(item);
                 }
             }
         }
@@ -2010,6 +2046,89 @@ namespace LinkedListVisualization
                         break;
                     }
 
+                case "gMovePrev":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+
+                        Node dstNode = dstPtr.pointingNode;
+                        Node srcNode = srcPtr.pointingNode.prevPtr;
+                        dstPtr.pointingNode = srcPtr.pointingNode.prevPtr;
+                        if (dstPtr.Opacity < 0.1)
+                        {
+                            break;
+                        }
+
+                        if (srcNode == null)
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, true);
+                            completeTime = dstPtr.MoveToAnim(storyboard, prevCompleteTime, dstPtr.currentCanvasLeft, dstPtr.currentCanvasTop + 150, dstPtr.currentAngle);
+                            break;
+                        }
+                        else
+                        {
+                            completeTime = dstPtr.SetNullAnim(storyboard, prevCompleteTime, false);
+                        }
+                        List<VisualPointer> srcRelated = srcNode.GetRelatedPointers(generalVisualPtrSet);
+
+                        // srcNode part
+                        double canvasLeftBias = srcNode.listElement.currentCanvasLeft + 40;
+                        double canvasTopBias = srcNode.listElement.currentCanvasTop + 40;
+                        double radius = 80;
+
+                        foreach (VisualPointer visualPointer in srcRelated)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(srcNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(srcNode.vpAngle / 180 * Math.PI) - 20, srcNode.vpAngle);
+                                }
+                                radius += 60;
+                            }
+                        }
+
+                        // dstNode part
+                        if (dstNode == null)
+                        {
+                            break;
+                        }
+                        List<VisualPointer> dstRelated = dstNode.GetRelatedPointers(generalVisualPtrSet);
+                        if (dstNode == null)
+                        {
+                            break;
+                        }
+                        canvasLeftBias = dstNode.listElement.currentCanvasLeft + 40;
+                        canvasTopBias = dstNode.listElement.currentCanvasTop + 40;
+                        radius = 80;
+
+                        foreach (VisualPointer visualPointer in dstRelated)
+                        {
+                            if (visualPointer.Opacity > 0.1)
+                            {
+                                if (currentNewListType != 1)
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias - 50,
+                                                                        canvasTopBias + radius - 20, 0);
+                                }
+                                else
+                                {
+                                    completeTime = visualPointer.MoveToAnim(storyboard, prevCompleteTime, canvasLeftBias + radius * Math.Sin(dstNode.vpAngle / 180 * Math.PI) - 50,
+                                                                        canvasTopBias - radius * Math.Cos(dstNode.vpAngle / 180 * Math.PI) - 20, dstNode.vpAngle);
+                                }
+
+                                radius += 60;
+                            }
+                        }
+                        break;
+                    }
+
                 case "nNew":
                     {
                         Node newNode = new Node(int.Parse(decodeResult[2]), 155, 155, 155, null);
@@ -2273,6 +2392,55 @@ namespace LinkedListVisualization
                         break;
                     }
 
+                case "pSetPrev":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+                        generalVisualPtrSet.TryGetValue(decodeResult[2], out VisualPointer srcPtr);
+
+                        Node dstNode = dstPtr.pointingNode;
+                        // 移动或新建指向srcPtr指向结点的后继结点的箭头
+                        if (srcPtr.pointingNode != null)
+                        {
+                            if (dstNode.prevPtr == null)
+                            {
+                                dstNode.prevArrow = new Arrow();
+                                Canvas.SetLeft(dstNode.prevArrow, dstNode.listElement.currentCanvasLeft + 40);
+                                Canvas.SetTop(dstNode.prevArrow, dstNode.listElement.currentCanvasTop + 40 - 17.5);
+                                dstNode.prevArrow.currentCanvasLeft = dstNode.listElement.currentCanvasLeft + 40;
+                                dstNode.prevArrow.currentCanvasTop = dstNode.listElement.currentCanvasTop + 40 - 17.5;
+
+                                double targetAngle = Math.Atan2(srcPtr.pointingNode.listElement.currentCanvasTop - dstNode.listElement.currentCanvasTop, srcPtr.pointingNode.listElement.currentCanvasLeft - dstNode.listElement.currentCanvasLeft) / Math.PI * 180;
+                                dstNode.prevArrow.Rotation.Angle = targetAngle;
+                                dstNode.prevArrow.currentAngle = targetAngle;
+
+                                double targetScaleRate = Math.Sqrt(Math.Pow(dstNode.listElement.currentCanvasTop - srcPtr.pointingNode.listElement.currentCanvasTop, 2) + Math.Pow(dstNode.listElement.currentCanvasLeft - srcPtr.pointingNode.listElement.currentCanvasLeft, 2)) / 190;
+                                dstNode.prevArrow.ScaleTrans.ScaleX = targetScaleRate;
+                                dstNode.prevArrow.currentScaleX = targetScaleRate;
+
+                                GeneralCanvas.Children.Add(dstNode.prevArrow);
+                                completeTime = dstNode.prevArrow.Expand(storyboard, prevCompleteTime);
+                            }
+                            else
+                            {
+                                completeTime = dstNode.prevArrow.PointingAnim(storyboard, prevCompleteTime, srcPtr.pointingNode.listElement.currentCanvasLeft + 40, srcPtr.pointingNode.listElement.currentCanvasTop + 40);
+                                dstNode.prevPtr.arrowsPointingToMe.Remove(dstNode.prevArrow);
+                            }
+                            srcPtr.pointingNode.arrowsPointingToMe.Add(dstPtr.pointingNode.prevArrow);
+                        }
+                        else
+                        {
+                            // 将next指针指向null
+                            if (dstNode.prevArrow != null)
+                            {
+                                completeTime = dstNode.prevArrow.Close(storyboard, prevCompleteTime);
+                                dstNode.prevArrow = null;
+                            }
+                        }
+
+                        dstNode.prevPtr = srcPtr.pointingNode;
+                        break;
+                    }
+
                 case "pDeleteNext":
                     {
                         generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
@@ -2283,6 +2451,20 @@ namespace LinkedListVisualization
                             completeTime = dstPtr.pointingNode.nextArrow.Close(storyboard, prevCompleteTime);
                             dstPtr.pointingNode.nextPtr = null;
                             dstPtr.pointingNode.nextArrow = null;
+                        }
+                        break;
+                    }
+
+                case "pDeletePrev":
+                    {
+                        generalVisualPtrSet.TryGetValue(decodeResult[1], out VisualPointer dstPtr);
+
+                        if (dstPtr.pointingNode.prevPtr != null)
+                        {
+                            dstPtr.pointingNode.prevPtr.arrowsPointingToMe.Remove(dstPtr.pointingNode.prevArrow);
+                            completeTime = dstPtr.pointingNode.prevArrow.Close(storyboard, prevCompleteTime);
+                            dstPtr.pointingNode.prevPtr = null;
+                            dstPtr.pointingNode.prevArrow = null;
                         }
                         break;
                     }
@@ -2717,7 +2899,7 @@ namespace LinkedListVisualization
                 GeneralCanvas.Children.Clear();
                 NoticeLabel.Opacity = 0;
                 GeneralCanvas.Children.Add(NoticeLabel);
-
+                EnableDisableAllPanelButtons(1);
                 ResumeFromBackup();
                 storyboardListIdx = -1;
                 ForwardButton.MinWidth = 1;

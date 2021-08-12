@@ -1,0 +1,8 @@
+currentPtr = root;
+while (currentPtr->next != null) {{
+    currentPtr = currentPtr->next;
+}}
+newNodePtr = new Node({0:D});
+currentPtr->next = newNodePtr;
+newNodePtr->prev = currentPtr;
+return SUCCESS;

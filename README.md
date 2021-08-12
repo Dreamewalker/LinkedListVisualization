@@ -23,7 +23,6 @@ nMoveAbs dstPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至绝�
 nMoveRel dstPtr, srcPtr, CanvasLeft, CanvasTop  // 将dstPtr指向的结点移动至srcPtr相对位置(CanvasLeft, CanvasTop)  
 nMoveRelOut dstPtr, srcPtr, radius  // 将dstPtr指向的结点移动至srcPtr指向外的相对位置，二者中心距离为radius  
 ### 动画操作
-aLeft srcPtr, offset    // 将srcPtr指向的结点及其后继向左移动  
 aStd     // 将整个链表移动到标准位置  
 aLine value     // 将代码区的滑块移动到value行
 

@@ -1,0 +1,12 @@
+updatePtr = root;
+if (updatePtr == null) {{
+    return NOT_FOUND;
+}}
+for (int i = 0; i < {0:D}; ++i) {{
+    if (updatePtr->next == null) {{
+        return NOT_FOUND;
+    }}
+    updatePtr = updatePtr->next;
+}}
+updatePtr->value = {1:D};
+return SUCCESS;

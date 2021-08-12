@@ -1,0 +1,12 @@
+newNodePtr = new Node({0:D});
+if (root == null) {{
+    root = newNodePtr;
+    return SUCCESS;
+}}
+currentPtr = root;
+while (currentPtr->next != null) {{
+    currentPtr = currentPtr->next;
+}}
+currentPtr->next = newNodePtr;
+newNodePtr->prev = currentPtr;
+return SUCCESS;

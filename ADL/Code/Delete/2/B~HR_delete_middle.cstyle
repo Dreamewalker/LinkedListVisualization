@@ -1,0 +1,29 @@
+if ({0:D} == 0) {{
+    delPtr = root;
+    if (root == null) {{
+        return NOT_FOUND;
+    }}
+    root = root->next;
+    root->prev = null;
+    delete delPtr;
+    return SUCCESS;
+}}
+delPtr = root;
+for (int i = 0; i < {0:D}; ++i) {{
+    if (delPtr == null) {{
+        return NOT_FOUND;
+    }}
+    delPtr = delPtr->next;
+}}
+if (delPtr == null) {{
+    return NOT_FOUND;
+}}
+if (delPtr == rear) {{
+    rear = delPtr->prev;
+}}
+else {{
+    delPtr->next->prev = delPtr->prev;
+}}
+delPtr->prev->next = delPtr->next;
+delete delPtr;
+return SUCCESS;

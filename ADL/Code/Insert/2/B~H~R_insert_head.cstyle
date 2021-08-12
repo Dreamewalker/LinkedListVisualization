@@ -1,0 +1,7 @@
+newNodePtr = new Node({0});
+if (root != null) {{
+    root->prev = newNodePtr;
+}}
+newNodePtr->next = root;
+root = newNodePtr;
+return SUCCESS
