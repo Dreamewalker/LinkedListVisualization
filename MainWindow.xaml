@@ -274,6 +274,7 @@
                                     Name="CreateNewListButton"
                                     Foreground="DimGray"
                                     Style="{StaticResource CtrlArrowButton}"
+                                    Focusable="False"
                                     Click="CreateNewListButton_Click"
                             >
                                 </Button>
@@ -350,7 +351,7 @@
                             Content="单链表"
                             MinWidth="0"
                             FontSize="32"
-                            
+                            Focusable="False"
                             Click="NewSingleLinkButton_Click">
                             </Button>
                             <Button
@@ -362,6 +363,7 @@
                             Content="循环链表"
                             MinWidth="1"
                             FontSize="32"
+                            Focusable="False"
                             Click="NewRecycleLinkButton_Click">
                             </Button>
                             <Button
@@ -373,6 +375,7 @@
                             Content="双向链表"
                             MinWidth="1"
                             FontSize="32"
+                                Focusable="False"
                             Click="NewBidirectLinkButton_Click">
                             </Button>
 
@@ -426,6 +429,7 @@
                             VerticalAlignment="Center"
                             Content="ON"
                             MinWidth="0"
+                            Focusable="False"
                             FontSize="32"
                             Click="HeadOnButton_Click">
                             </Button>
@@ -437,6 +441,7 @@
                             VerticalAlignment="Center"
                             Content="OFF"
                             MinWidth="1"
+                                Focusable="False"
                             FontSize="32"
                             Click="HeadOffButton_Click">
                             </Button>
@@ -492,6 +497,7 @@
                             VerticalAlignment="Center"
                             Content="ON"
                             MinWidth="0"
+                                Focusable="False"
                             FontSize="32"
                             Click="TailOnButton_Click">
                             </Button>
@@ -504,6 +510,7 @@
                             VerticalAlignment="Center"
                             Content="OFF"
                             MinWidth="1"
+                                Focusable="False"
                             FontSize="32"
                             Click="TailOffButton_Click">
                             </Button>
@@ -537,6 +544,7 @@
                                 <Button
                                     Name="BackNewButton"
                                     Style="{StaticResource CtrlArrowButton}"
+                                    Focusable="False"
                                     Click="BackNewButton_Click">
                                 </Button>
                             </Viewbox>
@@ -601,6 +609,7 @@
                                 Content="新建"
                                 FontSize="32"
                                 MinWidth="0"
+                                Focusable="False"
                                 Click="ToolBarButton_Click">
                             </Button>
                             
@@ -612,6 +621,7 @@
                                 Content="插入"
                                 FontSize="32"
                                 MinWidth="0"
+                                Focusable="False"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -623,6 +633,7 @@
                                 Content="删除"
                                 FontSize="32"
                                 MinWidth="0"
+                                Focusable="False"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -634,6 +645,7 @@
                                 Content="修改"
                                 FontSize="32"
                                 MinWidth="0"
+                                Focusable="False"
                                 Click="ToolBarButton_Click">
                             </Button>
 
@@ -645,6 +657,7 @@
                                 Content="其它"
                                 FontSize="32"
                                 MinWidth="0"
+                                Focusable="False"
                                 Click="ToolBarButton_Click">
                             </Button>
                         </Grid>
@@ -704,6 +717,7 @@
                                     Content="新建空链表"
                                     FontSize="24"
                                     Margin="0"
+                                    Focusable="False"
                                     Click="CreateEmptyButton_Click">
 
                                 </Button>
@@ -717,6 +731,7 @@
                                     Content="新建随机链表"
                                     FontSize="24"
                                     Margin="0"
+                                    Focusable="False"
                                     Click="CreateRandomButton_Click">
 
                                 </Button>
@@ -730,6 +745,7 @@
                                     Content="新建升序链表"
                                     FontSize="24"
                                     Margin="0"
+                                    Focusable="False"
                                     Click="CreateIncreaseButton_Click">
 
                                 </Button>
@@ -743,6 +759,7 @@
                                     Content="新建降序链表"
                                     FontSize="24"
                                     Margin="0"
+                                    Focusable="False"
                                     Click="CreateDecreaseBuuton_Click">
 
                                 </Button>
@@ -815,6 +832,7 @@
                                         Content="头部"
                                         FontSize="26"
                                         MinWidth="0"
+                                        Focusable="False"
                                         Click="InsertPanelButton_Click">
                                     </Button>
 
@@ -825,6 +843,7 @@
                                         Content="中部"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="InsertPanelButton_Click">
                                     </Button>
 
@@ -835,6 +854,7 @@
                                         Content="尾部"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="InsertPanelButton_Click">
                                     </Button>
                                 </Grid>
@@ -874,6 +894,7 @@
                                         Content="确认"
                                         FontSize="28"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="InsertConfirmButton_Click"/>
                                 </Grid>
 
@@ -974,6 +995,7 @@
                                         Content="头部"
                                         FontSize="26"
                                         MinWidth="0"
+                                        Focusable="False"
                                         Click="DeletePanelButton_Click">
                                     </Button>
 
@@ -984,6 +1006,7 @@
                                         Content="中部"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="DeletePanelButton_Click">
                                     </Button>
 
@@ -994,6 +1017,7 @@
                                         Content="尾部"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="DeletePanelButton_Click">
                                     </Button>
                                 </Grid>
@@ -1034,6 +1058,7 @@
                                     Content="确认"
                                     FontSize="24"
                                     MinWidth="1"
+                                    Focusable="False"
                                     Click="DeleteConfirmButton_Click"/>
                             </Grid>
 
@@ -1123,6 +1148,7 @@
                                         Content="升序排序"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="UpdateValue_Click"/>
                                     
                                     <Button
@@ -1132,6 +1158,7 @@
                                         Content="更新数值"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="UpdateValue_Click"/>
 
                                     <Button
@@ -1141,6 +1168,7 @@
                                         Content="降序排序"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="UpdateValue_Click"/>
 
                                 </Grid>
@@ -1200,6 +1228,7 @@
                                         Content="查找结点"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="QueryConfirm_Click"/>
                                     
                                     <Button
@@ -1209,6 +1238,7 @@
                                         Content="加载ADL"
                                         FontSize="26"
                                         MinWidth="1"
+                                        Focusable="False"
                                         Click="LoadADLButton_Click"/>
                                 </Grid>
                                 
@@ -1274,12 +1304,14 @@
                     Style="{StaticResource BackButton}"
                     Margin="10 0"
                     ToolTip="将画布移动缩放至默认"
+                    Focusable="False"
                     Click="BackButton_Click"/>
                 
                 <Button
                     Name="BackEndButton"
                     Style="{StaticResource BackEndButton}"
                     Margin="10 0"
+                    Focusable="False"
                     Click="BackToStart"/>
 
                 <Button
@@ -1287,6 +1319,7 @@
                     Style="{StaticResource ForwardButton}"
                     Margin="10 0"
                     MinWidth="1"
+                    Focusable="False"
                     Click="ForwardButton_Click"/>
 
                 <Button
@@ -1298,6 +1331,7 @@
                     BorderThickness="0"
                     Margin="10 0"
                     MinWidth="1"
+                    Focusable="False"
                     Click="ForwardEndButton_Click">
                 </Button>
 
