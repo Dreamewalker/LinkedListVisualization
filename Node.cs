@@ -27,6 +27,12 @@ namespace LinkedListVisualization
         public static double lab_a = 0;
         public static double lab_b = 0;
 
+        // 非线性动画Easing function
+        private static NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+        {
+            EasingMode = EasingMode.EaseIn
+        };
+
         public Node(int nodeValue, double lab_l, Node prevNode)
         {
             if (lab_l < 0)
@@ -284,8 +290,6 @@ namespace LinkedListVisualization
             double scaleRate = Math.Sqrt(Math.Pow(srcX - dstX, 2) + Math.Pow(srcY - dstY, 2)) / 190.0;
             double targetAngle = Math.Atan2(dstY - srcY, dstX - srcX) / Math.PI * 180;
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             DoubleAnimation leftAnim = new DoubleAnimation(srcX, new Duration(TimeSpan.FromMilliseconds(1500)));
             leftAnim.EasingFunction = nonLinearEasingFunction;

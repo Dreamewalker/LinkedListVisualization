@@ -21,6 +21,12 @@ namespace LinkedListVisualization.Widget
     /// </summary>
     public partial class Arrow : Viewbox
     {
+        // 非线性动画Easing function
+        private static NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+        {
+            EasingMode = EasingMode.EaseIn
+        };
+
         public Arrow()
         {
             InitializeComponent();
@@ -52,8 +58,6 @@ namespace LinkedListVisualization.Widget
         {
             DoubleAnimation doubleAnimation = new DoubleAnimation(currentAngle, currentAngle + angle, new Duration(TimeSpan.FromMilliseconds(1000)));
             doubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(doubleAnimation, Rotation);
@@ -71,8 +75,6 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation yDoubleAnimation = new DoubleAnimation(currentCanvasTop, currentCanvasTop + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
             yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             xDoubleAnimation.EasingFunction = nonLinearEasingFunction;
             yDoubleAnimation.EasingFunction = nonLinearEasingFunction;
@@ -93,8 +95,6 @@ namespace LinkedListVisualization.Widget
 
         public double PointingAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop)
         {
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             double targetLength = Math.Sqrt(Math.Pow(targetLeft - currentCanvasLeft, 2) + Math.Pow(targetTop - currentCanvasTop - 17.5, 2));
             double targetScaleRate = targetLength / 190;
@@ -149,8 +149,6 @@ namespace LinkedListVisualization.Widget
 
         public double MoveBaseAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop)
         {
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             double currentEndLeft = currentCanvasLeft + Math.Cos(currentAngle / 180 * Math.PI) * 190 * currentScaleX;
             double currentEndTop = currentCanvasTop + 17.5 - Math.Sin(currentAngle / 180 * Math.PI) * 190 * currentScaleX;
@@ -202,8 +200,6 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation doubleAnimation = new DoubleAnimation(initAngle, targetAngle, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(doubleAnimation, viewbox);
             Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Children[0].Angle"));
@@ -223,8 +219,6 @@ namespace LinkedListVisualization.Widget
         {
             DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimationOpcacity.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimationOpcacity.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(doubleAnimationOpcacity, ArrowLine);
             Storyboard.SetTargetProperty(doubleAnimationOpcacity, new PropertyPath("Opacity"));
@@ -248,8 +242,6 @@ namespace LinkedListVisualization.Widget
         {
             DoubleAnimation doubleAnimationOpcacity = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(500)));
             doubleAnimationOpcacity.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimationOpcacity.EasingFunction = nonLinearEasingFunction;
             Storyboard.SetTarget(doubleAnimationOpcacity, ArrowLine);
             Storyboard.SetTargetProperty(doubleAnimationOpcacity, new PropertyPath("Opacity"));

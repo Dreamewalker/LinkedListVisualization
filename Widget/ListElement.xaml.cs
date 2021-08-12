@@ -21,6 +21,12 @@ namespace LinkedListVisualization.Widget
     /// </summary>
     public partial class ListElement : Viewbox
     {
+        // 非线性动画Easing function
+        private static NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+        {
+            EasingMode = EasingMode.EaseIn
+        };
+
         public ListElement()
         {
             InitializeComponent();
@@ -50,8 +56,6 @@ namespace LinkedListVisualization.Widget
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             ringDoubleAnimation.EasingFunction = nonLinearEasingFunction;
             contentDoubleAnimation.EasingFunction = nonLinearEasingFunction;
 
@@ -77,8 +81,6 @@ namespace LinkedListVisualization.Widget
                 BeginTime = TimeSpan.FromSeconds(prevCompleteTime)
             };
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             ringDoubleAnimation.EasingFunction = nonLinearEasingFunction;
             contentDoubleAnimation.EasingFunction = nonLinearEasingFunction;
 
@@ -167,8 +169,6 @@ namespace LinkedListVisualization.Widget
             DoubleAnimation yDoubleAnimation = new DoubleAnimation(currentCanvasTop, currentCanvasTop + deltaY, new Duration(TimeSpan.FromMilliseconds(1500)));
             yDoubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             xDoubleAnimation.EasingFunction = nonLinearEasingFunction;
             yDoubleAnimation.EasingFunction = nonLinearEasingFunction;

@@ -56,6 +56,12 @@ namespace LinkedListVisualization
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        // 非线性动画Easing function
+        private NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+        {
+            EasingMode = EasingMode.EaseIn
+        };
+
         public MainWindow()
         {
             Random random = new Random();
@@ -340,8 +346,7 @@ namespace LinkedListVisualization
 
             //TypeMaskLabel.Content = "单链表";
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+            
 
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(500 + 500 * (currentNewListType - 0))));
@@ -376,9 +381,6 @@ namespace LinkedListVisualization
             //TypeMaskLabel.Content = "循环链表";
             Storyboard storyboard = new Storyboard();
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(currentNewListType - 1))));
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
@@ -412,9 +414,6 @@ namespace LinkedListVisualization
             //TypeMaskLabel.Content = "双向链表";
             Storyboard storyboard = new Storyboard();
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TypeSelectedMask), 194, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(currentNewListType - 2))));
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
@@ -443,9 +442,6 @@ namespace LinkedListVisualization
             Storyboard storyboard = new Storyboard();
 
 
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(HeadSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
@@ -471,10 +467,6 @@ namespace LinkedListVisualization
             HeadOffButton.MinWidth = 0;
 
             Storyboard storyboard = new Storyboard();
-
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(HeadSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
@@ -503,10 +495,6 @@ namespace LinkedListVisualization
 
             Storyboard storyboard = new Storyboard();
 
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
-
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TailSelectedMask), 0, new Duration(TimeSpan.FromMilliseconds(1000)));
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
@@ -532,10 +520,6 @@ namespace LinkedListVisualization
             TailOffButton.MinWidth = 0;
 
             Storyboard storyboard = new Storyboard();
-
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             // Move Anim
             DoubleAnimation doubleAnimation = new DoubleAnimation(Canvas.GetLeft(TailSelectedMask), 97, new Duration(TimeSpan.FromMilliseconds(1000)));
@@ -586,9 +570,6 @@ namespace LinkedListVisualization
             }
 
             OprPanelTitle.Content = title;
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             Storyboard storyboard = new Storyboard();
             
@@ -642,9 +623,6 @@ namespace LinkedListVisualization
             Random random = new Random();
             Node.lab_a = random.NextDouble() * 88 - 128;
             Node.lab_b = random.NextDouble() * 100 - 50;
-
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             EnableDisableAllPanelButtons(1);
             ForwardButton.MinWidth = 1;
@@ -755,8 +733,7 @@ namespace LinkedListVisualization
             toolBarButtons[currentToolBarSelect].MinWidth = 1;
 
             Storyboard storyboard = new Storyboard();
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
             // Tool Bar Anim
             DoubleAnimation toolBarAnim = new DoubleAnimation(currentToolBarSelect * 74, clickedButtonIndex * 74, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentToolBarSelect))));
             toolBarAnim.EasingFunction = nonLinearEasingFunction;
@@ -1235,8 +1212,7 @@ namespace LinkedListVisualization
             insertPanelButtons[currentInsertPositionSelect].MinWidth = 1;
 
             Storyboard storyboard = new Storyboard();
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
             // Insert Selection Anim
             DoubleAnimation insertSelectAnim = new DoubleAnimation(currentInsertPositionSelect * 100, clickedButtonIndex * 100, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentInsertPositionSelect))));
             insertSelectAnim.EasingFunction = nonLinearEasingFunction;
@@ -1321,8 +1297,7 @@ namespace LinkedListVisualization
             deletePanelButtons[currentDeletePositionSelect].MinWidth = 1;
 
             Storyboard storyboard = new Storyboard();
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
+
             // Insert Selection Anim
             DoubleAnimation deleteSelectAnim = new DoubleAnimation(currentDeletePositionSelect * 100, clickedButtonIndex * 100, new Duration(TimeSpan.FromMilliseconds(500 + 500 * Math.Abs(clickedButtonIndex - currentInsertPositionSelect))));
             deleteSelectAnim.EasingFunction = nonLinearEasingFunction;
@@ -1701,8 +1676,6 @@ namespace LinkedListVisualization
             {
                 return prevCompleteTime;
             }
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             double animTime = 0.5 + 0.1 * Math.Abs(targetLine - currentLine);
             DoubleAnimation lengthAnim = new DoubleAnimation(codes[targetLine].Length * 9 + 20, new Duration(TimeSpan.FromSeconds(animTime)));
@@ -3041,10 +3014,6 @@ namespace LinkedListVisualization
             GeneralCanvasScaleTransform.ScaleY = 1;
 
             /*
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
-            {
-                EasingMode = EasingMode.EaseOut
-            };
 
             Storyboard storyboard = new Storyboard();
             double durationTime = Math.Sqrt(Math.Pow(Canvas.GetLeft(ViewboxGeneralCanvas) + 685, 2) + Math.Pow(Canvas.GetTop(ViewboxGeneralCanvas) + 400, 2)) / 1000;

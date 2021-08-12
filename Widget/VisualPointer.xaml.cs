@@ -21,6 +21,12 @@ namespace LinkedListVisualization.Widget
     /// </summary>
     public partial class VisualPointer : Viewbox
     {
+        // 非线性动画Easing function
+        private static NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16)
+        {
+            EasingMode = EasingMode.EaseIn
+        };
+
         public Node pointingNode = null;
         public double currentCanvasLeft = 0;
         public double currentCanvasTop = 0;
@@ -67,8 +73,6 @@ namespace LinkedListVisualization.Widget
         {
             DoubleAnimation doubleAnimation = new DoubleAnimation(element.Opacity, opacityTarget, new Duration(TimeSpan.FromMilliseconds(700)));
             doubleAnimation.BeginTime = TimeSpan.FromSeconds(prevCompleteTime);
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
             doubleAnimation.EasingFunction = nonLinearEasingFunction;
 
             Storyboard.SetTarget(doubleAnimation, element);
@@ -79,8 +83,6 @@ namespace LinkedListVisualization.Widget
 
         public double MoveToAnim(Storyboard storyboard, double prevCompleteTime, double targetLeft, double targetTop, double targetAngle)
         {
-            NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
-            nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
             /*
             DoubleAnimationUsingKeyFrames xAnim = new DoubleAnimationUsingKeyFrames();
