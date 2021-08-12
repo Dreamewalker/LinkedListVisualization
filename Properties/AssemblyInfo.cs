@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("LinkedListVisualization")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("韩孟霖")]
 [assembly: AssemblyProduct("LinkedListVisualization")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
