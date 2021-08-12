@@ -23,10 +23,21 @@ namespace LinkedListVisualization
         // public Dictionary<string, VisualPointer> relatedPointers = new Dictionary<string, VisualPointer>();
         public List<Arrow> arrowsPointingToMe = new List<Arrow>(); // 记录指向该结点的前驱后继指针
 
-        public Node(int nodeValue, byte colorR, byte colorG, byte colorB, Node prevNode)
+        // 色系
+        public static double lab_a = 0;
+        public static double lab_b = 0;
+
+        public Node(int nodeValue, double lab_l, Node prevNode)
         {
+            if (lab_l < 0)
+            {
+                Random random = new Random();
+                lab_l = random.NextDouble() * 60 + 33;
+            }
+            Color nodeColor = ColorConvert.LabToRGB(lab_l, lab_a, lab_b);
+
             value = nodeValue;
-            listElement = new ListElement(nodeValue, colorR, colorG, colorB);
+            listElement = new ListElement(nodeValue, nodeColor.R, nodeColor.G, nodeColor.B);
 
             if (prevNode != null)
             {
@@ -229,9 +240,9 @@ namespace LinkedListVisualization
             } while (currentPtr != null && currentPtr != this);
         }
 
-        public void CreateNextNode(int nodeValue, bool isBidirection)
+        public void CreateNextNode(int nodeValue, double lab_l, bool isBidirection)
         {
-            nextPtr = new Node(nodeValue, 155, 155, 155, isBidirection ? this : null);
+            nextPtr = new Node(nodeValue, lab_l, isBidirection ? this : null);
             nextArrow = new Arrow();
             nextArrow.Rotation.Angle = 0;
             nextArrow.currentAngle = 0;

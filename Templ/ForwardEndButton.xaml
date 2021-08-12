@@ -44,7 +44,8 @@
                                 x:Name="ForwardLogoPath"
                                 Width="400"
                                 Height="353.554"
-                                Fill="#333333">
+                                Fill="#333333"
+                                Opacity="1">
                                 <Path.RenderTransform>
                                     <RotateTransform Angle="180" CenterX="200" CenterY="176.777"/>
                                 </Path.RenderTransform>
@@ -70,6 +71,35 @@
                                                             L217.678 194.454
                                                             C200 176.777, 200 176.777, 217.678 159.099
                                                             Z"/>
+                                </Path.Data>
+                            </Path>
+
+                            <Path
+                                x:Name="PauseLogoPath"
+                                Fill="#333333"
+                                Width="200"
+                                Height="400"
+                                Stretch="Uniform"
+                                Opacity="0">
+                                <Path.Data>
+                                    <PathGeometry Figures="
+                                                    M0 30 C0 0, 0 0, 30 0
+                                                    L50 0
+                                                    C80 0, 80 0, 80 30
+                                                    L80 390
+                                                    C80 420, 80 420, 50 420
+                                                    L30 420
+                                                    C0 420, 0 420, 0 390
+                                                    Z
+            
+                                                    M200 30 C200 0, 200 0, 230 0
+                                                    L250 0
+                                                    C280 0, 280 0, 280 30
+                                                    L280 390
+                                                    C280 420, 280 420, 250 420
+                                                    L230 420
+                                                    C200 420, 200 420, 200 390
+                                                    Z"/>
                                 </Path.Data>
                             </Path>
 
@@ -112,9 +142,11 @@
                         </EventTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ForwardLogoPath" Property="Fill" Value="#222222"/>
+                            <Setter TargetName="PauseLogoPath" Property="Fill" Value="#222222"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="ForwardLogoPath" Property="Fill" Value="#111111"/>
+                            <Setter TargetName="PauseLogoPath" Property="Fill" Value="#111111"/>
                             <Setter TargetName="ForwardBackground" Property="Fill" Value="#CCCCCC"/>
                         </Trigger>
                     </ControlTemplate.Triggers>

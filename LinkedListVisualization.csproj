@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ColorConvert.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NonLinearEasingFunction.cs" />
     <Compile Include="Widget\Arrow.xaml.cs">

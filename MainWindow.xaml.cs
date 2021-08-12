@@ -58,6 +58,11 @@ namespace LinkedListVisualization
 
         public MainWindow()
         {
+            Random random = new Random();
+            Node.lab_a = random.NextDouble() * 88 - 128;
+            Node.lab_b = random.NextDouble() * 100 - 50;
+
+
             InitializeComponent();
             this.SourceInitialized += MainWindow_SourceInitialized;
             this.Loaded += MainWindow_Loaded;
@@ -634,9 +639,18 @@ namespace LinkedListVisualization
         private void BackNewButton_Click(object sender, RoutedEventArgs e)
         {
             storyboardStatus = 0;
+            Random random = new Random();
+            Node.lab_a = random.NextDouble() * 88 - 128;
+            Node.lab_b = random.NextDouble() * 100 - 50;
+
             NonLinearEasingFunction nonLinearEasingFunction = new NonLinearEasingFunction(16);
             nonLinearEasingFunction.EasingMode = EasingMode.EaseIn;
 
+            EnableDisableAllPanelButtons(1);
+            ForwardButton.MinWidth = 1;
+            ForwardEndButton.MinWidth = 1;
+            SetForwardEndButtonLogoAnim(0);
+            storyboardList.Clear();
             Storyboard storyboard = new Storyboard();
 
             DoubleAnimation newPanelAnimation = new DoubleAnimation(-370, 0, new Duration(TimeSpan.FromMilliseconds(1500)));
@@ -837,7 +851,7 @@ namespace LinkedListVisualization
 
             if (currentHeadSelect == 0)
             {
-                root = new Node(-1, 155, 155, 155, null);
+                root = new Node(-1, 33, null);
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
@@ -893,19 +907,23 @@ namespace LinkedListVisualization
 
             // clear widgets on canvas
             double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
-            
+
+            double lab_l_step = 60.0 / (int.Parse(CreateNodeNumEditView.Text) + 1 - currentHeadSelect);
+            double current_lab_l = 33;
 
             Random random = new Random();
             if (currentHeadSelect == 0)
             {
-                root = new Node(-1, 155, 155, 155, null);
+                root = new Node(-1, current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
-                root = new Node(random.Next(0, 100), 155, 155, 155, null);
+                root = new Node(random.Next(0, 100), current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
@@ -923,7 +941,8 @@ namespace LinkedListVisualization
             rearNode = root;
             for (int i = 0; i < nodeNum; ++i)
             {
-                currentPtr.CreateNextNode(random.Next(0, 100), currentNewListType == 2);
+                currentPtr.CreateNextNode(random.Next(0, 100), current_lab_l, currentNewListType == 2);
+                current_lab_l += lab_l_step;
 
                 currentPtr = currentPtr.nextPtr;
             }
@@ -979,6 +998,9 @@ namespace LinkedListVisualization
             double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text);
+            double lab_l_step = 60.0 / nodeNum;
+            double current_lab_l = 33;
+
             Random random = new Random();
             List<int> randomArray = new List<int>();
             for (int c = 0; c < nodeNum; ++c)
@@ -990,14 +1012,16 @@ namespace LinkedListVisualization
             int i = 0;
             if (currentHeadSelect == 0)
             {
-                root = new Node(-1, 155, 155, 155, null);
+                root = new Node(-1, current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
-                root = new Node(randomArray[0], 155, 155, 155, null);
+                root = new Node(randomArray[0], current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
@@ -1013,7 +1037,8 @@ namespace LinkedListVisualization
             Node currentPtr = root;
             for (; i < nodeNum; ++i)
             {
-                currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
+                currentPtr.CreateNextNode(randomArray[i], current_lab_l, currentNewListType == 2);
+                current_lab_l += lab_l_step;
                 currentPtr = currentPtr.nextPtr;
             }
 
@@ -1065,6 +1090,9 @@ namespace LinkedListVisualization
             double clearDoneTime = CloseWidgetsOnCanvas(storyboard, 0);
 
             int nodeNum = int.Parse(CreateNodeNumEditView.Text);
+            double lab_l_step = 60.0 / nodeNum;
+            double current_lab_l = 33;
+
             Random random = new Random();
             List<int> randomArray = new List<int>();
             for (int c = 0; c < nodeNum; ++c)
@@ -1076,14 +1104,16 @@ namespace LinkedListVisualization
             int i = nodeNum - 1;
             if (currentHeadSelect == 0)
             {
-                root = new Node(-1, 155, 155, 155, null);
+                root = new Node(-1, current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
             }
             else if (CreateNodeNumEditView.Text != "0")
             {
-                root = new Node(randomArray[i], 155, 155, 155, null);
+                root = new Node(randomArray[i], current_lab_l, null);
+                current_lab_l += lab_l_step;
 
                 rootPointer = new VisualPointer("Root", root);
                 generalVisualPtrSet.Add("Root", rootPointer);
@@ -1099,7 +1129,8 @@ namespace LinkedListVisualization
             Node currentPtr = root;
             for (; i >= 0; --i)
             {
-                currentPtr.CreateNextNode(randomArray[i], currentNewListType == 2);
+                currentPtr.CreateNextNode(randomArray[i], current_lab_l, currentNewListType == 2);
+                current_lab_l += lab_l_step;
                 currentPtr = currentPtr.nextPtr;
             }
 
@@ -1482,14 +1513,21 @@ namespace LinkedListVisualization
                 storyboard1.Begin();
                 return;
             }
+            double lab_l_step = 60.0 / backupList.Count;
+            double current_lab_l = 33;
+
             bool isBidirection = currentNewListType == 2;
-            root = new Node(backupList[0], 155, 155, 155, null);
+            root = new Node(backupList[0], current_lab_l, null);
+            current_lab_l += lab_l_step;
+
             rootPointer = new VisualPointer("Root", root);
 
             Node currentPtr = root;
             for (int i = 1; i < backupList.Count; ++i)
             {
-                currentPtr.CreateNextNode(backupList[i], isBidirection);
+                currentPtr.CreateNextNode(backupList[i],current_lab_l, isBidirection);
+                current_lab_l += lab_l_step;
+
                 currentPtr = currentPtr.nextPtr;
             }
             rearPointer = new VisualPointer("Rear", currentPtr);
@@ -1571,6 +1609,7 @@ namespace LinkedListVisualization
                     DeleteGeneralPointers();
                     EnableDisableAllPanelButtons(1);
                 }
+                SetForwardEndButtonLogoAnim(0);
             }
         }
 
@@ -2131,7 +2170,7 @@ namespace LinkedListVisualization
 
                 case "nNew":
                     {
-                        Node newNode = new Node(int.Parse(decodeResult[2]), 155, 155, 155, null);
+                        Node newNode = new Node(int.Parse(decodeResult[2]), -1, null);
                         VisualPointer newPointer = new VisualPointer(decodeResult[1], newNode);
                         generalVisualPtrSet.Add(decodeResult[1], newPointer);
 
@@ -2754,6 +2793,35 @@ namespace LinkedListVisualization
             return completeTime;
         }
 
+        private void SetForwardEndButtonLogoAnim(int status)
+        {
+            System.Windows.Shapes.Path pausePath = (System.Windows.Shapes.Path)(ForwardEndButton.Template.FindName("PauseLogoPath", ForwardEndButton));
+            System.Windows.Shapes.Path forwardPath = (System.Windows.Shapes.Path)(ForwardEndButton.Template.FindName("ForwardLogoPath", ForwardEndButton));
+
+            Storyboard storyboard = new Storyboard();
+
+            DoubleAnimation forwardAnim = new DoubleAnimation(1 - status, new Duration(TimeSpan.FromSeconds(0.2)));
+            forwardAnim.BeginTime = TimeSpan.FromSeconds(0.2 - 0.2 * status);
+            forwardAnim.EasingFunction = new ExponentialEase()
+            {
+                EasingMode = EasingMode.EaseIn
+            };
+            Storyboard.SetTarget(forwardAnim, forwardPath);
+            Storyboard.SetTargetProperty(forwardAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(forwardAnim);
+
+            DoubleAnimation pauseAnim = new DoubleAnimation(status, new Duration(TimeSpan.FromSeconds(0.2)));
+            pauseAnim.BeginTime = TimeSpan.FromSeconds(0.2 * status);
+            pauseAnim.EasingFunction = new ExponentialEase()
+            {
+                EasingMode = EasingMode.EaseIn
+            };
+            Storyboard.SetTarget(pauseAnim, pausePath);
+            Storyboard.SetTargetProperty(pauseAnim, new PropertyPath("Opacity"));
+            storyboard.Children.Add(pauseAnim);
+            storyboard.Begin();
+        }
+
         private void ForwardEndButton_Click(object sender, RoutedEventArgs e)
         {
             if (((Button)sender).MinWidth < 0.5)
@@ -2764,6 +2832,7 @@ namespace LinkedListVisualization
             {
                 if (storyboardListIdx < storyboardList.Count - 1)
                 {
+                    SetForwardEndButtonLogoAnim(0);
                     storyboardStatus = 1;
                     ++storyboardListIdx;
                     storyboardList[storyboardListIdx].Begin();
@@ -2771,11 +2840,13 @@ namespace LinkedListVisualization
             }
             else if (storyboardStatus == 1)
             {
+                SetForwardEndButtonLogoAnim(1);
                 storyboardStatus = 0;
             }
             else
             {
                 storyboardStatus = 1;
+                SetForwardEndButtonLogoAnim(0);
                 if (codes.Length > 0)
                 {
                     // Normal status
@@ -2857,6 +2928,10 @@ namespace LinkedListVisualization
 
         private void BackToStart(object sender, RoutedEventArgs e)
         {
+            if (storyboardList.Count == 0)
+            {
+                return;
+            }
             if (storyboardStatus == 1 && storyboardListIdx < storyboardList.Count)
             {
                 storyboardList[storyboardListIdx].Stop();

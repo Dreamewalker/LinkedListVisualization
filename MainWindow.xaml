@@ -1291,10 +1291,15 @@
 
                 <Button
                     Name="ForwardEndButton"
+                    Height="60"
+                    Width="60"
                     Style="{StaticResource ForwardEndButton}"
+                    Background="#EEEEEE"
+                    BorderThickness="0"
                     Margin="10 0"
                     MinWidth="1"
-                    Click="ForwardEndButton_Click"/>
+                    Click="ForwardEndButton_Click">
+                </Button>
 
             </StackPanel>
         </DockPanel>
