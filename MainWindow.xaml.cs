@@ -3005,6 +3005,7 @@ namespace LinkedListVisualization
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            /*
             currentScaleRate = 1;
             prevHoriChange = 0;
             prevVerChange = 0;
@@ -3012,8 +3013,9 @@ namespace LinkedListVisualization
             Canvas.SetTop(ViewboxGeneralCanvas, -400);
             GeneralCanvasScaleTransform.ScaleX = 1;
             GeneralCanvasScaleTransform.ScaleY = 1;
+            */
 
-            /*
+            
 
             Storyboard storyboard = new Storyboard();
             double durationTime = Math.Sqrt(Math.Pow(Canvas.GetLeft(ViewboxGeneralCanvas) + 685, 2) + Math.Pow(Canvas.GetTop(ViewboxGeneralCanvas) + 400, 2)) / 1000;
@@ -3043,13 +3045,15 @@ namespace LinkedListVisualization
 
             storyboard.Completed += (sArg, eArg) =>
             {
+                storyboard.Remove(ViewboxGeneralCanvas);
                 Canvas.SetLeft(ViewboxGeneralCanvas, -685);
                 Canvas.SetTop(ViewboxGeneralCanvas, -400);
                 GeneralCanvasScaleTransform.ScaleX = 1;
                 GeneralCanvasScaleTransform.ScaleY = 1;
+                currentScaleRate = 1;
             };
-            storyboard.Begin();
-            */
+            storyboard.Begin(ViewboxGeneralCanvas, true);
+            
         }
     }
 }
