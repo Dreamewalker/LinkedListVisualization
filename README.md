@@ -1,6 +1,9 @@
 # LinkedListVisualization
 2020-2021学年春季学期暑假 数据结构课设1——链表可视化（基于WPF）
 
+## 开发环境
+Microsoft Visual Studio 2019 & .Net Framework 4.7.2
+
 ## 动画描述指令(ADL)
 ### 通用指针操作
 gNew newPtr, (CanvasLeft, CanvasTop)   // 新建一个指针newPtr, 后两个参数指示了新指针的位置，可选  
